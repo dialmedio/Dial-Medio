@@ -62,7 +62,7 @@ const espacios = [
           espacios.map((e, i) => (
             <li data-revela style={`--retraso:${i * 0.06}s`}>
               <span class="sub s-1">{e.nombre}</span>
-              <span class="mono texto-2">{e.nota}</span>
+              <span class="texto-2 espacio-nota">{e.nota}</span>
             </li>
           ))
         }
@@ -125,7 +125,7 @@ const espacios = [
   .espacios p { margin: 0; max-width: 40ch; }
   .espacios ul { list-style: none; border-top: 1px solid var(--borde); }
   .espacios li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--borde); }
-  .espacios li .mono { text-align: right; }
+  .espacio-nota { text-align: right; font-size: 1rem; }
   @media (min-width: 900px) { .espacios { grid-template-columns: 1fr 1.3fr; gap: 88px; align-items: start; } }
 
   .celebra { display: block; text-decoration: none; border-top: 1px solid var(--linea); transition: background 0.3s; }

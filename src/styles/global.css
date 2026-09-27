@@ -64,11 +64,11 @@ body {
   background: var(--papel);
   color: var(--carbon);
   font-family: var(--f-texto);
-  font-size: clamp(1rem, 0.97rem + 0.2vw, 1.09rem);
+  font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
   line-height: 1.6;
   font-stretch: 100%;
+  letter-spacing: .004em;
   font-optical-sizing: auto;
-  font-feature-settings: 'ss01';
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -81,7 +81,8 @@ button { font: inherit; color: inherit; }
 p { margin: 0 0 1em; text-wrap: pretty; }
 h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
 /* Énfasis: la voz de acento de Dial es la serif cursiva. */
-em { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal; letter-spacing: 0; font-size: 1.08em; line-height: 1; }
+/* Instrument Serif tiene menor altura de x que la sans: se compensa con +12 % para que no se vea pequeña. */
+em { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal; letter-spacing: .005em; font-size: 1.12em; line-height: 1; }
 .cursiva { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
 ul, ol { margin: 0; padding: 0; }
 ::selection { background: var(--terracota); color: var(--hueso); }
@@ -138,30 +139,31 @@ ul, ol { margin: 0; padding: 0; }
 .grano > * { position: relative; z-index: 1; }
 
 /* ---------- Tipografía ---------- */
-/* Titulares: Instrument Sans semibold, semicondensada, en caja mixta. */
+/* Titulares: Instrument Sans semibold, semicondensada (88 %), en caja mixta.
+   El espaciado es óptico: más cerrado cuanto más grande, más abierto cuanto más pequeño. */
 .display {
   font-family: var(--f-display);
   font-weight: 600;
-  font-stretch: 84%;
+  font-stretch: 88%;
   line-height: 1;
-  letter-spacing: -.024em;
+  letter-spacing: -.018em;
 }
-.display em { font-size: 1.04em; letter-spacing: -.01em; color: var(--acento-display, var(--terracota)); }
-.d-1 { font-size: clamp(3rem, 1rem + 6.4vw, 7.6rem); line-height: .96; }
-.d-2 { font-size: clamp(2.3rem, 1.2rem + 4.3vw, 5.1rem); }
-.d-3 { font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3.3rem); line-height: 1.04; }
-.d-4 { font-size: clamp(1.5rem, 1.15rem + 1.2vw, 2.1rem); line-height: 1.08; letter-spacing: -.022em; }
+.display em { font-size: 1.07em; letter-spacing: -.005em; color: var(--acento-display, var(--terracota)); }
+.d-1 { font-size: clamp(3rem, 1.1rem + 6vw, 7.25rem); line-height: .95; letter-spacing: -.022em; }
+.d-2 { font-size: clamp(2.25rem, 1.25rem + 3.8vw, 4.6rem); line-height: 1; letter-spacing: -.02em; }
+.d-3 { font-size: clamp(1.85rem, 1.25rem + 2.1vw, 3.1rem); line-height: 1.05; letter-spacing: -.016em; }
+.d-4 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); line-height: 1.1; letter-spacing: -.012em; }
 
 .sub {
   font-family: var(--f-sub);
   font-weight: 600;
-  font-stretch: 92%;
-  line-height: 1.15;
-  letter-spacing: -.015em;
+  font-stretch: 94%;
+  line-height: 1.2;
+  letter-spacing: -.008em;
 }
-.s-1 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); }
-.s-2 { font-size: clamp(1.2rem, 1.08rem + .5vw, 1.45rem); }
-.s-3 { font-size: 1.1rem; }
+.s-1 { font-size: clamp(1.45rem, 1.2rem + 1vw, 1.95rem); line-height: 1.15; }
+.s-2 { font-size: clamp(1.2rem, 1.1rem + .4vw, 1.4rem); }
+.s-3 { font-size: 1.15rem; }
 
 .kicker {
   font-family: var(--f-mono);
@@ -201,20 +203,23 @@ ul, ol { margin: 0; padding: 0; }
 }
 
 .lead {
-  font-size: clamp(1.15rem, 1rem + .6vw, 1.45rem);
+  font-size: clamp(1.2rem, 1.05rem + .5vw, 1.4rem);
   line-height: 1.5;
-  max-width: 38ch;
+  letter-spacing: 0;
+  max-width: 40ch;
 }
 /* Frases de manifiesto: Instrument Serif, la voz editorial. */
 .lead-xl {
   font-family: var(--f-serif);
-  font-size: clamp(1.6rem, 1.1rem + 1.9vw, 2.9rem);
-  line-height: 1.18;
+  font-size: clamp(1.7rem, 1.15rem + 1.9vw, 2.9rem);
+  line-height: 1.2;
   font-weight: 400;
-  letter-spacing: -.01em;
+  letter-spacing: .005em;
 }
 .lead-xl em { font-size: 1em; color: var(--acento-texto); }
 .texto-2 { color: var(--texto-2); }
+/* Frase gancho: serif cursiva, siempre un paso por encima del texto que presenta. */
+.gancho { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: .005em; line-height: 1.25; color: var(--acento-texto); }
 .acento { color: var(--acento-texto); }
 .medida { max-width: 62ch; }
 

@@ -60,9 +60,9 @@ body::after { content: ''; position: absolute; inset: 0; opacity: .12; mix-blend
 .cuerpo { position: absolute; left: 72px; top: 158px; width: 720px; }
 .k { font: 500 15px Plex; letter-spacing: .12em; text-transform: uppercase; color: ${C.clara}; display: flex; gap: 14px; align-items: center; }
 .k::before { content: ''; width: 36px; height: 2px; background: ${C.terracota}; }
-h1 { margin-top: 22px; font-weight: 600; font-stretch: 84%; font-size: 76px; line-height: .98; letter-spacing: -.024em; }
+h1 { margin-top: 22px; font-weight: 600; font-stretch: 88%; font-size: 74px; line-height: .98; letter-spacing: -.02em; }
 h1.serif { font-family: ISerif; font-weight: 400; font-stretch: normal; font-size: 84px; letter-spacing: -.01em; line-height: 1; }
-h1 em { font-family: ISerif; font-style: italic; font-weight: 400; color: ${C.terracota}; font-size: 1.05em; letter-spacing: -.01em; }
+h1 em { font-family: ISerif; font-style: italic; font-weight: 400; color: ${C.terracota}; font-size: 1.07em; letter-spacing: -.005em; }
 .linea { margin-top: 26px; display: flex; align-items: baseline; gap: 24px; }
 .linea em { font-family: ISerif; font-style: italic; font-size: 150px; line-height: 1; color: ${C.terracota}; }
 p { margin-top: 22px; font-size: 25px; line-height: 1.35; color: ${C.ceniza}; max-width: 680px; }

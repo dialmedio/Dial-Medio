@@ -65,7 +65,7 @@ const presupuestos = [
                   <input type="radio" name="linea" value={l.valor} checked={i === 0} />
                   <span class="opcion-caja">
                     <span class="sub s-3">{l.texto}</span>
-                    <span class="mono texto-2">{l.nota}</span>
+                    <span class="texto-2 opcion-nota">{l.nota}</span>
                   </span>
                 </label>
               ))
@@ -120,7 +120,7 @@ const presupuestos = [
 
         <div class="form-pie">
           <button type="submit" class="btn">Enviar solicitud <span class="flecha">→</span></button>
-          <p class="mono texto-2">{sitio.respuesta}</p>
+          <p class="texto-2">{sitio.respuesta}</p>
         </div>
         <p class="form-estado" role="status" aria-live="polite" data-estado></p>
       </form>
@@ -205,7 +205,7 @@ const presupuestos = [
     height: 100%;
     transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
-  .opcion-caja .mono { font-size: 0.85rem; }
+  .opcion-nota { font-size: 0.92rem; line-height: 1.35; }
   .opcion:hover .opcion-caja { border-color: var(--carbon); }
   .opcion input:checked + .opcion-caja { border-color: var(--terracota); background: rgba(193, 80, 46, 0.06); box-shadow: inset 0 0 0 1px var(--terracota); }
   .opcion input:focus-visible + .opcion-caja { outline: 2px solid var(--ambar); outline-offset: 2px; }
@@ -235,7 +235,7 @@ const presupuestos = [
   .trampa { position: absolute; left: -9999px; }
 
   .form-pie { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
-  .form-pie p { margin: 0; font-size: var(--t-meta); }
+  .form-pie p { margin: 0; font-size: 0.95rem; }
   .form-estado { margin: 0; min-height: 1.5em; font-size: 0.95rem; }
   .form-estado.error { color: var(--terracota-ink); }
   .form-estado a { font-weight: 600; }

@@ -117,7 +117,7 @@ const [principal, secundario] = [...casos, ...propios];
               <a href={`/impacto#${s.id}`} class="servicio">
                 <span class="display d-4 servicio-titulo">{s.data.titulo}</span>
                 <span class="servicio-cuerpo">
-                  {s.data.gancho && <span class="servicio-gancho">{s.data.gancho}</span>}
+                  {s.data.gancho && <span class="servicio-gancho gancho">{s.data.gancho}</span>}
                   <span class="servicio-resumen texto-2">{s.data.resumen}</span>
                 </span>
                 <span class="servicio-entrega meta">{s.data.entregables.join(' · ')}</span>
@@ -127,7 +127,7 @@ const [principal, secundario] = [...casos, ...propios];
           ))
         }
       </ol>
-      <p class="nota-cotiza meta" data-revela>Cada proyecto se cotiza a la medida.</p>
+      <p class="nota-cotiza texto-2" data-revela>Cada proyecto se cotiza a la medida.</p>
     </div>
   </section>
 
@@ -326,9 +326,9 @@ const [principal, secundario] = [...casos, ...propios];
   .servicio:hover::before { transform: scaleX(1); }
   .servicio-titulo { grid-column: 1; transition: color 0.3s; }
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
-  .servicio-cuerpo { grid-column: 1; display: grid; gap: 6px; max-width: 56ch; }
-  .servicio-gancho { font-family: var(--f-serif); font-style: italic; font-size: clamp(1.15rem, 1rem + .4vw, 1.35rem); line-height: 1.35; color: var(--terracota-ink); }
-  .servicio-resumen { font-size: 1rem; }
+  .servicio-cuerpo { grid-column: 1; display: grid; gap: 8px; max-width: 58ch; }
+  .servicio-gancho { font-size: clamp(1.35rem, 1.15rem + .6vw, 1.65rem); }
+  .servicio-resumen { font-size: 1.03rem; }
   .servicio-entrega { grid-column: 1; }
   .servicio-flecha { grid-column: 2; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
   .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
@@ -338,7 +338,7 @@ const [principal, secundario] = [...casos, ...propios];
     .servicio-entrega { grid-column: 2; }
     .servicio-flecha { grid-column: 3; justify-self: end; }
   }
-  .nota-cotiza { margin: 28px 0 0; }
+  .nota-cotiza { margin: 28px 0 0; font-size: 1rem; }
 
   /* ---------- Trabajo ---------- */
   .trabajo { display: grid; gap: 48px 40px; align-items: start; }

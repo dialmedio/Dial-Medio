@@ -52,7 +52,7 @@ const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ?
               <a href={destino(s)} class="bv-servicio">
                 <span class="kicker sin-linea">{s.data.linea === 'impacto' ? 'Dial Impacto' : 'Dial Encuentros'}</span>
                 <span class="display d-4">{s.data.titulo}</span>
-                {s.data.gancho && <span class="bv-gancho">{s.data.gancho}</span>}
+                {s.data.gancho && <span class="bv-gancho gancho">{s.data.gancho}</span>}
                 <span class="meta">{s.data.entregables.join(' · ')}</span>
                 <span class="bv-flecha" aria-hidden="true">→</span>
               </a>
@@ -123,7 +123,7 @@ const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ?
     transition: border-color 0.3s, background 0.3s;
   }
   .bv-servicio:hover { border-color: var(--terracota); background: #fbf8f3; }
-  .bv-gancho { font-family: var(--f-serif); font-style: italic; font-size: 1.15rem; line-height: 1.35; color: var(--terracota-ink); }
+  .bv-gancho { font-size: 1.4rem; }
   .bv-flecha { position: absolute; right: 24px; top: 24px; font-size: 1.4rem; transition: transform 0.3s var(--ease); }
   .bv-servicio:hover .bv-flecha { transform: translateX(4px); color: var(--terracota-ink); }
 
