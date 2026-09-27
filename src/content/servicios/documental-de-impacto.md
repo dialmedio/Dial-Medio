@@ -2,6 +2,7 @@
 titulo: Documental de impacto
 linea: impacto
 orden: 1
+gancho: "Del territorio a la pantalla, con música propia."
 resumen: "Una historia contada desde el territorio y desde quienes la viven. Investigamos, escribimos, rodamos y terminamos la pieza con música original compuesta para ella."
 paraQuien: "ONG, fundaciones, cooperación y universidades que necesitan mostrar un proceso con profundidad."
 incluye:

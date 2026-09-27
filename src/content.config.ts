@@ -19,6 +19,8 @@ const servicios = defineCollection({
     titulo: z.string(),
     linea: z.enum(['impacto', 'encuentros']),
     orden: z.number(),
+    // Frase corta y destacada que resume el servicio.
+    gancho: z.string().optional(),
     resumen: z.string(),
     paraQuien: z.string(),
     incluye: z.array(z.string()),

@@ -5,12 +5,13 @@ import { whatsapp } from '../lib/util';
 
 const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
 const nav = [
+  { texto: 'Inicio', href: '/', nota: 'Portada' },
   { texto: 'Impacto', href: '/impacto', nota: 'Documental y cobertura' },
   { texto: 'Encuentros', href: '/encuentros', nota: 'Eventos' },
   { texto: 'Medio', href: '/medio', nota: 'Obra propia' },
   { texto: 'Nosotros', href: '/nosotros', nota: 'La casa' },
 ];
-const activo = (href: string) => ruta === href || ruta.startsWith(href + '/');
+const activo = (href: string) => (href === '/' ? ruta === '/' : ruta === href || ruta.startsWith(href + '/'));
 ---
 
 <header class="cabecera" data-cabecera>
@@ -157,7 +158,7 @@ const activo = (href: string) => ruta === href || ruta.startsWith(href + '/');
   }
   @keyframes entra { from { opacity: 0; transform: translateY(14px); } }
 
-  @media (max-width: 860px) {
+  @media (max-width: 960px) {
     .nav, .cabecera-cta { display: none; }
     .menu-boton { display: grid; }
     .cabecera-fila { height: 64px; }

@@ -103,7 +103,7 @@ const [principal, secundario] = [...casos, ...propios];
       <header class="cabeza doble">
         <div data-revela>
           <p class="kicker">{dos(1)} — <span class="acento">Dial Impacto</span></p>
-          <h2 class="display d-2">Historias para organizaciones que transforman.</h2>
+          <h2 class="display d-2">Historias para organizaciones que <span class="acento-t">transforman.</span></h2>
         </div>
         <p class="texto-2" data-revela style="--retraso:.1s">
           Para ONG, fundaciones, cooperación internacional, universidades y marcas con propósito.
@@ -117,7 +117,10 @@ const [principal, secundario] = [...casos, ...propios];
               <a href={`/impacto#${s.id}`} class="servicio">
                 <span class="mono servicio-num">{dos(i + 1)}</span>
                 <span class="display d-4 servicio-titulo">{s.data.titulo}</span>
-                <span class="servicio-resumen texto-2">{s.data.resumen}</span>
+                <span class="servicio-cuerpo">
+                  {s.data.gancho && <span class="servicio-gancho">{s.data.gancho}</span>}
+                  <span class="servicio-resumen texto-2">{s.data.resumen}</span>
+                </span>
                 <span class="servicio-entrega meta">{s.data.entregables.join(' · ')}</span>
                 <span class="servicio-flecha" aria-hidden="true">→</span>
               </a>
@@ -326,13 +329,15 @@ const [principal, secundario] = [...casos, ...propios];
   .servicio-num { color: var(--terracota-ink); padding-top: 0.5em; }
   .servicio-titulo { grid-column: 2; transition: color 0.3s; }
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
-  .servicio-resumen { grid-column: 2; font-size: 1.02rem; max-width: 56ch; }
+  .servicio-cuerpo { grid-column: 2; display: grid; gap: 6px; max-width: 56ch; }
+  .servicio-gancho { font-style: italic; font-size: clamp(1.15rem, 1rem + .4vw, 1.35rem); line-height: 1.35; color: var(--terracota-ink); }
+  .servicio-resumen { font-size: 1rem; }
   .servicio-entrega { grid-column: 2; }
   .servicio-flecha { grid-column: 3; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
   .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
   @media (min-width: 1000px) {
     .servicio { grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1fr) 2rem; align-items: baseline; padding-block: 36px; }
-    .servicio-resumen { grid-column: 3; grid-row: 1; }
+    .servicio-cuerpo { grid-column: 3; grid-row: 1; }
     .servicio-entrega { grid-column: 3; }
     .servicio-flecha { grid-column: 4; justify-self: end; }
   }

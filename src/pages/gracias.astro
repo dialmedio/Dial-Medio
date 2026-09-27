@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Simbolo from '../components/Simbolo.astro';
 import sitio from '../data/sitio.json';
+import Boletin from '../components/Boletin.astro';
 ---
 
 <Base titulo="Gracias" noindex>
@@ -15,6 +16,11 @@ import sitio from '../data/sitio.json';
         <a href="/medio" class="btn">Ver Dial Medio <span class="flecha">→</span></a>
         <a href="/" class="btn linea">Volver al inicio</a>
       </div>
+      <div class="gracias-boletin">
+        <p class="kicker sin-linea"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
+        <p class="texto-2">{sitio.boletin.descripcion}</p>
+        <Boletin id="boletin-gracias" origen="gracias" />
+      </div>
     </div>
   </section>
 </Base>
@@ -25,4 +31,6 @@ import sitio from '../data/sitio.json';
   .gracias-cuerpo :global(.gracias-simbolo) { width: 120px; margin-bottom: 12px; }
   .gracias h1 { max-width: 16ch; }
   .gracias .lead { margin: 0; }
+  .gracias-boletin { display: grid; gap: 12px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--linea-clara); width: 100%; max-width: 560px; }
+  .gracias-boletin p { margin: 0; }
 </style>
