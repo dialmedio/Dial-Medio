@@ -5,38 +5,41 @@ import Simbolo from '../components/Simbolo.astro';
 import Sintonizador from '../components/Sintonizador.astro';
 import EscalaMedicion from '../components/EscalaMedicion.astro';
 import VideoLite from '../components/VideoLite.astro';
-import PiezaCard from '../components/PiezaCard.astro';
-import Pendiente from '../components/Pendiente.astro';
 import CTAFinal from '../components/CTAFinal.astro';
 import sitio from '../data/sitio.json';
-import cap from '../data/capacidades.json';
 import { dos, formatos, anio, rutaCaso } from '../lib/util';
 
-const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
-const impacto = servicios.filter((s) => s.data.linea === 'impacto');
-const encuentros = servicios.filter((s) => s.data.linea === 'encuentros');
+const impacto = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
 
 const medio = (await getCollection('medio', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
-const territorio = medio.filter((m) => m.data.mostrarEnImpacto && m.data.video);
-const [principal, ...otros] = territorio;
 const debate = medio.find((m) => m.data.formato === 'debate' && m.data.destacado);
 
-const casosImpacto = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'impacto' && c.data.destacado)).slice(0, 2);
-
-const diferenciales = [
-  {
-    titulo: 'Proyecto completo en casa',
-    texto: 'Investigación, guion, rodaje, montaje, color, música original, diseño sonoro y gestión. Un solo equipo responde por toda la pieza.',
-  },
-  {
-    titulo: 'Medimos el efecto',
-    texto: 'Podemos evaluar antes y después qué cambió en quienes vieron la pieza. Resultados que tu organización puede reportar.',
-  },
-  {
-    titulo: 'Una mirada que dignifica',
-    texto: 'Contamos historias que construyen puentes. Las personas que aparecen en ellas se reconocen con respeto.',
-  },
-];
+// Trabajo destacado: primero los casos por encargo, luego la obra propia en territorio.
+const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'impacto' && c.data.destacado && !!c.data.video)).map(
+  (c) => ({
+    titulo: c.data.titulo,
+    video: c.data.video!,
+    href: rutaCaso('impacto', c.id),
+    kicker: c.data.organizacion ?? 'Dial Impacto',
+    meta: `${c.data.lugar} · ${c.data.anio}`,
+    resumen: c.data.resumen,
+    duracion: undefined as string | undefined,
+  }),
+);
+const propios = medio
+  .filter((m) => m.data.mostrarEnImpacto && m.data.video)
+  .map((m) => ({
+    titulo: m.data.titulo,
+    video: m.data.video!,
+    href: `/medio/${m.id}`,
+    kicker: `${formatos[m.data.formato]} · Obra propia`,
+    meta: `${m.data.lugar} · ${anio(m.data.fecha)}`,
+    resumen: m.data.resumen,
+    duracion: m.data.duracion,
+  }));
+const [principal, secundario] = [...casos, ...propios];
 ---
 
 <Base>
@@ -45,7 +48,7 @@ const diferenciales = [
     <canvas class="estatica" data-estatica aria-hidden="true"></canvas>
     <div class="contenedor heroe-grid">
       <div class="heroe-texto">
-        <p class="kicker heroe-kicker"><span>Productora audiovisual</span><span class="texto-2">· {sitio.ciudad}</span></p>
+        <p class="kicker heroe-kicker">Productora audiovisual · {sitio.ciudad}</p>
         <h1 class="display d-1 heroe-titulo">
           <span class="l">Contamos,</span>
           <span class="l"><span class="acento-t">y medimos,</span></span>
@@ -53,11 +56,11 @@ const diferenciales = [
           <span class="l">humano.</span>
         </h1>
         <p class="lead heroe-bajada">
-          Producimos historias reales de personas, comunidades y organizaciones, de la investigación al estreno.
+          Historias reales de personas, comunidades y organizaciones, de la investigación al estreno.
         </p>
         <div class="acciones heroe-acciones">
           <a href="/contacto" class="btn">Cotiza tu proyecto <span class="flecha">→</span></a>
-          <a href="#trabajo" class="btn linea">Ver nuestro trabajo</a>
+          <a href="#trabajo" class="btn linea">Ver trabajo</a>
         </div>
       </div>
       <div class="heroe-simbolo">
@@ -69,28 +72,13 @@ const diferenciales = [
     </div>
   </section>
 
-  <!-- LA CASA -->
-  <section class="seccion tema-papel">
+  <!-- QUIÉNES SOMOS, EN UNA FRASE -->
+  <section class="seccion compacta tema-papel">
     <div class="contenedor">
-      <div class="casa">
-      <p class="kicker" data-revela>{dos(1)} — La casa</p>
-      <p class="lead-xl casa-texto" data-revela>
-        Somos una productora audiovisual con medio propio. Llevamos una historia desde la primera conversación hasta
-        el estreno, con imagen, sonido y <em>música original</em> hechos en casa. Y cuando importa saber si una pieza
-        movió algo, <em>lo medimos.</em>
+      <p class="lead-xl manifiesto" data-revela>
+        Somos una productora audiovisual con medio propio. Contamos historias que <em>construyen puentes</em> y
+        dignifican a quienes aparecen en ellas, con imagen, sonido y música original hechos en casa.
       </p>
-      </div>
-      <ol class="diferenciales">
-        {
-          diferenciales.map((d, i) => (
-            <li data-revela style={`--retraso:${i * 0.1}s`}>
-              <span class="mono acento">{dos(i + 1)}</span>
-              <h3 class="sub s-1">{d.titulo}</h3>
-              <p class="texto-2">{d.texto}</p>
-            </li>
-          ))
-        }
-      </ol>
     </div>
   </section>
 
@@ -99,12 +87,11 @@ const diferenciales = [
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(2)} — <span class="acento">Dial Impacto</span></p>
+          <p class="kicker">{dos(1)} — <span class="acento">Dial Impacto</span></p>
           <h2 class="display d-2">Historias para organizaciones que transforman.</h2>
         </div>
         <p class="texto-2" data-revela style="--retraso:.1s">
-          Para ONG, fundaciones, cooperación internacional, universidades y marcas con propósito. Cada proyecto se cotiza a
-          la medida.
+          Para ONG, fundaciones, cooperación internacional, universidades y marcas con propósito.
         </p>
       </header>
 
@@ -123,25 +110,61 @@ const diferenciales = [
           ))
         }
       </ol>
-      <div class="acciones mt">
-        <a href="/impacto" class="enlace">Conocer Dial Impacto <span>→</span></a>
-      </div>
+      <p class="nota-cotiza mono texto-2" data-revela>Cada proyecto se cotiza a la medida.</p>
     </div>
   </section>
 
+  <!-- TRABAJO -->
+  {
+    principal && (
+      <section class="seccion tema-papel" id="trabajo">
+        <div class="contenedor">
+          <header class="cabeza doble">
+            <div data-revela>
+              <p class="kicker">{dos(2)} — Trabajo</p>
+              <h2 class="display d-2">En territorio.</h2>
+            </div>
+            <p class="texto-2" data-revela style="--retraso:.1s">
+              Rodamos donde suceden las historias, con un equipo pequeño y cuidadoso.
+            </p>
+          </header>
+
+          <div class="trabajo">
+            {[principal, secundario].filter(Boolean).map((p, i) => (
+              <article class:list={['obra', { 'obra-principal': i === 0 }]} data-revela style={`--retraso:${i * 0.1}s`}>
+                <VideoLite video={p!.video} titulo={p!.titulo} />
+                <div class="obra-texto">
+                  <p class="kicker sin-linea">{p!.kicker}</p>
+                  <h3 class:list={['sub', i === 0 ? 's-1' : 's-2']}>
+                    <a href={p!.href}>{p!.titulo}</a>
+                  </h3>
+                  {i === 0 && <p class="texto-2 obra-resumen">{p!.resumen}</p>}
+                  <p class="mono texto-2 obra-meta">
+                    {p!.meta}
+                    {p!.duracion && ` · ${p!.duracion}`}
+                  </p>
+                  {i === 1 && (
+                    <a href="/impacto#portafolio" class="enlace obra-mas">
+                      Ver más trabajo <span>→</span>
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   <!-- MEDICIÓN -->
-  <section class="seccion tema-carbon grano medicion">
+  <section class="seccion tema-carbon grano">
     <div class="contenedor medicion-grid">
       <div class="medicion-texto">
         <p class="kicker" data-revela>{dos(3)} — <span class="acento">Pieza + medición</span></p>
         <h2 class="display d-2" data-revela>Del ruido a la señal, con datos.</h2>
         <p class="lead texto-2" data-revela>
-          Encuestamos a la audiencia antes y después de ver la pieza. Así tu organización sabe qué cambió y lo puede
-          reportar a sus aliados y donantes.
-        </p>
-        <p class="texto-2 medida" data-revela>
-          El método nació en nuestros debates, donde medimos cuánto se mueve la confianza entre personas que piensan
-          distinto. Hoy lo adaptamos a los objetivos de cada proyecto.
+          Encuestamos a la audiencia antes y después de ver la pieza. Tu organización sabe qué cambió y lo puede reportar.
         </p>
         <a href="/impacto/medicion" class="enlace" data-revela>Cómo medimos <span>→</span></a>
       </div>
@@ -149,155 +172,32 @@ const diferenciales = [
     </div>
   </section>
 
-  <!-- TRABAJO EN TERRITORIO -->
-  <section class="seccion tema-papel" id="trabajo">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(4)} — Trabajo</p>
-          <h2 class="display d-2">En territorio.</h2>
-        </div>
-        <p class="texto-2" data-revela style="--retraso:.1s">
-          Documental de autor rodado donde suceden las historias. Es nuestra escuela y la manera como trabajamos cada
-          encargo.
-        </p>
-      </header>
-
-      {
-        principal && (
-          <div class="trabajo-principal" data-revela>
-            <VideoLite video={principal.data.video!} titulo={principal.data.titulo} />
-            <div class="trabajo-ficha">
-              <p class="kicker sin-linea">
-                {formatos[principal.data.formato]}
-                {principal.data.serie && ` · Serie ${principal.data.serie}`}
-              </p>
-              <h3 class="display d-3">
-                <a href={`/medio/${principal.id}`}>{principal.data.titulo}</a>
-              </h3>
-              <p class="texto-2">{principal.data.resumen}</p>
-              <dl class="ficha mono">
-                <div>
-                  <dt>Lugar</dt>
-                  <dd>{principal.data.lugar}</dd>
-                </div>
-                <div>
-                  <dt>Año</dt>
-                  <dd>{anio(principal.data.fecha)}</dd>
-                </div>
-                <div>
-                  <dt>Duración</dt>
-                  <dd>{principal.data.duracion}</dd>
-                </div>
-                <div>
-                  <dt>Origen</dt>
-                  <dd>Obra propia</dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        )
-      }
-
-      <div class="trabajo-rejilla">
-        {
-          otros.map((m) => (
-            <PiezaCard
-              titulo={m.data.titulo}
-              video={m.data.video}
-              href={`/medio/${m.id}`}
-              kicker={`${formatos[m.data.formato]}${m.data.serie ? ' · ' + m.data.serie : ''}`}
-              meta={`${m.data.lugar} · ${anio(m.data.fecha)}`}
-              etiqueta="Obra propia"
-            />
-          ))
-        }
-        {
-          casosImpacto.length > 0
-            ? casosImpacto.map((c) => (
-                <PiezaCard
-                  titulo={c.data.titulo}
-                  video={c.data.video}
-                  href={rutaCaso('impacto', c.id)}
-                  kicker={c.data.organizacion}
-                  meta={`${c.data.lugar} · ${c.data.anio}`}
-                />
-              ))
-            : (
-                <Pendiente
-                  titulo="Primer caso por encargo de Dial Impacto"
-                  texto="Aquí va un proyecto hecho para una organización, con su permiso para nombrarla."
-                />
-              )
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- PROCESO -->
-  <section class="seccion tema-hueso proceso">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(5)} — Cómo trabajamos</p>
-          <h2 class="display d-2">De la idea al estreno.</h2>
-        </div>
-        <p class="texto-2" data-revela style="--retraso:.1s">
-          Un mismo equipo te acompaña en todo el camino. Tú hablas con una sola persona y la historia no cambia de manos.
-        </p>
-      </header>
-      <ol class="pasos">
-        {
-          cap.proceso.map((p, i) => (
-            <li data-revela style={`--retraso:${i * 0.07}s`}>
-              <span class="paso-nodo" aria-hidden="true" />
-              <span class="mono acento">{dos(i + 1)}</span>
-              <h3 class="sub s-2">{p.titulo}</h3>
-              <p class="texto-2">{p.texto}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <!-- ENCUENTROS + MEDIO -->
+  <!-- LAS OTRAS DOS LÍNEAS -->
   <section class="lineas">
-    <div class="linea-caja tema-papel">
+    <a href="/encuentros" class="linea-caja tema-papel">
       <div class="linea-interior">
-        <p class="kicker" data-revela>{dos(6)} — <span class="acento">Dial Encuentros</span></p>
-        <h2 class="display d-3" data-revela>Producimos el encuentro. Y lo dejamos contado.</h2>
-        <p class="texto-2" data-revela>
-          Foros, festivales, lanzamientos y música en vivo. Nos encargamos de la tarima, el sonido, la programación y la
-          cobertura.
+        <p class="kicker">{dos(4)} — <span class="acento">Dial Encuentros</span></p>
+        <h2 class="display d-3">Producimos el encuentro. Y lo dejamos contado.</h2>
+        <p class="texto-2">
+          Foros, festivales, lanzamientos y música en vivo: tarima, sonido, programación, videomapping y cobertura.
         </p>
-        <ul class="etiquetas" data-revela>
-          {encuentros.map((s) => <li class="etiqueta">{s.data.titulo}</li>)}
-          <li class="etiqueta">Videomapping</li>
-          <li class="etiqueta">Multicámara y dron</li>
-        </ul>
-        <a href="/encuentros" class="enlace" data-revela>Ver Dial Encuentros <span>→</span></a>
+        <span class="enlace">Ver Dial Encuentros <span>→</span></span>
       </div>
-    </div>
+    </a>
     <div class="linea-caja tema-carbon grano">
       <div class="linea-interior">
-        <p class="kicker" data-revela>{dos(7)} — <span class="acento">Dial Medio</span></p>
-        <h2 class="display d-3" data-revela>Nuestra obra propia es nuestro laboratorio.</h2>
+        <p class="kicker">{dos(5)} — <span class="acento">Dial Medio</span></p>
+        <h2 class="display d-3">Nuestra obra propia.</h2>
         {
           debate && (
-            <div class="linea-video" data-revela>
+            <div class="linea-video">
               <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
-              <p class="mono texto-2">
-                Debate · {debate.data.duracion} · {anio(debate.data.fecha)}
-              </p>
+              <p class="mono texto-2">Debate · {debate.data.duracion}</p>
             </div>
           )
         }
-        <p class="texto-2" data-revela>
-          Debates entre sectores enfrentados, videopodcast y documentales. Aquí probamos el método que luego llevamos a
-          cada proyecto.
-        </p>
-        <a href="/medio" class="enlace" data-revela>Ver Dial Medio <span>→</span></a>
+        <p class="texto-2">Debates entre sectores enfrentados, videopodcast y documentales.</p>
+        <a href="/medio" class="enlace">Ver Dial Medio <span>→</span></a>
       </div>
     </div>
   </section>
@@ -354,20 +254,14 @@ const diferenciales = [
     image-rendering: pixelated;
     mix-blend-mode: screen;
   }
-  .heroe-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    align-items: center;
-    gap: 24px;
-  }
+  .heroe-grid { display: grid; grid-template-columns: 1fr; align-items: center; gap: 24px; }
   .heroe-texto { display: grid; gap: 28px; justify-items: start; position: relative; z-index: 1; }
-  .heroe-kicker { gap: 0.6em; flex-wrap: wrap; }
   /* Este titular no lleva tildes: puede ir más apretado que el resto. */
   .heroe-titulo { font-size: clamp(3rem, 0.9rem + 6.4vw, 7.4rem); line-height: 0.94; }
   .heroe-titulo .l { display: block; white-space: nowrap; }
   .acento-t { color: var(--terracota); }
   .heroe-bajada { margin: 0; color: var(--hueso-2); }
-  .heroe-simbolo { order: -1; justify-self: end; width: min(44vw, 240px); margin-bottom: -12px; }
+  .heroe-simbolo { order: -1; justify-self: end; width: min(40vw, 220px); margin-bottom: -12px; }
   .heroe-dial { padding-block: 48px 36px; }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -376,8 +270,8 @@ const diferenciales = [
     .heroe-titulo .l:nth-child(2) { animation-delay: 0.35s; }
     .heroe-titulo .l:nth-child(3) { animation-delay: 0.45s; }
     .heroe-titulo .l:nth-child(4) { animation-delay: 0.55s; }
-    .heroe-kicker, .heroe-bajada, .heroe-acciones { animation: sube 1s var(--ease) 0.75s both; }
-    .heroe-kicker { animation-delay: 0.1s; }
+    .heroe-bajada, .heroe-acciones { animation: sube 1s var(--ease) 0.75s both; }
+    .heroe-kicker { animation: sube 1s var(--ease) 0.1s both; }
   }
   @keyframes sube { from { opacity: 0; transform: translateY(28px); } }
 
@@ -386,25 +280,10 @@ const diferenciales = [
     .heroe-simbolo { order: 0; width: 100%; max-width: 520px; justify-self: center; margin: 0; }
   }
 
-  /* ---------- La casa ---------- */
-  .casa { display: grid; gap: 28px; margin-bottom: clamp(56px, 8vw, 104px); }
-  .casa-texto { max-width: 30ch; margin: 0; }
+  /* ---------- Manifiesto ---------- */
+  .manifiesto { max-width: 34ch; margin: 0; }
   @media (min-width: 1000px) {
-    .casa { grid-template-columns: 1fr 3fr; align-items: start; }
-    .casa .kicker { padding-top: 0.9em; }
-    .casa-texto { font-size: clamp(1.9rem, 1rem + 1.5vw, 2.6rem); max-width: 32ch; }
-  }
-  .diferenciales {
-    list-style: none;
-    display: grid;
-    gap: 40px;
-    border-top: 1px solid var(--borde);
-    padding-top: 36px;
-  }
-  .diferenciales li { display: grid; gap: 14px; align-content: start; }
-  .diferenciales p { margin: 0; }
-  @media (min-width: 820px) {
-    .diferenciales { grid-template-columns: repeat(3, 1fr); gap: 48px; }
+    .manifiesto { font-size: clamp(2rem, 1rem + 1.6vw, 2.75rem); margin-left: calc(100% / 4); }
   }
 
   /* ---------- Servicios ---------- */
@@ -417,7 +296,6 @@ const diferenciales = [
     padding-block: 28px;
     text-decoration: none;
     position: relative;
-    transition: padding 0.4s var(--ease);
   }
   .servicio::before {
     content: '';
@@ -435,21 +313,29 @@ const diferenciales = [
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
   .servicio-resumen { grid-column: 2; font-size: 0.98rem; max-width: 56ch; }
   .servicio-entrega { grid-column: 2; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cobre); }
-  .servicio-flecha {
-    grid-column: 3;
-    grid-row: 1;
-    font-size: 1.6rem;
-    transition: transform 0.4s var(--ease), color 0.3s;
-  }
+  .servicio-flecha { grid-column: 3; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
   .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
   @media (min-width: 1000px) {
-    .servicio { grid-template-columns: 4rem minmax(0, 1.05fr) minmax(0, 1fr) 2rem; align-items: baseline; padding-block: 36px; }
-    .servicio-titulo { grid-column: 2; }
+    .servicio { grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1fr) 2rem; align-items: baseline; padding-block: 36px; }
     .servicio-resumen { grid-column: 3; grid-row: 1; }
     .servicio-entrega { grid-column: 3; }
     .servicio-flecha { grid-column: 4; justify-self: end; }
   }
-  .mt { margin-top: 40px; }
+  .nota-cotiza { margin: 28px 0 0; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ---------- Trabajo ---------- */
+  .trabajo { display: grid; gap: 48px 40px; align-items: start; }
+  .obra { display: grid; gap: 20px; align-content: start; }
+  .obra-texto { display: grid; gap: 10px; }
+  .obra-texto p { margin: 0; }
+  .obra h3 a { text-decoration: none; }
+  .obra h3 a:hover { color: var(--terracota-ink); }
+  .obra-resumen { max-width: 58ch; }
+  .obra-mas { justify-self: start; margin-top: 18px; }
+  .obra-meta { font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  @media (min-width: 900px) {
+    .trabajo { grid-template-columns: 1.75fr 1fr; }
+  }
 
   /* ---------- Medición ---------- */
   .medicion-grid { display: grid; gap: 56px; align-items: center; }
@@ -459,66 +345,14 @@ const diferenciales = [
     .medicion-grid { grid-template-columns: 1fr 1.05fr; gap: 88px; }
   }
 
-  /* ---------- Trabajo ---------- */
-  .trabajo-principal { display: grid; gap: 28px; margin-bottom: clamp(56px, 7vw, 96px); }
-  .trabajo-ficha { display: grid; gap: 18px; align-content: start; }
-  .trabajo-ficha h3 a { text-decoration: none; }
-  .trabajo-ficha h3 a:hover { color: var(--terracota-ink); }
-  .trabajo-ficha > p { margin: 0; }
-  .ficha {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-    margin: 8px 0 0;
-    border-top: 1px solid var(--borde);
-  }
-  .ficha div { padding: 12px 0; border-bottom: 1px solid var(--borde); }
-  .ficha dt { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--texto-2); }
-  .ficha dd { margin: 2px 0 0; font-size: 0.85rem; }
-  @media (min-width: 980px) {
-    .trabajo-principal { grid-template-columns: 1.6fr 1fr; gap: 48px; align-items: end; }
-  }
-  .trabajo-rejilla { display: grid; gap: 56px 32px; }
-  @media (min-width: 760px) {
-    .trabajo-rejilla { grid-template-columns: repeat(2, 1fr); }
-  }
-
-  /* ---------- Proceso ---------- */
-  .pasos {
-    list-style: none;
-    display: grid;
-    gap: 36px;
-    position: relative;
-  }
-  .pasos li { display: grid; gap: 10px; align-content: start; position: relative; padding-left: 36px; }
-  .pasos p { margin: 0; font-size: 0.95rem; }
-  .paso-nodo {
-    position: absolute;
-    left: 0; top: 0.2em;
-    width: 13px; height: 13px;
-    border-radius: 50%;
-    background: var(--carbon);
-  }
-  .pasos li:last-child .paso-nodo { background: var(--terracota); }
-  .pasos::before {
-    content: '';
-    position: absolute;
-    left: 6px; top: 8px; bottom: 8px;
-    width: 1px;
-    background: var(--borde);
-  }
-  @media (min-width: 1000px) {
-    .pasos { grid-template-columns: repeat(6, 1fr); gap: 28px; padding-top: 34px; }
-    .pasos li { padding-left: 0; padding-top: 0; }
-    .paso-nodo { top: -34px; left: 0; }
-    .pasos::before { left: 6px; right: 0; top: 6px; bottom: auto; width: auto; height: 1px; }
-  }
-
-  /* ---------- Líneas ---------- */
+  /* ---------- Otras líneas ---------- */
   .lineas { display: grid; }
-  .linea-caja { position: relative; padding: var(--seccion) var(--gutter); }
-  .linea-interior { display: grid; gap: 24px; justify-items: start; max-width: 600px; }
+  .linea-caja { position: relative; padding: var(--seccion) var(--gutter); text-decoration: none; display: grid; align-content: center; }
+  .linea-interior { display: grid; gap: 24px; justify-items: start; max-width: 560px; }
   .linea-interior > p { margin: 0; }
+  a.linea-caja { transition: background 0.4s var(--ease); }
+  a.linea-caja:hover { background: var(--hueso); }
+  a.linea-caja:hover .enlace { color: var(--terracota-ink); gap: 0.9em; }
   .linea-video { width: 100%; display: grid; gap: 12px; }
   .linea-video p { margin: 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; }
   @media (min-width: 980px) {

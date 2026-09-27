@@ -15,19 +15,10 @@ const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vi
   (a, b) => b.data.anio - a.data.anio,
 );
 
-const capas = [
-  { titulo: 'Producción y logística', texto: 'Cronograma, proveedores, permisos y un equipo en sitio de principio a fin.' },
-  { titulo: 'Programación artística', texto: 'Curaduría y coordinación de artistas, invitados y momentos del evento.' },
-  { titulo: 'Tarima y sonido', texto: 'Sonido profesional y tarimas a la medida del espacio y del público.' },
-  { titulo: 'Música en vivo', texto: 'Músicos y arreglos pensados para el encuentro, no una lista de reproducción.' },
-  { titulo: 'Proyecciones y videomapping', texto: 'Imagen proyectada sobre el espacio para que el lugar también cuente.' },
-  { titulo: 'Cobertura multicámara y dron', texto: 'Registro completo para que lo vivido se pueda volver a ver y compartir.' },
-];
-
 const espacios = [
-  { nombre: 'Taller Graphito', nota: 'Bogotá · [DATOS DEL ESPACIO PENDIENTES]' },
-  { nombre: 'Teatro Acto Latino', nota: 'Bogotá · [DATOS DEL ESPACIO PENDIENTES]' },
-  { nombre: 'Espacio propio', nota: 'Para eventos íntimos · [DATOS PENDIENTES]' },
+  { nombre: 'Taller Graphito', nota: 'Bogotá' },
+  { nombre: 'Teatro Acto Latino', nota: 'Bogotá' },
+  { nombre: 'Espacio propio', nota: 'Para encuentros íntimos' },
 ];
 ---
 
@@ -42,7 +33,6 @@ const espacios = [
   >
     <div class="acciones">
       <a href="/contacto?linea=encuentros" class="btn">Cotizar un evento <span class="flecha">→</span></a>
-      <a href="#servicios" class="btn linea">Ver servicios</a>
     </div>
   </PortadaPagina>
 
@@ -53,91 +43,69 @@ const espacios = [
           <p class="kicker">{dos(1)} — Servicios</p>
           <h2 class="display d-2">Todo el evento, o solo la cobertura.</h2>
         </div>
-        <p class="texto-2" data-revela>Cada encuentro se cotiza a la medida: tamaño, lugar, duración y lo que quieras llevarte después.</p>
+        <p class="texto-2" data-revela>Cada encuentro se cotiza según su tamaño, el lugar y lo que quieras llevarte después.</p>
       </header>
       <div class="rejilla-2">{servicios.map((s, i) => <ServicioDetalle servicio={s} n={i + 1} />)}</div>
     </div>
   </section>
 
-  <section class="seccion tema-carbon grano">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(2)} — <span class="acento">De la tarima a la pantalla</span></p>
-          <h2 class="display d-2">Seis capas, un solo equipo.</h2>
-        </div>
-        <p class="texto-2" data-revela>Nos encargamos de cada capa del evento para que tú te ocupes de la gente que llega.</p>
-      </header>
-      <ol class="capas">
+  <section class="seccion compacta tema-hueso">
+    <div class="contenedor espacios">
+      <div data-revela>
+        <p class="kicker">{dos(2)} — Espacios</p>
+        <h2 class="display d-3">Dónde encontrarnos.</h2>
+        <p class="texto-2">Trabajamos con espacios aliados en Bogotá. También llevamos la producción a tu lugar.</p>
+      </div>
+      <ul>
         {
-          capas.map((c, i) => (
-            <li data-revela style={`--retraso:${i * 0.05}s`}>
-              <span class="mono acento">{dos(i + 1)}</span>
-              <h3 class="sub s-2">{c.titulo}</h3>
-              <p class="texto-2">{c.texto}</p>
+          espacios.map((e, i) => (
+            <li data-revela style={`--retraso:${i * 0.06}s`}>
+              <span class="sub s-1">{e.nombre}</span>
+              <span class="mono texto-2">{e.nota}</span>
             </li>
           ))
         }
-      </ol>
+      </ul>
     </div>
   </section>
 
-  <section class="seccion tema-hueso">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(3)} — Espacios</p>
-          <h2 class="display d-2">Dónde encontrarnos.</h2>
-        </div>
-        <p class="texto-2" data-revela>Trabajamos con espacios aliados en Bogotá y también llevamos la producción a tu lugar.</p>
-      </header>
-      <div class="rejilla-3">
-        {
-          espacios.map((e) => (
-            <Pendiente marca="Foto pendiente" titulo={e.nombre} texto={e.nota} formato="cuadrado" />
-          ))
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="seccion tema-papel" id="portafolio">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(4)} — Portafolio</p>
-          <h2 class="display d-2">Encuentros que hemos producido.</h2>
-        </div>
-      </header>
-      <div class="rejilla-2">
-        {
-          casos.map((c) => (
-            <PiezaCard
-              titulo={c.data.titulo}
-              video={c.data.video}
-              href={rutaCaso('encuentros', c.id)}
-              kicker={c.data.organizacion}
-              resumen={c.data.resumen}
-              meta={`${c.data.lugar} · ${c.data.anio}`}
-            />
-          ))
-        }
-        {
-          casos.length === 0 && (
-            <>
+  {
+    (casos.length > 0 || import.meta.env.DEV) && (
+      <section class="seccion tema-papel" id="portafolio">
+        <div class="contenedor">
+          <header class="cabeza doble">
+            <div data-revela>
+              <p class="kicker">{dos(3)} — Trabajo</p>
+              <h2 class="display d-2">Encuentros que hemos producido.</h2>
+            </div>
+          </header>
+          <div class="rejilla-2">
+            {casos.map((c) => (
+              <PiezaCard
+                titulo={c.data.titulo}
+                video={c.data.video}
+                href={rutaCaso('encuentros', c.id)}
+                kicker={c.data.organizacion}
+                resumen={c.data.resumen}
+                meta={`${c.data.lugar} · ${c.data.anio}`}
+              />
+            ))}
+            {casos.length === 0 && (
               <Pendiente titulo="Evento completo" texto="Un evento producido de principio a fin: tarima, sonido, música en vivo, videomapping y cobertura." />
-              <Pendiente titulo="Cobertura de foro o festival" texto="Video resumen y fotografías de un encuentro de una organización." />
-            </>
-          )
-        }
-      </div>
+            )}
+          </div>
+        </div>
+      </section>
+    )
+  }
 
-      <a href="/encuentros/celebraciones" class="celebra" data-revela>
-        <span class="kicker">¿Es una celebración privada?</span>
-        <span class="display d-3">Bodas, aniversarios y serenatas tienen su propia página →</span>
-      </a>
+  <a href="/encuentros/celebraciones" class="celebra tema-papel">
+    <div class="contenedor celebra-fila">
+      <span class="kicker">¿Es una celebración privada?</span>
+      <span class="celebra-texto">Bodas, aniversarios y serenatas tienen <em>su propia página.</em></span>
+      <span class="celebra-flecha" aria-hidden="true">→</span>
     </div>
-  </section>
+  </a>
 
   <CTAFinal
     titulo="¿Qué encuentro estás preparando?"
@@ -148,29 +116,23 @@ const espacios = [
 </Base>
 
 <style>
-  .rejilla-2 { display: grid; gap: 64px 56px; }
+  .rejilla-2 { display: grid; gap: 72px 56px; }
   @media (min-width: 900px) { .rejilla-2 { grid-template-columns: 1fr 1fr; } }
-  .rejilla-3 { display: grid; gap: 40px 28px; }
-  @media (min-width: 760px) { .rejilla-3 { grid-template-columns: repeat(3, 1fr); } }
-  .capas { list-style: none; display: grid; gap: 0; border-top: 1px solid var(--borde); }
-  .capas li { display: grid; gap: 10px; padding: 28px 0; border-bottom: 1px solid var(--borde); }
-  .capas p { margin: 0; font-size: 0.95rem; }
-  @media (min-width: 760px) {
-    .capas { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
-  }
-  @media (min-width: 1100px) {
-    .capas { grid-template-columns: repeat(3, 1fr); }
-  }
-  .celebra {
-    margin-top: clamp(64px, 8vw, 112px);
-    display: grid;
-    gap: 16px;
-    padding: clamp(28px, 4vw, 48px);
-    background: var(--hueso);
-    text-decoration: none;
-    border-left: 4px solid var(--terracota);
-    transition: background 0.3s;
-  }
-  .celebra:hover { background: #e2d7c5; }
-  .celebra .display { max-width: 24ch; }
+
+  .espacios { display: grid; gap: 40px; }
+  .espacios h2 { margin-block: 18px; }
+  .espacios p { margin: 0; max-width: 40ch; }
+  .espacios ul { list-style: none; border-top: 1px solid var(--borde); }
+  .espacios li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--borde); }
+  .espacios li .mono { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; text-align: right; }
+  @media (min-width: 900px) { .espacios { grid-template-columns: 1fr 1.3fr; gap: 88px; align-items: start; } }
+
+  .celebra { display: block; text-decoration: none; border-top: 1px solid var(--linea); transition: background 0.3s; }
+  .celebra:hover { background: var(--hueso); }
+  .celebra-fila { display: grid; gap: 14px 40px; padding-block: clamp(40px, 5vw, 64px); align-items: center; }
+  .celebra-texto { font-size: clamp(1.4rem, 1rem + 1.4vw, 2.1rem); line-height: 1.3; }
+  .celebra-texto em { color: var(--terracota-ink); }
+  .celebra-flecha { font-size: 2rem; transition: transform 0.4s var(--ease); }
+  .celebra:hover .celebra-flecha { transform: translateX(8px); color: var(--terracota-ink); }
+  @media (min-width: 900px) { .celebra-fila { grid-template-columns: 16rem 1fr auto; } }
 </style>

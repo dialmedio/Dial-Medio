@@ -95,11 +95,12 @@ const mensaje = 'Hola, Martín. Vi el sitio de Dial y quiero cotizar la cobertur
     </div>
   </section>
 
+  {(casos.length > 0 || import.meta.env.DEV) && (
   <section class="seccion tema-papel">
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(3)} — Portafolio</p>
+          <p class="kicker">{dos(3)} — Trabajo</p>
           <h2 class="display d-2">Celebraciones.</h2>
         </div>
       </header>
@@ -126,6 +127,7 @@ const mensaje = 'Hola, Martín. Vi el sitio de Dial y quiero cotizar la cobertur
       </div>
     </div>
   </section>
+  )}
 
   <CTAFinal
     titulo="¿Qué vas a celebrar?"

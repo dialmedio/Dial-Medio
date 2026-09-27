@@ -3,11 +3,9 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PortadaPagina from '../../components/PortadaPagina.astro';
 import ServicioDetalle from '../../components/ServicioDetalle.astro';
-import EscalaMedicion from '../../components/EscalaMedicion.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import CTAFinal from '../../components/CTAFinal.astro';
-import cap from '../../data/capacidades.json';
 import { anio, dos, formatos, rutaCaso } from '../../lib/util';
 
 const servicios = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
@@ -26,14 +24,14 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
 
 <Base
   titulo="Dial Impacto"
-  descripcion="Documental por encargo, cobertura de proyectos sociales y ambientales, video institucional y piezas con medición pre/post para ONG, fundaciones, cooperación y universidades."
+  descripcion="Documental por encargo, cobertura de proyectos sociales y ambientales, video institucional y piezas con medición antes y después, para ONG, fundaciones, cooperación y universidades."
 >
   <PortadaPagina
     kicker="Dial Impacto"
     titulo="Historias que muestran lo que tu organización <em>transforma.</em>"
-    bajada="Documental, cobertura y video institucional para quienes trabajan con comunidades y territorios. Con la opción de medir el efecto de cada pieza en su audiencia."
+    bajada="Documental, cobertura y video para quienes trabajan con comunidades y territorios."
   >
-    <ul class="etiquetas publicos">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
+    <ul class="etiquetas publicos" aria-label="Para quién">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
     <div class="acciones">
       <a href="/contacto?linea=impacto" class="btn">Cotizar un proyecto <span class="flecha">→</span></a>
       <a href="#servicios" class="btn linea">Ver servicios</a>
@@ -48,9 +46,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
           <p class="kicker">{dos(1)} — Servicios</p>
           <h2 class="display d-2">Cuatro formas de contar tu trabajo.</h2>
         </div>
-        <p class="texto-2" data-revela>
-          Son puntos de partida. Cada proyecto se arma y se cotiza a la medida de lo que tu organización necesita contar.
-        </p>
+        <p class="texto-2" data-revela>Son puntos de partida. Cada proyecto se arma y se cotiza a la medida.</p>
       </header>
       <div class="servicios-rejilla">
         {servicios.map((s, i) => <ServicioDetalle servicio={s} n={i + 1} />)}
@@ -58,49 +54,29 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
     </div>
   </section>
 
-  <!-- MEDICIÓN -->
-  <section class="seccion tema-carbon grano">
-    <div class="contenedor med-grid">
-      <div class="med-texto">
-        <p class="kicker" data-revela>{dos(2)} — <span class="acento">Nuestro diferencial</span></p>
-        <h2 class="display d-2" data-revela>Sabes qué movió tu pieza.</h2>
-        <p class="lead texto-2" data-revela>
-          Evaluamos a la audiencia antes y después de ver la pieza. Te entregamos un informe claro, listo para compartir con
-          tus aliados y donantes.
-        </p>
-        <a href="/impacto/medicion" class="btn" data-revela>Cómo medimos <span class="flecha">→</span></a>
-      </div>
-      <EscalaMedicion />
+  <!-- MEDICIÓN, EN UNA LÍNEA -->
+  <a href="/impacto/medicion" class="banda-med tema-carbon grano">
+    <div class="contenedor banda-med-fila">
+      <p class="kicker sin-linea"><span class="acento">Nuestro diferencial</span></p>
+      <p class="banda-med-texto">
+        Podemos medir el efecto de tu pieza en la audiencia, <em>antes y después</em> de verla.
+      </p>
+      <span class="enlace">Cómo medimos <span>→</span></span>
     </div>
-  </section>
+  </a>
 
-  <!-- PORTAFOLIO -->
+  <!-- TRABAJO -->
   <section class="seccion tema-papel" id="portafolio">
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(3)} — Portafolio</p>
-          <h2 class="display d-2">Trabajo en territorio.</h2>
+          <p class="kicker">{dos(2)} — Trabajo</p>
+          <h2 class="display d-2">En territorio.</h2>
         </div>
-        <p class="texto-2" data-revela>
-          Casos por encargo y documental de autor. Todo rodado donde suceden las historias.
-        </p>
+        <p class="texto-2" data-revela>Rodamos donde suceden las historias. Esto es parte de lo que hemos hecho.</p>
       </header>
 
       <div class="rejilla-2">
-        {
-          territorio.map((m) => (
-            <PiezaCard
-              titulo={m.data.titulo}
-              video={m.data.video}
-              href={`/medio/${m.id}`}
-              kicker={`${formatos[m.data.formato]}${m.data.serie ? ' · Serie ' + m.data.serie : ''}`}
-              resumen={m.data.resumen}
-              meta={`${m.data.lugar} · ${anio(m.data.fecha)}`}
-              etiqueta="Obra propia"
-            />
-          ))
-        }
         {
           casos.map((c) => (
             <PiezaCard
@@ -114,63 +90,37 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
           ))
         }
         {
-          casos.length === 0 && (
-            <>
-              <Pendiente titulo="Documental por encargo" texto="Un documental hecho para una organización, con su permiso para nombrarla." />
-              <Pendiente titulo="Cobertura de proyecto" texto="Registro de un proyecto social o ambiental: video resumen, cápsulas y fotos." />
-            </>
-          )
-        }
-      </div>
-    </div>
-  </section>
-
-  <!-- MÚSICA Y SONIDO EN CASA -->
-  <section class="seccion tema-hueso">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div data-revela>
-          <p class="kicker">{dos(4)} — Hecho en casa</p>
-          <h2 class="display d-2">La música también la hacemos nosotros.</h2>
-        </div>
-        <p class="texto-2" data-revela>
-          Componemos la música original y diseñamos el sonido de cada pieza. Tu historia suena a ella misma, no a un banco de
-          música.
-        </p>
-      </header>
-      <div class="rejilla-2">
-        {
-          muestras.map((m) => (
+          territorio.map((m) => (
             <PiezaCard
               titulo={m.data.titulo}
               video={m.data.video}
-              kicker={m.data.disciplinas.join(' · ')}
-              resumen={m.data.rol}
-              meta={String(m.data.anio)}
+              href={`/medio/${m.id}`}
+              kicker={`${formatos[m.data.formato]} · Obra propia`}
+              resumen={m.data.resumen}
+              meta={`${m.data.lugar} · ${anio(m.data.fecha)}${m.data.duracion ? ' · ' + m.data.duracion : ''}`}
             />
           ))
         }
+        {casos.length === 0 && <Pendiente titulo="Primer caso por encargo" texto="Un proyecto hecho para una organización, con su permiso para nombrarla." />}
       </div>
-    </div>
-  </section>
 
-  <!-- CRITERIOS -->
-  <section class="seccion compacta tema-papel">
-    <div class="contenedor criterios">
-      <div data-revela>
-        <p class="kicker">{dos(5)} — Criterios de la casa</p>
-        <h2 class="display d-3">Lo que no hacemos.</h2>
-      </div>
-      <ul>
-        {
-          cap.criterios.map((c, i) => (
-            <li data-revela style={`--retraso:${i * 0.08}s`}>
-              <h3 class="sub s-2">{c.titulo}</h3>
-              <p class="texto-2">{c.texto}</p>
-            </li>
-          ))
-        }
-      </ul>
+      {
+        muestras.length > 0 && (
+          <div class="musica">
+            <div class="musica-cabeza" data-revela>
+              <h3 class="sub s-1">Música original y diseño sonoro</h3>
+              <p class="texto-2">
+                La música de cada pieza la componemos nosotros. Tu historia suena a ella misma, no a un banco de música.
+              </p>
+            </div>
+            <div class="rejilla-2">
+              {muestras.map((m) => (
+                <PiezaCard titulo={m.data.titulo} video={m.data.video} kicker={m.data.disciplinas.join(' · ')} meta={m.data.rol} />
+              ))}
+            </div>
+          </div>
+        )
+      }
     </div>
   </section>
 
@@ -179,27 +129,29 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
 
 <style>
   .publicos { margin-top: 4px; }
-  :global(.tema-carbon) .publicos .etiqueta { color: var(--hueso-2); }
-  .servicios-rejilla { display: grid; gap: 64px 56px; }
+  .publicos .etiqueta { color: var(--hueso-2); }
+  .servicios-rejilla { display: grid; gap: 72px 56px; }
   @media (min-width: 900px) {
     .servicios-rejilla { grid-template-columns: 1fr 1fr; }
   }
-  .med-grid { display: grid; gap: 56px; align-items: center; }
-  .med-texto { display: grid; gap: 24px; justify-items: start; }
-  .med-texto p { margin: 0; }
+
+  .banda-med { display: block; position: relative; text-decoration: none; padding-block: clamp(40px, 5vw, 64px); }
+  .banda-med-fila { display: grid; gap: 16px 48px; align-items: center; }
+  .banda-med-texto { margin: 0; font-size: clamp(1.25rem, 1rem + 1vw, 1.8rem); line-height: 1.35; max-width: 36ch; }
+  .banda-med-texto em { color: #e0714c; }
+  .banda-med:hover .enlace { color: #e0714c; gap: 0.9em; }
   @media (min-width: 980px) {
-    .med-grid { grid-template-columns: 1fr 1.05fr; gap: 88px; }
+    .banda-med-fila { grid-template-columns: 11rem 1fr auto; }
   }
+
   .rejilla-2 { display: grid; gap: 64px 32px; }
   @media (min-width: 760px) {
     .rejilla-2 { grid-template-columns: repeat(2, 1fr); }
   }
-  .criterios { display: grid; gap: 40px; }
-  .criterios ul { list-style: none; display: grid; gap: 28px; }
-  .criterios li { border-top: 1px solid var(--borde); padding-top: 18px; display: grid; gap: 8px; }
-  .criterios li p { margin: 0; }
+  .musica { margin-top: clamp(80px, 10vw, 136px); padding-top: 40px; border-top: 1px solid var(--borde); display: grid; gap: 40px; }
+  .musica-cabeza { display: grid; gap: 12px 48px; }
+  .musica-cabeza p { margin: 0; max-width: 52ch; }
   @media (min-width: 900px) {
-    .criterios { grid-template-columns: 1fr 2fr; }
-    .criterios ul { grid-template-columns: repeat(3, 1fr); }
+    .musica-cabeza { grid-template-columns: 1fr 1fr; align-items: end; }
   }
 </style>

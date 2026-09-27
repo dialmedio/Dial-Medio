@@ -28,7 +28,7 @@ const cotizar = `/contacto?linea=${s.linea}&servicio=${servicio.id}`;
       <ul class="mono">{s.entregables.map((i) => <li>{i}</li>)}</ul>
     </div>
   </div>
-  <a href={cotizar} class="enlace">Cotizar {s.titulo.toLowerCase()} <span>→</span></a>
+  <a href={cotizar} class="enlace" aria-label={`Cotizar ${s.titulo}`}>Cotizar <span>→</span></a>
 </article>
 
 <style>

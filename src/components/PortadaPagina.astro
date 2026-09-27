@@ -9,7 +9,7 @@ interface Props {
   tema?: 'carbon' | 'hueso';
   simbolo?: boolean;
 }
-const { kicker, titulo, bajada, tema = 'carbon', simbolo = true } = Astro.props;
+const { kicker, titulo, bajada, tema = 'carbon', simbolo = false } = Astro.props;
 ---
 
 <section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon' }]}>

@@ -3,8 +3,6 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PortadaPagina from '../../components/PortadaPagina.astro';
 import EscalaMedicion from '../../components/EscalaMedicion.astro';
-import VideoLite from '../../components/VideoLite.astro';
-import Pendiente from '../../components/Pendiente.astro';
 import CTAFinal from '../../components/CTAFinal.astro';
 import { dos } from '../../lib/util';
 
@@ -89,40 +87,27 @@ const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos 
         <p class="kicker">{dos(3)} — Qué recibes</p>
         <h2 class="display d-3">Un informe que puedes presentar.</h2>
         <ul class="informe-lista">{informe.map((i) => <li>{i}</li>)}</ul>
-        <p class="texto-2 nota">
-          Una evaluación antes y después mide el cambio inmediato en quienes vieron la pieza. Es una evidencia valiosa para
-          tus reportes, pero no reemplaza una evaluación de impacto de largo plazo. Te lo decimos desde el principio.
-        </p>
       </div>
-      <Pendiente
-        marca="Ejemplo de informe pendiente"
-        titulo="Muestra de informe de resultados"
-        texto="Aquí irá una página de ejemplo de un informe real, con permiso de la organización."
-        formato="vertical"
-      />
+      <div class="informe-lado" data-revela style="--retraso:.1s">
+        <p class="texto-2 nota">
+          Una evaluación antes y después mide el cambio inmediato en quienes vieron la pieza. Es evidencia valiosa para tus
+          reportes, pero no reemplaza una evaluación de impacto de largo plazo. Te lo decimos desde el principio.
+        </p>
+        {
+          debate && (
+            <div class="origen">
+              <p class="kicker sin-linea">De dónde viene</p>
+              <p>
+                Lo probamos primero en casa. En los debates de Dial Medio encuestamos a la sala al entrar y al salir: la
+                pregunta no es quién ganó, sino quién cambió de opinión.
+              </p>
+              <a href={'/medio/' + debate.id} class="enlace">Ver el debate <span>→</span></a>
+            </div>
+          )
+        }
+      </div>
     </div>
   </section>
-
-  {
-    debate && (
-      <section class="seccion tema-papel">
-        <div class="contenedor origen">
-          <div data-revela>
-            <p class="kicker">{dos(4)} — De dónde viene</p>
-            <h2 class="display d-3">Lo probamos primero en casa.</h2>
-            <p class="lead texto-2">
-              En los debates de Dial Medio encuestamos a la sala al entrar y al salir. La pregunta no es quién ganó, sino quién
-              cambió de opinión. Ese es el mismo método que hoy llevamos a los proyectos de las organizaciones.
-            </p>
-            <a href={`/medio/${debate.id}`} class="enlace">Ver el debate <span>→</span></a>
-          </div>
-          <div data-revela style="--retraso:.1s">
-            <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
-          </div>
-        </div>
-      </section>
-    )
-  }
 
   <CTAFinal
     titulo="¿Quieres saber qué mueve tu próxima pieza?"
@@ -149,11 +134,11 @@ const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos 
   .informe h2 { margin-top: 18px; }
   .informe-lista { list-style: none; display: grid; margin: 32px 0; border-top: 1px solid var(--borde); }
   .informe-lista li { padding: 14px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: 1.15rem; }
-  .nota { font-size: 0.92rem; max-width: 56ch; border-left: 2px solid var(--terracota); padding-left: 16px; }
+  .nota { font-size: 0.98rem; max-width: 50ch; border-left: 2px solid var(--terracota); padding-left: 18px; }
   @media (min-width: 900px) { .informe { grid-template-columns: 1.2fr 1fr; gap: 88px; } }
 
-  .origen { display: grid; gap: 48px; align-items: center; }
-  .origen h2 { margin-block: 18px 22px; }
-  .origen .lead { margin-bottom: 28px; }
-  @media (min-width: 980px) { .origen { grid-template-columns: 1fr 1.2fr; gap: 72px; } }
+  .informe-lado { display: grid; gap: 40px; align-content: start; padding-top: 8px; }
+  .nota { margin: 0; }
+  .origen { display: grid; gap: 14px; justify-items: start; padding-top: 32px; border-top: 1px solid var(--borde); }
+  .origen p { margin: 0; max-width: 46ch; }
 </style>

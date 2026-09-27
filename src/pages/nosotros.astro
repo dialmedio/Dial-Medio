@@ -3,19 +3,18 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
-import Pendiente from '../components/Pendiente.astro';
 import CTAFinal from '../components/CTAFinal.astro';
 import cap from '../data/capacidades.json';
 import { dos } from '../lib/util';
 
 const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.data.orden);
 
-const portafolio = [
+const recorrido = [
   'Debates entre sectores enfrentados',
-  'Rodajes en tres países de Asia',
-  'Material en Barranquilla, Cali y Popayán',
   'Documental en el Pacífico colombiano',
-  'Documental sobre el terremoto en Pereira (en preparación)',
+  'Rodajes en tres países de Asia',
+  'Barranquilla, Cali y Popayán',
+  'Pereira, documental en preparación',
   'Periodismo de datos',
 ];
 ---
@@ -27,21 +26,17 @@ const portafolio = [
   <PortadaPagina
     kicker="Nosotros"
     titulo="Un solo equipo, de la idea al <em>estreno.</em>"
-    bajada="Dial es una productora audiovisual colombiana con medio propio. Contamos, y medimos, el encuentro humano: las historias de personas, comunidades y organizaciones."
+    bajada="Productora audiovisual colombiana con medio propio. Contamos, y medimos, el encuentro humano."
   />
 
   <section class="seccion tema-papel">
     <div class="contenedor intro">
-      <p class="kicker" data-revela>{dos(1)} — La casa</p>
-      <div class="intro-texto" data-revela>
-        <p class="lead-xl">
-          Creemos que una buena historia <em>construye puentes</em> y dignifica a quienes aparecen en ella. Por eso trabajamos
-          despacio donde hay que escuchar y con precisión donde hay que entregar.
-        </p>
-        <p class="texto-2 medida">
-          Lo comercial financia lo creativo: los proyectos que hacemos con organizaciones sostienen la obra propia de Dial
-          Medio, y la obra propia es donde afinamos el oficio y el método que luego ponemos al servicio de cada encargo.
-        </p>
+      <p class="lead-xl intro-frase" data-revela>
+        Trabajamos <em>despacio</em> donde hay que escuchar y con <em>precisión</em> donde hay que entregar.
+      </p>
+      <div class="recorrido" data-revela style="--retraso:.1s">
+        <p class="kicker sin-linea">Hemos filmado</p>
+        <ul>{recorrido.map((r) => <li>{r}</li>)}</ul>
       </div>
     </div>
   </section>
@@ -50,10 +45,10 @@ const portafolio = [
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(2)} — Cómo trabajamos</p>
-          <h2 class="display d-2">Seis momentos.</h2>
+          <p class="kicker">{dos(1)} — Cómo trabajamos</p>
+          <h2 class="display d-2">De la idea al estreno.</h2>
         </div>
-        <p class="texto-2" data-revela>Tú hablas con una sola persona durante todo el proyecto. La historia no cambia de manos.</p>
+        <p class="texto-2" data-revela>Hablas con una sola persona durante todo el proyecto. La historia no cambia de manos.</p>
       </header>
       <ol class="proceso">
         {
@@ -75,35 +70,34 @@ const portafolio = [
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(3)} — Equipo</p>
+          <p class="kicker">{dos(2)} — Equipo</p>
           <h2 class="display d-2">Quién está detrás.</h2>
         </div>
-        <p class="texto-2" data-revela>
-          Un núcleo pequeño y una red de realizadores, fotógrafos, sonidistas y músicos que se suman según cada proyecto.
-        </p>
       </header>
       <div class="equipo">
         {
           equipo.map((p) => (
-            <article class="persona" data-revela>
-              {p.data.foto ? (
+            <article class:list={['persona', { 'con-foto': !!p.data.foto }]} data-revela>
+              {p.data.foto && (
                 <Image src={p.data.foto} alt={p.data.nombre} widths={[480, 800]} sizes="(min-width: 900px) 30vw, 100vw" />
-              ) : (
-                <Pendiente marca="Foto pendiente" titulo={p.data.nombre} formato="vertical" class="persona-foto" />
               )}
-              <p class="kicker sin-linea">{p.data.rol}</p>
-              {p.data.foto && <h3 class="sub s-1">{p.data.nombre}</h3>}
-              <p class="texto-2">{p.data.bio}</p>
+              <div class="persona-texto">
+                <p class="kicker sin-linea">{p.data.rol}</p>
+                <h3 class="display d-3">{p.data.nombre}</h3>
+                <p class="texto-2">{p.data.bio}</p>
+              </div>
             </article>
           ))
         }
-        <article class="persona red" data-revela>
-          <div class="red-caja tema-carbon grano">
-            <span class="display">+</span>
-            <p>Red de realizadores por proyecto</p>
+        <article class="persona red tema-carbon grano" data-revela style="--retraso:.1s">
+          <div class="persona-texto">
+            <p class="kicker sin-linea">Imagen · Sonido · Montaje · Música</p>
+            <h3 class="display d-3">Red de realizadores</h3>
+            <p class="texto-2">
+              Fotógrafos, sonidistas, editores y músicos que se suman según cada proyecto, bajo una misma dirección y un mismo
+              estándar.
+            </p>
           </div>
-          <p class="kicker sin-linea">Imagen · Sonido · Montaje · Música</p>
-          <p class="texto-2">Cada proyecto reúne al equipo que necesita, bajo una misma dirección y un mismo estándar.</p>
         </article>
       </div>
     </div>
@@ -113,17 +107,16 @@ const portafolio = [
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
-          <p class="kicker">{dos(4)} — <span class="acento">Capacidades</span></p>
+          <p class="kicker">{dos(3)} — <span class="acento">Capacidades</span></p>
           <h2 class="display d-2">Con qué trabajamos.</h2>
         </div>
-        <p class="texto-2" data-revela>Equipos propios y espacios aliados en Bogotá, listos para rodar o para recibir a tu público.</p>
+        <p class="texto-2" data-revela>Equipos propios y espacios aliados en Bogotá.</p>
       </header>
       <div class="capacidades">
         {
           cap.grupos.map((g, i) => (
             <div data-revela style={`--retraso:${i * 0.06}s`}>
-              <p class="mono acento">{dos(i + 1)}</p>
-              <h3 class="sub s-1">{g.titulo}</h3>
+              <h3 class="sub s-2">{g.titulo}</h3>
               <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
             </div>
           ))
@@ -131,29 +124,18 @@ const portafolio = [
       </div>
 
       <div class="sueltos" data-revela>
-        <p class="kicker">Servicios sueltos, por día o por pieza</p>
+        <p class="kicker sin-linea">También por día o por pieza</p>
         <ul class="etiquetas">{cap.sueltos.map((s) => <li class="etiqueta">{s}</li>)}</ul>
         <a href="/contacto?linea=suelto" class="enlace">Cotizar un servicio suelto <span>→</span></a>
       </div>
     </div>
   </section>
 
-  <section class="seccion tema-papel">
-    <div class="contenedor recorrido">
-      <div data-revela>
-        <p class="kicker">{dos(5)} — Recorrido</p>
-        <h2 class="display d-3">Dónde hemos filmado.</h2>
-      </div>
-      <ul>{portafolio.map((p, i) => <li data-revela style={`--retraso:${i * 0.04}s`}><span class="mono acento">{dos(i + 1)}</span>{p}</li>)}</ul>
-    </div>
-  </section>
-
-  <section class="seccion compacta tema-hueso" id="criterios">
+  <section class="seccion compacta tema-papel" id="criterios">
     <div class="contenedor criterios">
       <div data-revela>
-        <p class="kicker">{dos(6)} — Criterios de la casa</p>
+        <p class="kicker">{dos(4)} — Criterios de la casa</p>
         <h2 class="display d-3">Lo que no hacemos.</h2>
-        <p class="texto-2">Todo proyecto debe acercarse a nuestra mirada o sostener la casa. Y hay cosas que no hacemos por ningún precio.</p>
       </div>
       <ul>
         {
@@ -172,42 +154,29 @@ const portafolio = [
 </Base>
 
 <style>
-  .intro { display: grid; gap: 28px; }
-  .intro-texto { display: grid; gap: 28px; }
-  .intro-texto p { margin: 0; }
-  .intro-texto .lead-xl { max-width: 32ch; }
-  @media (min-width: 980px) {
-    .intro { grid-template-columns: 1fr 3fr; }
-    .intro-texto { grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: end; }
-  }
+  .intro { display: grid; gap: 48px; align-items: end; }
+  .intro-frase { margin: 0; max-width: 22ch; font-size: clamp(1.8rem, 1rem + 2.4vw, 3.2rem); line-height: 1.2; }
+  .recorrido ul { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
+  .recorrido li { padding: 11px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: 1.1rem; }
+  @media (min-width: 980px) { .intro { grid-template-columns: 1.5fr 1fr; gap: 88px; } }
 
   .proceso { list-style: none; display: grid; border-top: 1px solid var(--borde); }
   .proceso li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
   .proceso p { margin: 8px 0 0; }
   .proc-n { font-size: 2.6rem; color: var(--terracota); line-height: 1; }
-  @media (min-width: 900px) {
-    .proceso { grid-template-columns: 1fr 1fr; column-gap: 56px; }
-  }
+  @media (min-width: 900px) { .proceso { grid-template-columns: 1fr 1fr; column-gap: 56px; } }
 
-  .equipo { display: grid; gap: 48px 32px; }
-  @media (min-width: 760px) { .equipo { grid-template-columns: repeat(3, 1fr); } }
-  .persona { display: grid; gap: 14px; align-content: start; }
-  .persona p { margin: 0; }
+  .equipo { display: grid; gap: 24px; }
+  @media (min-width: 900px) { .equipo { grid-template-columns: 1.3fr 1fr; } }
+  .persona { display: grid; gap: 24px; align-content: start; padding: clamp(28px, 4vw, 48px); border: 1px solid var(--borde); position: relative; }
+  .persona.con-foto { grid-template-columns: 1fr; padding: 0; border: 0; }
   .persona :global(img) { aspect-ratio: 4 / 5; object-fit: cover; width: 100%; }
-  .red-caja {
-    aspect-ratio: 4 / 5;
-    display: grid;
-    place-content: center;
-    text-align: center;
-    gap: 8px;
-    position: relative;
-  }
-  .red-caja .display { font-size: 5rem; color: var(--terracota); line-height: 1; }
-  .red-caja p { font-family: var(--f-sub); font-size: 1.2rem; max-width: 14ch; margin: 0 auto; }
+  .persona-texto { display: grid; gap: 14px; align-content: start; }
+  .persona-texto p { margin: 0; max-width: 52ch; }
+  .red { border-color: transparent; }
 
   .capacidades { display: grid; gap: 40px 32px; }
-  .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 12px; align-content: start; }
-  .capacidades p { margin: 0; }
+  .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 14px; align-content: start; }
   .capacidades ul { list-style: none; display: grid; gap: 8px; }
   .capacidades li { color: var(--hueso-2); font-size: 0.95rem; line-height: 1.45; }
   @media (min-width: 760px) { .capacidades { grid-template-columns: repeat(2, 1fr); } }
@@ -215,14 +184,8 @@ const portafolio = [
   .sueltos { margin-top: clamp(56px, 7vw, 96px); display: grid; gap: 20px; justify-items: start; }
   .sueltos .etiqueta { color: var(--hueso); font-size: 0.75rem; }
 
-  .recorrido { display: grid; gap: 36px; }
-  .recorrido ul { list-style: none; border-top: 1px solid var(--borde); }
-  .recorrido li { display: grid; grid-template-columns: 3rem 1fr; padding: 16px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: clamp(1.1rem, 1rem + 0.6vw, 1.45rem); align-items: baseline; }
-  .recorrido .mono { font-size: 0.75rem; }
-  @media (min-width: 900px) { .recorrido { grid-template-columns: 1fr 1.6fr; gap: 72px; } }
-
   .criterios { display: grid; gap: 40px; }
-  .criterios h2 { margin-block: 18px; }
+  .criterios h2 { margin-top: 18px; }
   .criterios ul { list-style: none; display: grid; gap: 28px; }
   .criterios li { border-top: 1px solid var(--borde); padding-top: 18px; display: grid; gap: 8px; }
   .criterios li p { margin: 0; }

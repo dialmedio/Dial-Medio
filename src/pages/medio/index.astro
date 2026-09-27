@@ -6,7 +6,7 @@ import VideoLite from '../../components/VideoLite.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import sitio from '../../data/sitio.json';
-import { anio, dos, estados, formatos, urlVideo } from '../../lib/util';
+import { anio, dos, estados } from '../../lib/util';
 
 const todo = (await getCollection('medio', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
 const debates = todo.filter((m) => m.data.formato === 'debate');
@@ -14,6 +14,8 @@ const [destacado] = debates;
 const clips = todo.filter((m) => m.data.formato === 'clip');
 const documentales = todo.filter((m) => m.data.formato === 'documental');
 const podcasts = todo.filter((m) => m.data.formato === 'videopodcast');
+const publicados = documentales.filter((d) => d.data.estado === 'publicado' && d.data.video);
+const enCamino = documentales.filter((d) => d.data.estado !== 'publicado');
 
 const reglas = [
   { n: '1', titulo: 'Una voz, diez alrededor', texto: 'Un debatiente fijo frente a un círculo de diez que piensan distinto. Los retadores rotan.' },
@@ -35,8 +37,8 @@ const reglas = [
         </h1>
         <p class="mono firma">Sintonizar es conversar</p>
         <p class="lead texto-2">
-          Debates entre sectores enfrentados, videopodcast y documentales. Aquí probamos, con tiempo y sin encargo, el método
-          que luego llevamos a cada proyecto.
+          Debates entre sectores enfrentados, videopodcast y documentales. Conversaciones que buscan la frecuencia común entre
+          quienes piensan distinto.
         </p>
         <ul class="redes">
           {
@@ -135,38 +137,56 @@ const reglas = [
       </header>
       <div class="rejilla-2">
         {
-          documentales.map((d) => (
+          publicados.map((d) => (
             <PiezaCard
               titulo={d.data.titulo}
               video={d.data.video}
-              href={d.data.estado === 'publicado' ? `/medio/${d.id}` : undefined}
-              kicker={`Documental${d.data.serie ? ' · Serie ' + d.data.serie : ''}`}
+              href={'/medio/' + d.id}
+              kicker={'Documental' + (d.data.serie ? ' · Serie ' + d.data.serie : '')}
               resumen={d.data.resumen}
-              meta={d.data.estado === 'publicado' ? `${d.data.lugar} · ${anio(d.data.fecha)}` : d.data.lugar}
-              estado={estados[d.data.estado] || undefined}
+              meta={d.data.lugar + ' · ' + anio(d.data.fecha) + (d.data.duracion ? ' · ' + d.data.duracion : '')}
             />
           ))
         }
       </div>
-    </div>
-  </section>
 
-  <section class="seccion compacta tema-hueso">
-    <div class="contenedor podcast">
-      <div data-revela>
-        <p class="kicker">{dos(4)} — Videopodcast</p>
-        <h2 class="display d-3">Conversaciones uno a uno.</h2>
-        <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su territorio.</p>
-      </div>
       {
-        podcasts.length > 0 ? (
-          podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={`/medio/${p.id}`} kicker="Videopodcast" />)
-        ) : (
-          <Pendiente marca="Episodios pendientes" titulo="Primeros episodios del videopodcast" texto="Cuando estén publicados, aparecen aquí automáticamente." />
+        enCamino.length > 0 && (
+          <div class="camino" data-revela>
+            <p class="kicker">En camino</p>
+            <ul>
+              {enCamino.map((d) => (
+                <li>
+                  <span class="sub s-2">{d.data.titulo}</span>
+                  <span class="texto-2">{d.data.resumen}</span>
+                  <span class="mono acento">{estados[d.data.estado]}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         )
       }
     </div>
   </section>
+
+  {
+    (podcasts.length > 0 || import.meta.env.DEV) && (
+      <section class="seccion compacta tema-hueso">
+        <div class="contenedor podcast">
+          <div data-revela>
+            <p class="kicker">{dos(4)} — Videopodcast</p>
+            <h2 class="display d-3">Conversaciones uno a uno.</h2>
+            <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su territorio.</p>
+          </div>
+          {podcasts.length > 0 ? (
+            podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={'/medio/' + p.id} kicker="Videopodcast" />)
+          ) : (
+            <Pendiente marca="Episodios pendientes" titulo="Primeros episodios del videopodcast" texto="Cuando estén publicados, aparecen aquí automáticamente." />
+          )}
+        </div>
+      </section>
+    )
+  }
 
   <section class="seccion compacta tema-terracota grano puente">
     <div class="contenedor puente-grid">
@@ -264,6 +284,11 @@ const reglas = [
   .rejilla-2 { display: grid; gap: 64px 32px; }
   @media (min-width: 760px) { .rejilla-2 { grid-template-columns: repeat(2, 1fr); } }
 
+  .camino { margin-top: clamp(64px, 8vw, 104px); display: grid; gap: 20px; }
+  .camino ul { list-style: none; border-top: 1px solid var(--borde); }
+  .camino li { display: grid; gap: 6px 32px; padding: 22px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
+  .camino li .mono { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  @media (min-width: 900px) { .camino li { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 10rem; } .camino li .mono { text-align: right; } }
   .podcast { display: grid; gap: 40px; align-items: center; }
   .podcast h2 { margin-block: 18px; }
   @media (min-width: 900px) { .podcast { grid-template-columns: 1fr 1fr; gap: 72px; } }

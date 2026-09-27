@@ -2,6 +2,7 @@
 /**
  * Espacio reservado para material real que aún no existe.
  * Se ve claramente como pendiente: no simula clientes ni resultados.
+ * Solo aparece en desarrollo (npm run dev): el sitio publicado no muestra cajas vacías.
  */
 import Simbolo from './Simbolo.astro';
 
@@ -13,8 +14,10 @@ interface Props {
   class?: string;
 }
 const { marca = 'Caso pendiente', titulo, texto, formato = 'horizontal', class: clase = '' } = Astro.props;
+const visible = import.meta.env.DEV;
 ---
 
+{visible && (
 <article class:list={['pendiente-caja', formato, clase]} data-revela>
   <div class="pendiente-marco" aria-hidden="true">
     <Simbolo tono="oscuro" class="pendiente-simbolo" />
@@ -25,6 +28,7 @@ const { marca = 'Caso pendiente', titulo, texto, formato = 'horizontal', class: 
     {texto && <p class="texto-2">{texto}</p>}
   </div>
 </article>
+)}
 
 <style>
   .pendiente-caja { display: grid; gap: 20px; align-content: start; }
