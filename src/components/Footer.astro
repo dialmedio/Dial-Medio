@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import Boletin from './Boletin.astro';
 import sitio from '../data/sitio.json';
 import { whatsapp } from '../lib/util';
 
@@ -28,6 +29,15 @@ const columnas = [
 
 <footer class="pie tema-carbon grano">
   <div class="contenedor">
+    <section class="pie-boletin" id="boletin" aria-labelledby="boletin-titulo">
+      <div class="pie-boletin-texto">
+        <p class="kicker sin-linea"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
+        <h2 class="display d-4" id="boletin-titulo">Sintoniza a Dial en tu correo.</h2>
+        <p class="texto-2">{sitio.boletin.descripcion}</p>
+      </div>
+      <Boletin id="boletin-pie" origen="pie" />
+    </section>
+
     <div class="pie-grid">
       <div class="pie-marca">
         <a href="/" aria-label="Dial, inicio" class="pie-logo"><Logo tono="claro" /></a>
@@ -76,7 +86,22 @@ const columnas = [
 </footer>
 
 <style>
-  .pie { padding-block: clamp(64px, 8vw, 104px) 28px; position: relative; }
+  .pie { padding-block: clamp(56px, 7vw, 88px) 28px; position: relative; }
+  .pie-boletin {
+    display: grid;
+    gap: 28px 64px;
+    align-items: end;
+    padding-bottom: clamp(48px, 6vw, 72px);
+    margin-bottom: clamp(48px, 6vw, 72px);
+    border-bottom: 1px solid var(--linea-clara);
+  }
+  .pie-boletin-texto { display: grid; gap: 14px; }
+  .pie-boletin-texto p { margin: 0; }
+  .pie-boletin-texto .texto-2 { max-width: 46ch; }
+  @media (min-width: 900px) {
+    .pie-boletin { grid-template-columns: 1fr 1fr; }
+    .pie-boletin :global(.boletin) { justify-self: end; }
+  }
   .pie-grid {
     display: grid;
     gap: 48px 32px;

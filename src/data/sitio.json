@@ -12,9 +12,26 @@
     "mensaje": "Hola, Martín. Vi el sitio de Dial y quiero cotizar un proyecto."
   },
   "redes": [
-    { "nombre": "Instagram", "usuario": "@dialmedio", "url": "https://www.instagram.com/dialmedio/" },
-    { "nombre": "YouTube", "usuario": "@Dialmedio", "url": "https://www.youtube.com/@Dialmedio" },
-    { "nombre": "TikTok", "usuario": "@dialmedio", "url": "https://www.tiktok.com/@dialmedio" }
+    {
+      "nombre": "Instagram",
+      "usuario": "@dialmedio",
+      "url": "https://www.instagram.com/dialmedio/"
+    },
+    {
+      "nombre": "YouTube",
+      "usuario": "@Dialmedio",
+      "url": "https://www.youtube.com/@Dialmedio"
+    },
+    {
+      "nombre": "TikTok",
+      "usuario": "@dialmedio",
+      "url": "https://www.tiktok.com/@dialmedio"
+    }
   ],
-  "respuesta": "Respondemos en máximo dos días hábiles."
+  "respuesta": "Respondemos en máximo dos días hábiles.",
+  "boletin": {
+    "usuario": "dial",
+    "frecuencia": "Una vez por trimestre",
+    "descripcion": "Trabajo nuevo, lo que aprendemos midiendo y convocatorias que vale la pena mirar. Sin ruido."
+  }
 }

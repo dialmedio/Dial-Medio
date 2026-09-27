@@ -1,0 +1,33 @@
+---
+// Destino después de confirmar la suscripción en Buttondown
+// (Buttondown > Settings > Subscribing > "After confirming" → https://dialmedio.org/bienvenida).
+import Base from '../layouts/Base.astro';
+import Simbolo from '../components/Simbolo.astro';
+import sitio from '../data/sitio.json';
+---
+
+<Base titulo="Bienvenida al boletín" noindex>
+  <section class="bienvenida tema-carbon grano">
+    <div class="contenedor bienvenida-cuerpo">
+      <Simbolo tono="claro" anima class="bienvenida-simbolo" />
+      <p class="kicker"><span class="acento">Suscripción confirmada</span></p>
+      <h1 class="display d-2">Ya estás en la frecuencia.</h1>
+      <p class="lead texto-2">
+        Te escribiremos {sitio.boletin.frecuencia.toLowerCase()} con trabajo nuevo, lo que aprendemos midiendo y convocatorias
+        que vale la pena mirar. Sin ruido.
+      </p>
+      <div class="acciones">
+        <a href="/impacto" class="btn">Ver lo que hacemos <span class="flecha">→</span></a>
+        <a href="/medio" class="btn linea">Dial Medio</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .bienvenida { min-height: calc(100svh - 72px); display: grid; align-items: center; position: relative; padding-block: 72px; }
+  .bienvenida-cuerpo { display: grid; gap: 24px; justify-items: start; }
+  .bienvenida-cuerpo :global(.bienvenida-simbolo) { width: 120px; margin-bottom: 12px; }
+  .bienvenida h1 { max-width: 16ch; }
+  .bienvenida .lead { margin: 0; max-width: 48ch; }
+</style>

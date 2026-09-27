@@ -16,7 +16,7 @@ export default defineConfig({
   },
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/gracias') && !page.includes('/404'),
+      filter: (page) => !['/gracias', '/404', '/bienvenida'].some((r) => page.includes(r)),
       i18n: { defaultLocale: 'es', locales: { es: 'es-CO', en: 'en' } },
     }),
   ],
