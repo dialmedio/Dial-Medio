@@ -7,7 +7,7 @@ const SITE = 'https://dialmedio.org';
 
 export default defineConfig({
   site: SITE,
-  trailingSlash: 'ignore',
+  trailingSlash: 'never',
   devToolbar: { enabled: false },
   i18n: {
     locales: ['es', 'en'],
