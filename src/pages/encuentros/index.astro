@@ -6,6 +6,7 @@ import ServicioDetalle from '../../components/ServicioDetalle.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import CTAFinal from '../../components/CTAFinal.astro';
+import VideoLite from '../../components/VideoLite.astro';
 import { dos, rutaCaso } from '../../lib/util';
 
 const servicios = (await getCollection('servicios', (s) => s.data.linea === 'encuentros')).sort(
@@ -15,10 +16,11 @@ const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vi
   (a, b) => b.data.anio - a.data.anio,
 );
 
+const mapa = (dir: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dir + ', Bogotá, Colombia')}`;
 const espacios = [
-  { nombre: 'Taller Graphito', nota: 'Bogotá' },
-  { nombre: 'Teatro Acto Latino', nota: 'Bogotá' },
-  { nombre: 'Espacio propio', nota: 'Para encuentros íntimos' },
+  { nombre: 'Fundación Grafito', tipo: 'Taller y casa cultural', direccion: 'Calle 45A # 14-66' },
+  { nombre: 'Teatro Acto Latino', tipo: 'Teatro', direccion: 'Carrera 16 # 58A-55' },
+  { nombre: 'Espacio propio', tipo: 'Sesiones y encuentros íntimos', direccion: '' },
 ];
 ---
 
@@ -61,12 +63,34 @@ const espacios = [
         {
           espacios.map((e, i) => (
             <li data-revela style={`--retraso:${i * 0.06}s`}>
-              <span class="sub s-1">{e.nombre}</span>
-              <span class="texto-2 espacio-nota">{e.nota}</span>
+              <span class="espacio-nombre">
+                <span class="sub s-1">{e.nombre}</span>
+                <span class="texto-2">{e.tipo}</span>
+              </span>
+              {e.direccion ? (
+                <a class="espacio-dir" href={mapa(e.direccion)} target="_blank" rel="noopener">{e.direccion}, Bogotá <span aria-hidden="true">↗</span></a>
+              ) : (
+                <a class="espacio-dir" href="#sesiones">Ver una sesión <span aria-hidden="true">↓</span></a>
+              )}
             </li>
           ))
         }
       </ul>
+    </div>
+
+    <div class="contenedor sesiones" id="sesiones">
+      <div class="sesiones-video" data-revela>
+        <VideoLite video={{ plataforma: 'youtube', id: 'tt3X0UynmCk' }} titulo="In-Vitro Live Sessions" />
+      </div>
+      <div class="sesiones-texto" data-revela style="--retraso:.1s">
+        <p class="kicker">Sesiones en vivo</p>
+        <h3 class="display d-3">Música en vivo, <em>grabada en casa.</em></h3>
+        <p class="texto-2">
+          Grabamos sesiones de música en vivo en nuestro espacio: imagen multicámara, sonido directo y mezcla, para artistas,
+          lanzamientos y proyectos culturales. <em>In-Vitro Live Sessions</em> se grabó aquí.
+        </p>
+        <a href="/contacto?linea=suelto" class="enlace">Cotizar una sesión <span>→</span></a>
+      </div>
     </div>
   </section>
 
@@ -124,8 +148,15 @@ const espacios = [
   .espacios h2 { margin-block: 18px; }
   .espacios p { margin: 0; max-width: 40ch; }
   .espacios ul { list-style: none; border-top: 1px solid var(--borde); }
-  .espacios li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--borde); }
-  .espacio-nota { text-align: right; font-size: 1rem; }
+  .espacios li { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 24px; padding: 22px 0; border-bottom: 1px solid var(--borde); }
+  .espacio-nombre { display: grid; gap: 4px; }
+  .espacio-nombre .texto-2 { font-size: 1rem; }
+  .espacio-dir { font-family: var(--f-mono); font-size: var(--t-meta); text-decoration: none; color: var(--texto-2); border-bottom: 1px solid var(--borde); padding-bottom: 2px; transition: color .2s, border-color .2s; }
+  .espacio-dir:hover { color: var(--acento-texto); border-color: currentColor; }
+  .sesiones { display: grid; gap: 40px; align-items: center; margin-top: clamp(72px, 9vw, 120px); }
+  .sesiones-texto { display: grid; gap: 18px; justify-items: start; }
+  .sesiones-texto p { margin: 0; max-width: 46ch; }
+  @media (min-width: 980px) { .sesiones { grid-template-columns: 1.3fr 1fr; gap: 72px; } }
   @media (min-width: 900px) { .espacios { grid-template-columns: 1fr 1.3fr; gap: 88px; align-items: start; } }
 
   .celebra { display: block; text-decoration: none; border-top: 1px solid var(--linea); transition: background 0.3s; }

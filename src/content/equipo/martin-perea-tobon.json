@@ -2,5 +2,6 @@
   "nombre": "Martín Perea Tobón",
   "rol": "Dirección y producción",
   "bio": "Músico con énfasis en arreglos. Dirige y produce los proyectos de Dial: arma los equipos, junta a gente diversa y cuida que cada historia llegue completa, de la investigación al estreno. Compone la música original de muchas de nuestras piezas.",
-  "orden": 1
+  "orden": 1,
+  "foto": "./martin-perea-tobon.jpg"
 }

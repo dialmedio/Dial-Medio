@@ -26,7 +26,6 @@ const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vi
     kicker: c.data.organizacion ?? 'Dial Impacto',
     meta: `${c.data.lugar} · ${c.data.anio}`,
     resumen: c.data.resumen,
-    duracion: undefined as string | undefined,
   }),
 );
 const propios = medio
@@ -38,7 +37,6 @@ const propios = medio
     kicker: `${formatos[m.data.formato]} · Obra propia`,
     meta: `${m.data.lugar} · ${anio(m.data.fecha)}`,
     resumen: m.data.resumen,
-    duracion: m.data.duracion,
   }));
 const [principal, secundario] = [...casos, ...propios];
 ---
@@ -76,7 +74,7 @@ const [principal, secundario] = [...casos, ...propios];
                 <a href={`/medio/${debate.id}`}>{debate.data.titulo}</a>
               </h2>
               <p class="texto-2">Encuestamos a la sala al entrar y al salir: la pregunta no es quién ganó, sino quién cambió de opinión.</p>
-              <p class="meta">Debate · {debate.data.duracion}</p>
+              <p class="meta">Debate · {anio(debate.data.fecha)}</p>
             </div>
           </aside>
         )
@@ -150,7 +148,7 @@ const [principal, secundario] = [...casos, ...propios];
           <div class="trabajo">
             {[principal, secundario].filter(Boolean).map((p, i) => (
               <article class:list={['obra', { 'obra-principal': i === 0 }]} data-revela style={`--retraso:${i * 0.1}s`}>
-                <VideoLite video={p!.video} titulo={p!.titulo} duracion={p!.duracion} />
+                <VideoLite video={p!.video} titulo={p!.titulo} />
                 <div class="obra-texto">
                   <p class="kicker sin-linea">{p!.kicker}</p>
                   <h3 class:list={['sub', i === 0 ? 's-1' : 's-2']}>
@@ -159,7 +157,6 @@ const [principal, secundario] = [...casos, ...propios];
                   {i === 0 && <p class="texto-2 obra-resumen">{p!.resumen}</p>}
                   <p class="meta obra-meta">
                     {p!.meta}
-                    {p!.duracion && ` · ${p!.duracion}`}
                   </p>
                   {i === 1 && (
                     <a href="/impacto#portafolio" class="enlace obra-mas">

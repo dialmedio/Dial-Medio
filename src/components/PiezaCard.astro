@@ -12,16 +12,15 @@ interface Props {
   etiqueta?: string;
   estado?: string;
   grande?: boolean;
-  duracion?: string;
   class?: string;
 }
-const { titulo, video, kicker, meta, resumen, href, etiqueta, estado, grande = false, duracion, class: clase = '' } = Astro.props;
+const { titulo, video, kicker, meta, resumen, href, etiqueta, estado, grande = false, class: clase = '' } = Astro.props;
 ---
 
 <article class:list={['pieza', { grande }, clase]} data-revela>
   {
     video ? (
-      <VideoLite video={video} titulo={titulo} duracion={duracion} />
+      <VideoLite video={video} titulo={titulo} />
     ) : (
       <div class="pieza-vacia grano" aria-hidden="true">
         <span class="mono">{estado ?? 'Próximamente'}</span>

@@ -7,6 +7,14 @@ import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import CTAFinal from '../../components/CTAFinal.astro';
 import Onda from '../../components/Onda.astro';
+import { Image } from 'astro:assets';
+import webRed from '../../assets/web/redquynza.jpg';
+import webDial from '../../assets/web/dialmedio.jpg';
+
+const sitios = [
+  { nombre: 'RED Quynza', url: 'https://redquynza.org', img: webRed, nota: 'Red académica sobre violencia urbana: podcast, repositorio, boletín y documentales.' },
+  { nombre: 'Dial', url: 'https://dialmedio.org', img: webDial, nota: 'Este sitio: identidad, portafolio, boletín y formulario de cotización.' },
+];
 import { anio, dos, formatos, rutaCaso } from '../../lib/util';
 
 const servicios = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
@@ -31,7 +39,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
     kicker="Dial Impacto"
     titulo="Historias que muestran lo que tu organización <em>transforma.</em>"
     bajada="Documental, cobertura y video para organizaciones que trabajan con comunidades, en la ciudad y en el territorio."
-    indice={[...servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` })), { texto: 'Trabajo', href: '#portafolio' }]}
+    indice={[...servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` })), { texto: 'Trabajo', href: '#portafolio' }, { texto: 'Sitios web', href: '#web' }]}
   >
     <ul class="etiquetas publicos" aria-label="Para quién">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
     <div class="acciones">
@@ -98,9 +106,8 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
               video={m.data.video}
               href={`/medio/${m.id}`}
               kicker={`${formatos[m.data.formato]} · Obra propia`}
-              duracion={m.data.duracion}
               resumen={m.data.resumen}
-              meta={`${m.data.lugar} · ${anio(m.data.fecha)}${m.data.duracion ? ' · ' + m.data.duracion : ''}`}
+              meta={`${m.data.lugar} · ${anio(m.data.fecha)}`}
             />
           ))
         }
@@ -128,6 +135,38 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
     </div>
   </section>
 
+  <!-- SITIOS WEB -->
+  <section class="seccion tema-hueso" id="web">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — También hacemos</p>
+          <h2 class="display d-2">La casa digital de <em>tu proyecto.</em></h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Diseñamos y publicamos sitios web para organizaciones: el lugar donde viven tus documentales, tus datos y tu boletín.
+          Rápidos, fáciles de actualizar y con identidad propia.
+        </p>
+      </header>
+      <div class="sitios">
+        {
+          sitios.map((w, i) => (
+            <a class="sitio" href={w.url} target="_blank" rel="noopener" data-revela style={`--retraso:${i * 0.08}s`}>
+              <span class="sitio-marco">
+                <span class="sitio-barra" aria-hidden="true"><i /><i /><i /><span class="meta">{w.url.replace('https://', '')}</span></span>
+                <Image src={w.img} alt={`Página de inicio de ${w.nombre}`} widths={[640, 1000, 1440]} sizes="(min-width: 900px) 50vw, 100vw" />
+              </span>
+              <span class="sitio-texto">
+                <span class="sub s-2">{w.nombre} <span aria-hidden="true">↗</span></span>
+                <span class="texto-2">{w.nota}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
   <CTAFinal linea="impacto" />
 </Base>
 
@@ -152,6 +191,17 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
   @media (min-width: 760px) {
     .rejilla-2 { grid-template-columns: repeat(2, 1fr); }
   }
+  .sitios { display: grid; gap: 48px 32px; }
+  @media (min-width: 860px) { .sitios { grid-template-columns: 1fr 1fr; } }
+  .sitio { display: grid; gap: 18px; text-decoration: none; align-content: start; }
+  .sitio-marco { display: block; border-radius: 8px; overflow: hidden; background: var(--carbon); box-shadow: 0 30px 60px -34px rgba(23, 19, 15, 0.55); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+  .sitio:hover .sitio-marco { transform: translateY(-4px); box-shadow: 0 40px 70px -34px rgba(23, 19, 15, 0.6); }
+  .sitio-barra { display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--carbon-2); }
+  .sitio-barra i { width: 9px; height: 9px; border-radius: 50%; background: var(--carbon-3); }
+  .sitio-barra .meta { margin-left: 10px; font-size: 0.75rem; color: var(--hueso-2); }
+  .sitio-marco :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  .sitio-texto { display: grid; gap: 6px; }
+  .sitio-texto .texto-2 { font-size: 1rem; max-width: 48ch; }
   .musica { margin-top: clamp(80px, 10vw, 136px); display: grid; gap: 40px; }
   .musica-cabeza { display: grid; gap: 12px 48px; }
   .musica-cabeza p { margin: 0; max-width: 52ch; }

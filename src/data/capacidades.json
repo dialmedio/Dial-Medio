@@ -14,7 +14,7 @@
     },
     {
       "titulo": "Espacios",
-      "items": ["Taller Graphito", "Teatro Acto Latino", "Espacio propio para eventos íntimos"]
+      "items": ["Fundación Grafito · Calle 45A # 14-66", "Teatro Acto Latino · Carrera 16 # 58A-55", "Espacio propio para sesiones y encuentros íntimos"]
     }
   ],
   "sueltos": [
@@ -24,7 +24,9 @@
     "Diseño sonoro",
     "Tomas con dron",
     "Alquiler de espacio",
-    "Sonido para eventos"
+    "Sonido para eventos",
+    "Sesiones de música en vivo",
+    "Sitios web"
   ],
   "criterios": [
     { "titulo": "Sin propaganda electoral", "texto": "No producimos piezas de campaña ni propaganda electoral partidista." },

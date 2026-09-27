@@ -25,11 +25,10 @@ const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x
       <a href="/medio" class="mono volver">← Dial Medio</a>
       <p class="kicker"><span class="acento">{kicker}</span></p>
       <h1 class="display d-2">{d.titulo}</h1>
-      <div class="pieza-video"><VideoLite video={d.video!} titulo={d.titulo} duracion={d.duracion} cargaInmediata /></div>
+      <div class="pieza-video"><VideoLite video={d.video!} titulo={d.titulo} cargaInmediata /></div>
       <dl class="ficha mono">
         {d.lugar && <div><dt>Lugar</dt><dd>{d.lugar}</dd></div>}
         <div><dt>Año</dt><dd>{anio(d.fecha)}</dd></div>
-        {d.duracion && <div><dt>Duración</dt><dd>{d.duracion}</dd></div>}
         <div><dt>Producción</dt><dd>Dial · Obra propia</dd></div>
       </dl>
     </div>
