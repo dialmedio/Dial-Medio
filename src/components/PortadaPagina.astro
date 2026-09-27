@@ -16,7 +16,7 @@ interface Props {
 const { kicker, titulo, bajada, tema = 'carbon', simbolo = false, indice = [] } = Astro.props;
 ---
 
-<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon', 'con-indice': indice.length > 0 }]}>
+<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon', luz: tema === 'carbon', 'con-indice': indice.length > 0 }]}>
   {simbolo && <Simbolo tono={tema === 'carbon' ? 'claro' : 'oscuro'} class="portada-pag-simbolo" anima />}
   <div class="contenedor portada-pag-grid">
     <div class="portada-pag-cuerpo">

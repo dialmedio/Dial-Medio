@@ -6,6 +6,7 @@ import ServicioDetalle from '../../components/ServicioDetalle.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import CTAFinal from '../../components/CTAFinal.astro';
+import Onda from '../../components/Onda.astro';
 import { anio, dos, formatos, rutaCaso } from '../../lib/util';
 
 const servicios = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
@@ -56,7 +57,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
   </section>
 
   <!-- MEDICIÓN, EN UNA LÍNEA -->
-  <a href="/impacto/medicion" class="banda-med tema-carbon grano">
+  <a href="/impacto/medicion" class="banda-med tema-carbon grano luz-baja">
     <div class="contenedor banda-med-fila">
       <p class="kicker sin-linea"><span class="acento">Nuestro diferencial</span></p>
       <p class="banda-med-texto">
@@ -97,6 +98,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
               video={m.data.video}
               href={`/medio/${m.id}`}
               kicker={`${formatos[m.data.formato]} · Obra propia`}
+              duracion={m.data.duracion}
               resumen={m.data.resumen}
               meta={`${m.data.lugar} · ${anio(m.data.fecha)}${m.data.duracion ? ' · ' + m.data.duracion : ''}`}
             />
@@ -108,6 +110,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
       {
         muestras.length > 0 && (
           <div class="musica">
+            <Onda alto={60} />
             <div class="musica-cabeza" data-revela>
               <h3 class="sub s-1">Música original y diseño sonoro</h3>
               <p class="texto-2">
@@ -149,7 +152,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
   @media (min-width: 760px) {
     .rejilla-2 { grid-template-columns: repeat(2, 1fr); }
   }
-  .musica { margin-top: clamp(80px, 10vw, 136px); padding-top: 40px; border-top: 1px solid var(--borde); display: grid; gap: 40px; }
+  .musica { margin-top: clamp(80px, 10vw, 136px); display: grid; gap: 40px; }
   .musica-cabeza { display: grid; gap: 12px 48px; }
   .musica-cabeza p { margin: 0; max-width: 52ch; }
   @media (min-width: 900px) {

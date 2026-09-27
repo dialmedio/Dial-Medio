@@ -6,6 +6,7 @@ import VideoLite from '../../components/VideoLite.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
 import Logo from '../../components/Logo.astro';
+import Onda from '../../components/Onda.astro';
 import Boletin from '../../components/Boletin.astro';
 import sitio from '../../data/sitio.json';
 import { anio, dos, estados } from '../../lib/util';
@@ -30,7 +31,7 @@ const reglas = [
   titulo="Dial Medio · Debates, videopodcast y documentales"
   descripcion="La obra propia de Dial: debates entre sectores enfrentados, videopodcast y documentales. Sintonizar es conversar."
 >
-  <section class="medio-portada tema-carbon grano">
+  <section class="medio-portada tema-carbon grano luz">
     <div class="contenedor medio-portada-grid">
       <div class="medio-portada-texto">
         <p class="kicker"><span class="acento">Dial Medio</span> · Obra propia</p>
@@ -54,6 +55,7 @@ const reglas = [
       </div>
       <Simbolo tono="claro" anima class="medio-simbolo" />
     </div>
+    <div class="contenedor medio-onda"><Onda tono="claro" alto={72} /></div>
   </section>
 
   {
@@ -69,7 +71,7 @@ const reglas = [
           </header>
           <div class="debate-grid">
             <div data-revela>
-              <VideoLite video={destacado.data.video!} titulo={destacado.data.titulo} />
+              <VideoLite video={destacado.data.video!} titulo={destacado.data.titulo} duracion={destacado.data.duracion} />
             </div>
             <aside class="capitulos" data-revela style="--retraso:.1s">
               <p class="kicker sin-linea">Tesis en debate · {destacado.data.duracion}</p>
@@ -143,6 +145,7 @@ const reglas = [
               video={d.data.video}
               href={'/medio/' + d.id}
               kicker={'Documental' + (d.data.serie ? ' · Serie ' + d.data.serie : '')}
+              duracion={d.data.duracion}
               resumen={d.data.resumen}
               meta={d.data.lugar + ' · ' + anio(d.data.fecha) + (d.data.duracion ? ' · ' + d.data.duracion : '')}
             />
@@ -215,6 +218,7 @@ const reglas = [
 <style>
   .medio-portada { position: relative; overflow: hidden; padding-block: clamp(64px, 9vw, 128px); }
   .medio-portada-grid { display: grid; gap: 40px; align-items: center; }
+  .medio-onda { margin-top: clamp(40px, 5vw, 72px); }
   .medio-portada-texto { display: grid; gap: 24px; justify-items: start; }
   .medio-portada .lead { margin: 0; max-width: 46ch; }
   .logotipo { font-size: clamp(3.4rem, 1rem + 8vw, 7.5rem); line-height: 1; font-weight: 400; }

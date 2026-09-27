@@ -6,6 +6,7 @@ import Sintonizador from '../components/Sintonizador.astro';
 import EscalaMedicion from '../components/EscalaMedicion.astro';
 import VideoLite from '../components/VideoLite.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import Onda from '../components/Onda.astro';
 import sitio from '../data/sitio.json';
 import { dos, formatos, anio, rutaCaso } from '../lib/util';
 
@@ -44,8 +45,7 @@ const [principal, secundario] = [...casos, ...propios];
 
 <Base descripcion="Productora audiovisual en Bogotá: documental, cobertura y eventos para organizaciones, y un medio propio de debates. Contamos, y medimos, el encuentro humano.">
   <!-- PORTADA: del ruido a la señal -->
-  <section class="heroe tema-carbon grano">
-    <canvas class="estatica" data-estatica aria-hidden="true"></canvas>
+  <section class="heroe tema-carbon grano luz">
     <div class="contenedor heroe-grid">
       <div class="heroe-texto">
         <p class="kicker heroe-kicker">Productora audiovisual · {sitio.ciudad}</p>
@@ -90,6 +90,7 @@ const [principal, secundario] = [...casos, ...propios];
   <!-- QUIÉNES SOMOS, EN UNA FRASE -->
   <section class="seccion compacta tema-papel">
     <div class="contenedor">
+      <Onda alto={56} class="manifiesto-onda" />
       <p class="lead-xl manifiesto" data-revela>
         Somos una productora audiovisual con medio propio. Contamos historias que <em>construyen puentes</em> y
         dignifican a quienes aparecen en ellas, con imagen, sonido y música original hechos en casa.
@@ -149,7 +150,7 @@ const [principal, secundario] = [...casos, ...propios];
           <div class="trabajo">
             {[principal, secundario].filter(Boolean).map((p, i) => (
               <article class:list={['obra', { 'obra-principal': i === 0 }]} data-revela style={`--retraso:${i * 0.1}s`}>
-                <VideoLite video={p!.video} titulo={p!.titulo} />
+                <VideoLite video={p!.video} titulo={p!.titulo} duracion={p!.duracion} />
                 <div class="obra-texto">
                   <p class="kicker sin-linea">{p!.kicker}</p>
                   <h3 class:list={['sub', i === 0 ? 's-1' : 's-2']}>
@@ -175,7 +176,7 @@ const [principal, secundario] = [...casos, ...propios];
   }
 
   <!-- MEDICIÓN -->
-  <section class="seccion tema-carbon grano">
+  <section class="seccion tema-carbon grano luz-baja">
     <div class="contenedor medicion-grid">
       <div class="medicion-texto">
         <p class="kicker" data-revela>{dos(3)} — <span class="acento">Pieza + medición</span></p>
@@ -201,7 +202,7 @@ const [principal, secundario] = [...casos, ...propios];
         <span class="enlace">Ver Dial Encuentros <span>→</span></span>
       </div>
     </a>
-    <div class="linea-caja tema-carbon grano">
+    <div class="linea-caja tema-carbon grano luz-baja">
       <div class="linea-interior">
         <p class="kicker">{dos(5)} — <span class="acento">Dial Medio</span></p>
         <h2 class="display d-3">Nuestra obra propia.</h2>
@@ -214,35 +215,6 @@ const [principal, secundario] = [...casos, ...propios];
   <CTAFinal />
 </Base>
 
-<script>
-  // Estática de apertura: ruido que se disuelve en señal.
-  const canvas = document.querySelector<HTMLCanvasElement>('[data-estatica]');
-  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (canvas && !reducir) {
-    const ctx = canvas.getContext('2d');
-    const w = (canvas.width = 240);
-    const h = (canvas.height = 150);
-    const img = ctx!.createImageData(w, h);
-    const inicio = performance.now();
-    const dur = 1500;
-    const cuadro = (t: number) => {
-      const p = Math.min((t - inicio) / dur, 1);
-      for (let i = 0; i < img.data.length; i += 4) {
-        const v = Math.random() * 255;
-        img.data[i] = v;
-        img.data[i + 1] = v * 0.92;
-        img.data[i + 2] = v * 0.84;
-        img.data[i + 3] = 255;
-      }
-      ctx!.putImageData(img, 0, 0);
-      canvas.style.opacity = String(0.22 * (1 - p) ** 1.6);
-      if (p < 1) requestAnimationFrame(cuadro);
-      else canvas.remove();
-    };
-    requestAnimationFrame(cuadro);
-  } else canvas?.remove();
-</script>
-
 <style>
   /* ---------- Portada ---------- */
   .heroe {
@@ -252,16 +224,6 @@ const [principal, secundario] = [...casos, ...propios];
     min-height: calc(100svh - 72px);
     display: grid;
     grid-template-rows: 1fr auto;
-  }
-  .estatica {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 2 !important;
-    pointer-events: none;
-    image-rendering: pixelated;
-    mix-blend-mode: screen;
   }
   .heroe-grid { display: grid; grid-template-columns: 1fr; align-items: center; gap: 24px; }
   .heroe-texto { display: grid; gap: 28px; justify-items: start; position: relative; z-index: 1; }
@@ -280,16 +242,13 @@ const [principal, secundario] = [...casos, ...propios];
   .estreno h2 a:hover { color: var(--terracota); }
   .heroe-dial { padding-block: 48px 36px; }
 
+  /* Entrada: un fundido rápido y suave, sin ruido. */
   @media (prefers-reduced-motion: no-preference) {
-    .heroe-titulo .l { animation: sube 1s var(--ease) both; }
-    .heroe-titulo .l:nth-child(1) { animation-delay: 0.25s; }
-    .heroe-titulo .l:nth-child(2) { animation-delay: 0.35s; }
-    .heroe-titulo .l:nth-child(3) { animation-delay: 0.45s; }
-    .heroe-titulo .l:nth-child(4) { animation-delay: 0.55s; }
-    .heroe-bajada, .heroe-acciones { animation: sube 1s var(--ease) 0.75s both; }
-    .heroe-kicker { animation: sube 1s var(--ease) 0.1s both; }
+    .heroe-texto, .estreno { animation: aparece 0.9s var(--ease) both; }
+    .estreno { animation-delay: 0.15s; }
+    .heroe-dial { animation: aparece 1.2s ease 0.35s both; }
   }
-  @keyframes sube { from { opacity: 0; transform: translateY(28px); } }
+  @keyframes aparece { from { opacity: 0; transform: translateY(8px); } }
 
   @media (min-width: 900px) {
     .heroe-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); }
@@ -298,6 +257,8 @@ const [principal, secundario] = [...casos, ...propios];
 
   /* ---------- Manifiesto ---------- */
   .manifiesto { max-width: 34ch; margin: 0; }
+  :global(.manifiesto-onda) { margin-bottom: clamp(32px, 4vw, 48px); max-width: 560px; }
+  @media (min-width: 1000px) { :global(.manifiesto-onda) { margin-left: calc(100% / 4); } }
   @media (min-width: 1000px) {
     .manifiesto { font-size: clamp(2rem, 1rem + 1.6vw, 2.75rem); margin-left: calc(100% / 4); }
   }
