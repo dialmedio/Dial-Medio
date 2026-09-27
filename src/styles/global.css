@@ -32,6 +32,8 @@
   --linea-clara: rgba(232, 223, 208, 0.18);
 
   /* Tipografía */
+  --t-etq: .8rem;      /* rótulos en mono y mayúsculas: nunca más pequeños que esto */
+  --t-meta: .875rem;   /* datos en mono: lugar, año, duración, entregas */
   --f-display: 'Anton', 'Oswald Variable', Impact, sans-serif;
   --f-sub: 'Oswald Variable', 'Arial Narrow', sans-serif;
   --f-texto: 'Lora Variable', Georgia, serif;
@@ -157,9 +159,9 @@ ul, ol { margin: 0; padding: 0; }
 
 .kicker {
   font-family: var(--f-mono);
-  font-size: .75rem;
+  font-size: var(--t-etq);
   line-height: 1.4;
-  letter-spacing: .14em;
+  letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--texto-2);
   display: inline-flex;
@@ -176,9 +178,19 @@ ul, ol { margin: 0; padding: 0; }
 
 .mono {
   font-family: var(--f-mono);
-  font-size: .8125rem;
-  letter-spacing: .02em;
+  font-size: var(--t-meta);
+  letter-spacing: 0;
   line-height: 1.55;
+}
+
+/* Datos: mono en minúsculas, tamaño legible, sin espaciado extra. */
+.meta {
+  font-family: var(--f-mono);
+  font-size: var(--t-meta);
+  line-height: 1.5;
+  letter-spacing: 0;
+  color: var(--texto-2);
+  font-variant-numeric: tabular-nums;
 }
 
 .lead {
@@ -270,7 +282,7 @@ ul, ol { margin: 0; padding: 0; }
 /* ---------- Marcadores de contenido pendiente ---------- */
 .pendiente {
   font-family: var(--f-mono);
-  font-size: .72rem;
+  font-size: var(--t-etq);
   letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--ambar);
@@ -283,10 +295,10 @@ ul, ol { margin: 0; padding: 0; }
 /* ---------- Etiquetas ---------- */
 .etiqueta {
   font-family: var(--f-mono);
-  font-size: .7rem;
-  letter-spacing: .1em;
+  font-size: var(--t-etq);
+  letter-spacing: .08em;
   text-transform: uppercase;
-  padding: .35em .7em;
+  padding: .45em .95em;
   border: 1px solid var(--borde);
   border-radius: 100px;
   white-space: nowrap;

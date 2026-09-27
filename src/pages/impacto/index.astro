@@ -30,6 +30,7 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
     kicker="Dial Impacto"
     titulo="Historias que muestran lo que tu organización <em>transforma.</em>"
     bajada="Documental, cobertura y video para quienes trabajan con comunidades y territorios."
+    indice={[...servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` })), { texto: 'Trabajo', href: '#portafolio' }]}
   >
     <ul class="etiquetas publicos" aria-label="Para quién">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
     <div class="acciones">

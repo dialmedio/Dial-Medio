@@ -30,6 +30,7 @@ const espacios = [
     kicker="Dial Encuentros"
     titulo="Producimos el encuentro. Y lo dejamos <em>contado.</em>"
     bajada="Foros, festivales, lanzamientos y música en vivo. De la tarima a la pantalla, con un solo equipo."
+    indice={[...servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` })), { texto: 'Espacios', href: '#espacios' }, { texto: 'Celebraciones privadas', href: '/encuentros/celebraciones' }]}
   >
     <div class="acciones">
       <a href="/contacto?linea=encuentros" class="btn">Cotizar un evento <span class="flecha">→</span></a>
@@ -49,7 +50,7 @@ const espacios = [
     </div>
   </section>
 
-  <section class="seccion compacta tema-hueso">
+  <section class="seccion compacta tema-hueso" id="espacios">
     <div class="contenedor espacios">
       <div data-revela>
         <p class="kicker">{dos(2)} — Espacios</p>
@@ -124,7 +125,7 @@ const espacios = [
   .espacios p { margin: 0; max-width: 40ch; }
   .espacios ul { list-style: none; border-top: 1px solid var(--borde); }
   .espacios li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 22px 0; border-bottom: 1px solid var(--borde); }
-  .espacios li .mono { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; text-align: right; }
+  .espacios li .mono { text-align: right; }
   @media (min-width: 900px) { .espacios { grid-template-columns: 1fr 1.3fr; gap: 88px; align-items: start; } }
 
   .celebra { display: block; text-decoration: none; border-top: 1px solid var(--linea); transition: background 0.3s; }

@@ -1,26 +1,38 @@
 ---
 /**
- * Regla de frecuencias AM. La aguja barre el ruido y se detiene en 810 AM,
- * homenaje a Radio Sutatenza. Es el gesto "del ruido a la señal".
+ * Regla de frecuencias AM. La aguja busca sin parar, con calma: recorre el dial,
+ * se detiene en frecuencias al azar y de vez en cuando encuentra la señal en 810 AM
+ * (homenaje a Radio Sutatenza). Es el gesto "del ruido a la señal".
+ * Con `conSenal={false}` nunca la encuentra (página 404).
  */
 interface Props {
   frecuencia?: number;
+  conSenal?: boolean;
   class?: string;
 }
-const { frecuencia = 810, class: clase = '' } = Astro.props;
+const { frecuencia = 810, conSenal = true, class: clase = '' } = Astro.props;
 const min = 530;
 const max = 1700;
 const ancho = max - min;
 const x = (f: number) => f - min;
-const ticks = [] as { x: number; tipo: 'mayor' | 'medio' | 'menor'; f: number }[];
+const ticks = [] as { x: number; tipo: 'mayor' | 'medio' | 'menor' }[];
 for (let f = 540; f <= max; f += 10) {
-  ticks.push({ x: x(f), f, tipo: f % 100 === 0 ? 'mayor' : f % 50 === 0 ? 'medio' : 'menor' });
+  ticks.push({ x: x(f), tipo: f % 100 === 0 ? 'mayor' : f % 50 === 0 ? 'medio' : 'menor' });
 }
 const etiquetas = [600, 700, 800, 1000, 1200, 1400, 1600];
 const pct = (x(frecuencia) / ancho) * 100;
 ---
 
-<div class:list={['sintonizador', clase]} style={`--pos:${pct}%`} aria-hidden="true">
+<div
+  class:list={['sintonizador', clase]}
+  style={`--pos:${pct}%`}
+  data-sintonizador
+  data-min={min}
+  data-max={max}
+  data-frecuencia={frecuencia}
+  data-senal={conSenal ? '1' : '0'}
+  aria-hidden="true"
+>
   <div class="sint-etiquetas mono">
     <span>Ruido</span>
     <span>kHz</span>
@@ -29,54 +41,131 @@ const pct = (x(frecuencia) / ancho) * 100;
     <svg viewBox={`0 0 ${ancho} 40`} preserveAspectRatio="none">
       {
         ticks.map((t) => (
-          <line
-            x1={t.x}
-            x2={t.x}
-            y1={t.tipo === 'mayor' ? 8 : t.tipo === 'medio' ? 18 : 25}
-            y2="40"
-            class={t.tipo}
-          />
+          <line x1={t.x} x2={t.x} y1={t.tipo === 'mayor' ? 8 : t.tipo === 'medio' ? 18 : 25} y2="40" class={t.tipo} />
         ))
       }
     </svg>
     <div class="sint-numeros mono">
       {etiquetas.map((f) => <span style={`left:${(x(f) / ancho) * 100}%`}>{f}</span>)}
     </div>
-    <div class="sint-aguja">
-      <span class="sint-señal mono">Señal · {frecuencia} AM</span>
+    <div class="sint-aguja" data-aguja>
+      <span class="sint-lectura mono" data-lectura>{conSenal ? `Señal · ${frecuencia} AM` : 'Sin señal'}</span>
     </div>
   </div>
 </div>
 
+<script>
+  const reducir = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-sintonizador]').forEach((raiz) => {
+    const aguja = raiz.querySelector<HTMLElement>('[data-aguja]')!;
+    const lectura = raiz.querySelector<HTMLElement>('[data-lectura]')!;
+    const min = Number(raiz.dataset.min);
+    const max = Number(raiz.dataset.max);
+    const meta = Number(raiz.dataset.frecuencia);
+    const conSenal = raiz.dataset.senal === '1';
+    if (reducir) return;
+
+    const pct = (f: number) => ((f - min) / (max - min)) * 100;
+    const suave = (t: number) => 0.5 - Math.cos(Math.PI * t) / 2;
+    const azar = (a: number, b: number) => a + Math.random() * (b - a);
+
+    let actual = max - 60;
+    let desde = actual;
+    let hacia = conSenal ? meta : 1180;
+    let inicio = performance.now();
+    let duracion = 3200;
+    let pausaHasta = 0;
+    let visibles = true;
+    let saltosSinSenal = 0;
+
+    const pintar = (f: number, sintonizada: boolean) => {
+      aguja.style.left = `${pct(f)}%`;
+      aguja.classList.toggle('sintonizada', sintonizada);
+      raiz.classList.toggle('lectura-izq', pct(f) > 80);
+      lectura.textContent = sintonizada ? `Señal · ${meta} AM` : conSenal ? `${Math.round(f / 10) * 10} kHz` : 'Sin señal';
+    };
+
+    const siguiente = (ahora: number) => {
+      desde = actual;
+      // Cada tanto encuentra la señal; el resto del tiempo sigue buscando.
+      const enSenal = Math.abs(actual - meta) < 20;
+      const irASenal = conSenal && !enSenal && (saltosSinSenal >= 3 || Math.random() < 0.3);
+      if (irASenal) {
+        hacia = meta;
+        saltosSinSenal = 0;
+      } else {
+        let f = actual;
+        while (Math.abs(f - actual) < 160 || Math.abs(f - meta) < 40) f = azar(min + 30, max - 30);
+        hacia = f;
+        saltosSinSenal++;
+      }
+      duracion = Math.min(7000, 1800 + Math.abs(hacia - desde) * 5.5);
+      inicio = ahora;
+    };
+
+    const cuadro = (ahora: number) => {
+      if (visibles && !document.hidden) {
+        if (ahora < pausaHasta) {
+          // En pausa: un temblor mínimo, como una mano que no suelta el dial.
+          const temblor = hacia === meta ? 0 : Math.sin(ahora / 420) * 1.5;
+          actual = hacia + temblor;
+          pintar(actual, hacia === meta && conSenal);
+        } else if (pausaHasta && ahora >= pausaHasta) {
+          pausaHasta = 0;
+          siguiente(ahora);
+        } else {
+          const t = Math.max(0, Math.min((ahora - inicio) / duracion, 1));
+          const oscilacion = Math.sin(t * Math.PI * 3) * (1 - t) * 14;
+          actual = desde + (hacia - desde) * suave(t) + oscilacion;
+          pintar(actual, false);
+          if (t >= 1) {
+            actual = hacia;
+            pausaHasta = ahora + (hacia === meta ? azar(4200, 6000) : azar(1100, 2400));
+          }
+        }
+      }
+      requestAnimationFrame(cuadro);
+    };
+
+    new IntersectionObserver(([e]) => (visibles = e.isIntersecting)).observe(raiz);
+    inicio = performance.now() + 300;
+    requestAnimationFrame(cuadro);
+  });
+</script>
+
 <style>
-  .sintonizador { position: relative; padding-top: 34px; }
+  .sintonizador { position: relative; padding-top: 38px; }
   .sint-etiquetas {
     position: absolute;
     top: 0; left: 0; right: 0;
     display: flex;
     justify-content: space-between;
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    font-size: var(--t-etq);
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--hueso-2);
   }
-  .sint-regla { position: relative; height: 64px; }
+  .sint-regla { position: relative; height: 66px; }
   .sint-regla svg { width: 100%; height: 40px; overflow: visible; }
   .sint-regla line { stroke: var(--hueso); vector-effect: non-scaling-stroke; stroke-width: 1; }
   .sint-regla line.menor { opacity: 0.28; }
   .sint-regla line.medio { opacity: 0.5; }
   .sint-regla line.mayor { opacity: 0.85; }
-  .sint-numeros { position: relative; height: 22px; font-size: 0.66rem; color: var(--hueso-2); letter-spacing: 0.06em; }
-  .sint-numeros span { position: absolute; top: 6px; transform: translateX(-50%); }
+  .sint-numeros { position: relative; height: 24px; font-size: 0.75rem; color: var(--hueso-2); }
+  .sint-numeros span { position: absolute; top: 7px; transform: translateX(-50%); }
 
   .sint-aguja {
     position: absolute;
     top: -14px;
-    bottom: 18px;
+    bottom: 20px;
     left: var(--pos);
     width: 2px;
+    margin-left: -1px;
     background: var(--terracota);
-    box-shadow: 0 0 18px rgba(193, 80, 46, 0.7);
+    box-shadow: 0 0 14px rgba(193, 80, 46, 0.55);
+    transition: box-shadow 0.8s var(--ease);
+    will-change: left;
   }
   .sint-aguja::before {
     content: '';
@@ -87,31 +176,24 @@ const pct = (x(frecuencia) / ancho) * 100;
     border-radius: 50%;
     background: var(--terracota);
     transform: translateX(-50%);
+    transition: box-shadow 0.8s var(--ease), transform 0.8s var(--ease);
   }
-  .sint-señal {
+  .sint-aguja.sintonizada { box-shadow: 0 0 26px rgba(217, 122, 52, 0.9); }
+  .sint-aguja.sintonizada::before { box-shadow: 0 0 0 6px rgba(217, 122, 52, 0.22); transform: translateX(-50%) scale(1.15); }
+  .sint-lectura {
     position: absolute;
-    top: -34px;
+    top: -38px;
     left: 12px;
     white-space: nowrap;
-    font-size: 0.68rem;
-    letter-spacing: 0.16em;
+    font-size: var(--t-etq);
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--ambar);
+    color: var(--hueso-2);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.6s;
   }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .sint-aguja { animation: barrer 2.6s cubic-bezier(0.5, 0, 0.2, 1) 0.3s both; }
-    .sint-señal { animation: aparece 0.6s ease 2.7s both; }
-  }
-  @keyframes barrer {
-    0% { left: 96%; }
-    35% { left: 58%; }
-    55% { left: 71%; }
-    72% { left: calc(var(--pos) - 7%); }
-    86% { left: calc(var(--pos) + 2.5%); }
-    100% { left: var(--pos); }
-  }
-  @keyframes aparece { from { opacity: 0; transform: translateY(4px); } }
+  .sintonizada .sint-lectura { color: var(--ambar); }
+  .lectura-izq .sint-lectura { left: auto; right: 12px; }
 
   @media (max-width: 600px) {
     .sint-numeros span:nth-child(odd):not(:first-child) { display: none; }

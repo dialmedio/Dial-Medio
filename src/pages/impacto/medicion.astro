@@ -33,13 +33,14 @@ const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos 
     kicker="Dial Impacto · Pieza + medición"
     titulo="Medimos lo que una historia <em>mueve.</em>"
     bajada="Una pieza audiovisual con una evaluación antes y después de verla. Tu organización sabe qué cambió en su audiencia y lo puede reportar."
+    indice={[{ texto: 'El método', href: '#metodo' }, { texto: 'Qué medimos', href: '#que-medimos' }, { texto: 'Qué recibes', href: '#informe' }]}
   >
     <div class="acciones">
       <a href="/contacto?linea=impacto&servicio=pieza-con-medicion" class="btn">Cotizar pieza con medición <span class="flecha">→</span></a>
     </div>
   </PortadaPagina>
 
-  <section class="seccion tema-papel">
+  <section class="seccion tema-papel" id="metodo">
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
@@ -61,7 +62,7 @@ const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos 
     </div>
   </section>
 
-  <section class="seccion tema-carbon grano">
+  <section class="seccion tema-carbon grano" id="que-medimos">
     <div class="contenedor med-grid">
       <div class="med-texto">
         <p class="kicker" data-revela>{dos(2)} — Qué medimos</p>
@@ -81,7 +82,7 @@ const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos 
     </div>
   </section>
 
-  <section class="seccion tema-hueso">
+  <section class="seccion tema-hueso" id="informe">
     <div class="contenedor informe">
       <div data-revela>
         <p class="kicker">{dos(3)} — Qué recibes</p>

@@ -1,5 +1,8 @@
 ---
-/** Portada de las páginas interiores. */
+/**
+ * Portada de las páginas interiores.
+ * `indice` agrega a la derecha los accesos a las secciones de la página.
+ */
 import Simbolo from './Simbolo.astro';
 
 interface Props {
@@ -8,17 +11,38 @@ interface Props {
   bajada?: string;
   tema?: 'carbon' | 'hueso';
   simbolo?: boolean;
+  indice?: { texto: string; href: string }[];
 }
-const { kicker, titulo, bajada, tema = 'carbon', simbolo = false } = Astro.props;
+const { kicker, titulo, bajada, tema = 'carbon', simbolo = false, indice = [] } = Astro.props;
 ---
 
-<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon' }]}>
+<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon', 'con-indice': indice.length > 0 }]}>
   {simbolo && <Simbolo tono={tema === 'carbon' ? 'claro' : 'oscuro'} class="portada-pag-simbolo" anima />}
-  <div class="contenedor portada-pag-cuerpo">
-    <p class="kicker"><span class="acento">{kicker}</span></p>
-    <h1 class="display d-2" set:html={titulo} />
-    {bajada && <p class="lead texto-2">{bajada}</p>}
-    <slot />
+  <div class="contenedor portada-pag-grid">
+    <div class="portada-pag-cuerpo">
+      <p class="kicker"><span class="acento">{kicker}</span></p>
+      <h1 class="display d-2" set:html={titulo} />
+      {bajada && <p class="lead texto-2">{bajada}</p>}
+      <slot />
+    </div>
+    {
+      indice.length > 0 && (
+        <nav class="indice" aria-label="En esta página">
+          <p class="kicker sin-linea">En esta página</p>
+          <ol>
+            {indice.map((i, n) => (
+              <li>
+                <a href={i.href}>
+                  <span class="mono">{String(n + 1).padStart(2, '0')}</span>
+                  <span>{i.texto}</span>
+                  <span class="indice-flecha" aria-hidden="true">{i.href.startsWith('#') ? '↓' : '→'}</span>
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      )
+    }
   </div>
 </section>
 
@@ -26,12 +50,41 @@ const { kicker, titulo, bajada, tema = 'carbon', simbolo = false } = Astro.props
   .portada-pag {
     position: relative;
     overflow: hidden;
-    padding-block: clamp(72px, 10vw, 140px) clamp(64px, 8vw, 112px);
+    padding-block: clamp(72px, 10vw, 136px) clamp(64px, 8vw, 104px);
   }
+  .portada-pag-grid { display: grid; gap: 56px; align-items: end; }
   .portada-pag-cuerpo { display: grid; gap: 26px; justify-items: start; }
   .portada-pag h1 { max-width: 15ch; }
   .portada-pag h1 :global(em) { font-style: normal; color: var(--terracota); }
   .portada-pag .lead { margin: 0; max-width: 46ch; }
+
+  .indice ol { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
+  .indice a {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr auto;
+    align-items: baseline;
+    gap: 8px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--borde);
+    text-decoration: none;
+    font-family: var(--f-sub);
+    font-weight: 500;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    transition: color 0.2s, padding 0.3s var(--ease);
+  }
+  .indice .mono { color: var(--acento-texto); font-size: var(--t-meta); }
+  .indice-flecha { color: var(--texto-2); transition: transform 0.3s var(--ease), color 0.2s; }
+  .indice a:hover { padding-left: 6px; }
+  .indice a:hover .indice-flecha { transform: translateY(3px); color: var(--acento-texto); }
+
+  @media (max-width: 999px) {
+    .indice { display: none; }
+  }
+  @media (min-width: 1000px) {
+    .con-indice .portada-pag-grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 88px; }
+  }
+
   .portada-pag :global(.portada-pag-simbolo) {
     position: absolute;
     right: calc(-1 * clamp(80px, 12vw, 200px));
@@ -40,8 +93,5 @@ const { kicker, titulo, bajada, tema = 'carbon', simbolo = false } = Astro.props
     transform: translateY(-50%);
     opacity: 0.16;
     z-index: 0 !important;
-  }
-  @media (max-width: 700px) {
-    .portada-pag :global(.portada-pag-simbolo) { top: 30px; transform: none; width: 90vw; right: -40vw; opacity: 0.12; }
   }
 </style>

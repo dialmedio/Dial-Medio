@@ -103,14 +103,14 @@ const [principal, secundario] = [...casos, ...propios];
                 <span class="mono servicio-num">{dos(i + 1)}</span>
                 <span class="display d-4 servicio-titulo">{s.data.titulo}</span>
                 <span class="servicio-resumen texto-2">{s.data.resumen}</span>
-                <span class="servicio-entrega mono">{s.data.entregables.join(' · ')}</span>
+                <span class="servicio-entrega meta">{s.data.entregables.join(' · ')}</span>
                 <span class="servicio-flecha" aria-hidden="true">→</span>
               </a>
             </li>
           ))
         }
       </ol>
-      <p class="nota-cotiza mono texto-2" data-revela>Cada proyecto se cotiza a la medida.</p>
+      <p class="nota-cotiza meta" data-revela>Cada proyecto se cotiza a la medida.</p>
     </div>
   </section>
 
@@ -139,7 +139,7 @@ const [principal, secundario] = [...casos, ...propios];
                     <a href={p!.href}>{p!.titulo}</a>
                   </h3>
                   {i === 0 && <p class="texto-2 obra-resumen">{p!.resumen}</p>}
-                  <p class="mono texto-2 obra-meta">
+                  <p class="meta obra-meta">
                     {p!.meta}
                     {p!.duracion && ` · ${p!.duracion}`}
                   </p>
@@ -192,7 +192,7 @@ const [principal, secundario] = [...casos, ...propios];
           debate && (
             <div class="linea-video">
               <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
-              <p class="mono texto-2">Debate · {debate.data.duracion}</p>
+              <p class="meta">Debate · {debate.data.duracion}</p>
             </div>
           )
         }
@@ -311,8 +311,8 @@ const [principal, secundario] = [...casos, ...propios];
   .servicio-num { color: var(--terracota-ink); padding-top: 0.5em; }
   .servicio-titulo { grid-column: 2; transition: color 0.3s; }
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
-  .servicio-resumen { grid-column: 2; font-size: 0.98rem; max-width: 56ch; }
-  .servicio-entrega { grid-column: 2; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cobre); }
+  .servicio-resumen { grid-column: 2; font-size: 1.02rem; max-width: 56ch; }
+  .servicio-entrega { grid-column: 2; }
   .servicio-flecha { grid-column: 3; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
   .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
   @media (min-width: 1000px) {
@@ -321,7 +321,7 @@ const [principal, secundario] = [...casos, ...propios];
     .servicio-entrega { grid-column: 3; }
     .servicio-flecha { grid-column: 4; justify-self: end; }
   }
-  .nota-cotiza { margin: 28px 0 0; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .nota-cotiza { margin: 28px 0 0; }
 
   /* ---------- Trabajo ---------- */
   .trabajo { display: grid; gap: 48px 40px; align-items: start; }
@@ -332,7 +332,7 @@ const [principal, secundario] = [...casos, ...propios];
   .obra h3 a:hover { color: var(--terracota-ink); }
   .obra-resumen { max-width: 58ch; }
   .obra-mas { justify-self: start; margin-top: 18px; }
-  .obra-meta { font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .obra-meta { }
   @media (min-width: 900px) {
     .trabajo { grid-template-columns: 1.75fr 1fr; }
   }
@@ -354,7 +354,7 @@ const [principal, secundario] = [...casos, ...propios];
   a.linea-caja:hover { background: var(--hueso); }
   a.linea-caja:hover .enlace { color: var(--terracota-ink); gap: 0.9em; }
   .linea-video { width: 100%; display: grid; gap: 12px; }
-  .linea-video p { margin: 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .linea-video p { margin: 0; }
   @media (min-width: 980px) {
     .lineas { grid-template-columns: 1fr 1fr; }
     .linea-caja:first-child .linea-interior { margin-left: auto; margin-right: 56px; }

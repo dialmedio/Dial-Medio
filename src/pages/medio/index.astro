@@ -224,7 +224,7 @@ const reglas = [
     background: var(--terracota);
     margin: 0 0.07em;
   }
-  .firma { color: var(--ambar); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin: -6px 0 0; }
+  .firma { color: var(--ambar); letter-spacing: 0.26em; text-transform: uppercase; font-size: 0.9rem; margin: -6px 0 0; }
   .redes { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
   .redes a { text-decoration: none; color: var(--hueso-2); transition: color 0.2s, border-color 0.2s; }
   .redes a:hover { color: var(--hueso); border-color: var(--hueso); }
@@ -245,14 +245,14 @@ const reglas = [
     padding: 11px 0;
     border-bottom: 1px solid var(--borde);
     text-decoration: none;
-    font-size: 0.92rem;
-    line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.45;
     transition: color 0.2s, padding 0.3s var(--ease);
   }
   .capitulos li a:hover { color: var(--hueso); padding-left: 6px; }
   .capitulos li a span:last-child { color: var(--hueso-2); }
   .capitulos li a:hover span:last-child { color: var(--hueso); }
-  .capitulos .mono { font-size: 0.75rem; }
+  .capitulos .mono { font-size: var(--t-meta); }
 
   .reglas { list-style: none; display: grid; gap: 36px; margin-top: clamp(64px, 8vw, 104px); }
   .reglas li { display: grid; gap: 12px; align-content: start; }
@@ -279,7 +279,7 @@ const reglas = [
     .clips { padding-inline: calc((100vw - var(--ancho)) / 2); }
   }
   .clip { scroll-snap-align: start; display: grid; gap: 12px; align-content: start; }
-  .clip-titulo { margin: 0; font-size: 0.92rem; line-height: 1.35; color: var(--hueso-2); }
+  .clip-titulo { margin: 0; font-size: 1rem; line-height: 1.4; color: var(--hueso-2); }
 
   .rejilla-2 { display: grid; gap: 64px 32px; }
   @media (min-width: 760px) { .rejilla-2 { grid-template-columns: repeat(2, 1fr); } }
@@ -287,7 +287,7 @@ const reglas = [
   .camino { margin-top: clamp(64px, 8vw, 104px); display: grid; gap: 20px; }
   .camino ul { list-style: none; border-top: 1px solid var(--borde); }
   .camino li { display: grid; gap: 6px 32px; padding: 22px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
-  .camino li .mono { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .camino li .mono { font-size: var(--t-etq); letter-spacing: 0.1em; text-transform: uppercase; }
   @media (min-width: 900px) { .camino li { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 10rem; } .camino li .mono { text-align: right; } }
   .podcast { display: grid; gap: 40px; align-items: center; }
   .podcast h2 { margin-block: 18px; }

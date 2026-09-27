@@ -81,13 +81,13 @@ const fmt = (n: number) => n.toFixed(1).replace('.', ',');
 <style>
   .caso-portada { padding-block: clamp(56px, 8vw, 104px); position: relative; }
   .caso-portada .contenedor { display: grid; gap: 24px; }
-  .volver { text-decoration: none; color: var(--hueso-2); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .volver { text-decoration: none; color: var(--hueso-2); font-size: var(--t-etq); letter-spacing: 0.12em; text-transform: uppercase; }
   .volver:hover { color: var(--terracota); }
   .caso-portada h1 { max-width: 18ch; }
   .caso-portada .lead { margin: 0; max-width: 56ch; }
   .caso-video { margin-top: 16px; }
   .caso-ficha { display: flex; flex-wrap: wrap; gap: 12px 48px; margin: 8px 0 0; }
-  .caso-ficha dt { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hueso-2); }
+  .caso-ficha dt { font-size: var(--t-etq); letter-spacing: 0.12em; text-transform: uppercase; color: var(--hueso-2); font-family: var(--f-mono); }
   .caso-ficha dd { margin: 4px 0 0; }
   .caso-cuerpo { display: grid; gap: 48px; }
   @media (min-width: 980px) { .caso-cuerpo { grid-template-columns: 1.4fr 1fr; gap: 88px; align-items: start; } }

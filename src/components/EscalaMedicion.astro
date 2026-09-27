@@ -76,8 +76,8 @@ const pos = (v: number) => `${((v - 1) / 9) * 100}%`;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
+    font-size: var(--t-etq);
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--hueso-2);
     margin-bottom: 26px;
@@ -85,11 +85,11 @@ const pos = (v: number) => `${((v - 1) / 9) * 100}%`;
   .escala-aviso { color: var(--ambar); }
   .escala-numeros,
   .escala-pista { margin-left: 52px; margin-right: 10px; position: relative; }
-  .escala-numeros { height: 20px; font-size: 0.7rem; color: var(--hueso-2); }
+  .escala-numeros { height: 22px; font-size: 0.8rem; color: var(--hueso-2); }
   .escala-numeros span { position: absolute; transform: translateX(-50%); }
   .escala-filas { list-style: none; display: grid; gap: 4px; margin-top: 8px; }
   .escala-fila { display: flex; align-items: center; height: 34px; position: relative; }
-  .escala-etq { position: absolute; left: 0; font-size: 0.68rem; color: var(--hueso-2); }
+  .escala-etq { position: absolute; left: 0; font-size: 0.78rem; color: var(--hueso-2); }
   .escala-pista {
     flex: 1;
     height: 1px;
@@ -133,12 +133,12 @@ const pos = (v: number) => `${((v - 1) / 9) * 100}%`;
     margin-top: 26px;
     padding-top: 20px;
     border-top: 1px solid var(--linea-clara);
-    font-size: 0.8rem;
+    font-size: var(--t-etq);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--hueso-2);
   }
-  .escala-resumen strong { color: var(--hueso); font-weight: 700; font-size: 1.05rem; margin-left: 4px; }
+  .escala-resumen strong { color: var(--hueso); font-weight: 700; font-size: 1.2rem; margin-left: 4px; }
   .escala-flecha { color: var(--ambar); }
   .escala-leyenda { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
   .escala-leyenda.antes { border: 1.5px solid var(--ambar); }

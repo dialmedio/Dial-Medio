@@ -17,8 +17,11 @@ const cotizar = `/contacto?linea=${s.linea}&servicio=${servicio.id}`;
     <h3 class="display d-3">{s.titulo}</h3>
   </header>
   <p class="sd-resumen">{s.resumen}</p>
-  <p class="sd-para texto-2"><span class="mono">Para</span> {s.paraQuien}</p>
   <div class="sd-listas">
+    <div class="sd-para">
+      <p class="kicker sin-linea">Para quién</p>
+      <p class="texto-2">{s.paraQuien}</p>
+    </div>
     <div>
       <p class="kicker sin-linea">Incluye</p>
       <ul>{s.incluye.map((i) => <li>{i}</li>)}</ul>
@@ -42,11 +45,12 @@ const cotizar = `/contacto?linea=${s.linea}&servicio=${servicio.id}`;
   }
   .sd-cabeza { display: grid; gap: 12px; }
   .sd-resumen { margin: 0; font-size: 1.08rem; max-width: 52ch; }
-  .sd-para { margin: 0; font-size: 0.95rem; }
-  .sd-para .mono { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; margin-right: 6px; color: var(--cobre); }
-  .sd-listas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; margin-block: 4px 8px; }
+  .sd-para { grid-column: 1 / -1; }
+  .sd-para p { margin: 0; }
+  .sd-para .texto-2 { margin-top: 10px; font-size: 1rem; max-width: 52ch; }
+  .sd-listas { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 24px; padding-top: 24px; border-top: 1px dashed var(--borde); width: 100%; margin-block: 4px 8px; }
   .sd-listas ul { list-style: none; display: grid; gap: 8px; margin-top: 12px; }
-  .sd-listas li { position: relative; padding-left: 16px; font-size: 0.95rem; line-height: 1.4; }
+  .sd-listas li { position: relative; padding-left: 16px; font-size: 1rem; line-height: 1.45; }
   .sd-listas li::before {
     content: '';
     position: absolute;
@@ -55,6 +59,6 @@ const cotizar = `/contacto?linea=${s.linea}&servicio=${servicio.id}`;
     border-radius: 50%;
     background: var(--terracota);
   }
-  .sd-listas ul.mono li { font-size: 0.78rem; }
+  .sd-listas ul.mono li { font-size: var(--t-meta); padding-top: 0.1em; }
   .sd-listas ul.mono li::before { background: none; border: 1px solid var(--cobre); }
 </style>

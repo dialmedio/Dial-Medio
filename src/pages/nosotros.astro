@@ -27,6 +27,7 @@ const recorrido = [
     kicker="Nosotros"
     titulo="Un solo equipo, de la idea al <em>estreno.</em>"
     bajada="Productora audiovisual colombiana con medio propio. Contamos, y medimos, el encuentro humano."
+    indice={[{ texto: 'Cómo trabajamos', href: '#proceso' }, { texto: 'Equipo', href: '#equipo' }, { texto: 'Capacidades', href: '#capacidades' }, { texto: 'Lo que no hacemos', href: '#criterios' }]}
   />
 
   <section class="seccion tema-papel">
@@ -157,7 +158,7 @@ const recorrido = [
   .intro { display: grid; gap: 48px; align-items: end; }
   .intro-frase { margin: 0; max-width: 22ch; font-size: clamp(1.8rem, 1rem + 2.4vw, 3.2rem); line-height: 1.2; }
   .recorrido ul { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
-  .recorrido li { padding: 11px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: 1.1rem; }
+  .recorrido li { padding: 12px 0; border-bottom: 1px solid var(--borde); font-size: 1.05rem; }
   @media (min-width: 980px) { .intro { grid-template-columns: 1.5fr 1fr; gap: 88px; } }
 
   .proceso { list-style: none; display: grid; border-top: 1px solid var(--borde); }
@@ -178,11 +179,11 @@ const recorrido = [
   .capacidades { display: grid; gap: 40px 32px; }
   .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 14px; align-content: start; }
   .capacidades ul { list-style: none; display: grid; gap: 8px; }
-  .capacidades li { color: var(--hueso-2); font-size: 0.95rem; line-height: 1.45; }
+  .capacidades li { color: var(--hueso-2); font-size: 1rem; line-height: 1.5; }
   @media (min-width: 760px) { .capacidades { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .capacidades { grid-template-columns: repeat(4, 1fr); } }
   .sueltos { margin-top: clamp(56px, 7vw, 96px); display: grid; gap: 20px; justify-items: start; }
-  .sueltos .etiqueta { color: var(--hueso); font-size: 0.75rem; }
+  .sueltos .etiqueta { color: var(--hueso); }
 
   .criterios { display: grid; gap: 40px; }
   .criterios h2 { margin-top: 18px; }

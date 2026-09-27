@@ -74,12 +74,12 @@ const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x
 <style>
   .pieza-portada { padding-block: clamp(48px, 7vw, 96px); position: relative; }
   .pieza-portada .contenedor { display: grid; gap: 22px; }
-  .volver { text-decoration: none; color: var(--hueso-2); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .volver { text-decoration: none; color: var(--hueso-2); font-size: var(--t-etq); letter-spacing: 0.12em; text-transform: uppercase; }
   .volver:hover { color: var(--terracota); }
   .pieza-portada h1 { max-width: 20ch; }
   .pieza-video { margin-top: 12px; }
   .ficha { display: flex; flex-wrap: wrap; gap: 12px 48px; margin: 6px 0 0; }
-  .ficha dt { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hueso-2); }
+  .ficha dt { font-size: var(--t-etq); letter-spacing: 0.12em; text-transform: uppercase; color: var(--hueso-2); }
   .ficha dd { margin: 4px 0 0; }
 
   .cuerpo { display: grid; gap: 56px; }
@@ -88,8 +88,8 @@ const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x
   .prosa .lead-xl { margin-bottom: 1.2em; }
   .lado { display: grid; gap: 40px; align-content: start; }
   .caps, .nombres { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
-  .caps li, .nombres li { border-bottom: 1px solid var(--borde); padding: 10px 0; font-size: 0.92rem; line-height: 1.4; }
+  .caps li, .nombres li { border-bottom: 1px solid var(--borde); padding: 10px 0; font-size: 1rem; line-height: 1.45; }
   .caps a { text-decoration: none; display: grid; grid-template-columns: 4.4em 1fr; gap: 8px; }
   .caps a:hover { color: var(--terracota-ink); }
-  .caps .mono { font-size: 0.75rem; }
+  .caps .mono { font-size: var(--t-meta); }
 </style>
