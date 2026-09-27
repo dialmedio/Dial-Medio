@@ -1,0 +1,166 @@
+---
+import Logo from './Logo.astro';
+import sitio from '../data/sitio.json';
+import { whatsapp } from '../lib/util';
+
+const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
+const nav = [
+  { texto: 'Impacto', href: '/impacto', nota: 'Documental y cobertura' },
+  { texto: 'Encuentros', href: '/encuentros', nota: 'Eventos' },
+  { texto: 'Medio', href: '/medio', nota: 'Obra propia' },
+  { texto: 'Nosotros', href: '/nosotros', nota: 'La casa' },
+];
+const activo = (href: string) => ruta === href || ruta.startsWith(href + '/');
+---
+
+<header class="cabecera" data-cabecera>
+  <div class="contenedor cabecera-fila">
+    <a href="/" class="cabecera-logo" aria-label="Dial, inicio">
+      <Logo tono="claro" />
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul>
+        {
+          nav.map((n) => (
+            <li>
+              <a href={n.href} aria-current={activo(n.href) ? 'page' : undefined}>
+                {n.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a href="/contacto" class="btn cabecera-cta">Cotizar</a>
+
+    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
+      <span class="sr-only">Abrir menú</span>
+      <span class="menu-lineas" aria-hidden="true"><span></span><span></span></span>
+    </button>
+  </div>
+
+  <div class="menu-movil grano" id="menu-movil" data-menu hidden>
+    <nav aria-label="Menú móvil" class="contenedor">
+      <ol>
+        {
+          nav.map((n, i) => (
+            <li style={`--i:${i}`}>
+              <a href={n.href} aria-current={activo(n.href) ? 'page' : undefined}>
+                <span class="mono">0{i + 1}</span>
+                <span class="display">{n.texto}</span>
+                <span class="mono nota">{n.nota}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="menu-pie">
+        <a href="/contacto" class="btn">Cotizar un proyecto <span class="flecha">→</span></a>
+        <a href={whatsapp()} class="btn linea" target="_blank" rel="noopener">WhatsApp</a>
+        <p class="mono">{sitio.correo}</p>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .cabecera {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(26, 22, 19, 0.94);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
+    color: var(--hueso);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .cabecera.con-scroll { border-bottom-color: var(--linea-clara); background: rgba(26, 22, 19, 0.97); }
+  .cabecera-fila {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 72px;
+  }
+  .cabecera-logo { text-decoration: none; font-size: 18px; margin-right: auto; }
+
+  .nav ul { display: flex; gap: clamp(20px, 2.6vw, 40px); list-style: none; }
+  .nav a {
+    font-family: var(--f-sub);
+    font-weight: 500;
+    font-size: 0.98rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--hueso-2);
+    padding-block: 8px;
+    position: relative;
+    transition: color 0.2s;
+  }
+  .nav a::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: var(--terracota);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease);
+  }
+  .nav a:hover, .nav a[aria-current='page'] { color: var(--hueso); }
+  .nav a:hover::after, .nav a[aria-current='page']::after { transform: scaleX(1); }
+  .cabecera-cta { min-height: 42px; padding-inline: 1.2em; font-size: 0.95rem; }
+
+  .menu-boton {
+    display: none;
+    width: 44px; height: 44px;
+    background: none;
+    border: 1px solid var(--linea-clara);
+    border-radius: var(--radio);
+    cursor: pointer;
+    place-items: center;
+  }
+  .menu-lineas { display: grid; gap: 6px; width: 18px; }
+  .menu-lineas span { height: 1.5px; background: var(--hueso); transition: transform 0.3s var(--ease); }
+  [aria-expanded='true'] .menu-lineas span:first-child { transform: translateY(3.75px) rotate(45deg); }
+  [aria-expanded='true'] .menu-lineas span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+
+  .menu-movil {
+    position: fixed;
+    inset: 72px 0 0 0;
+    background: var(--carbon);
+    overflow-y: auto;
+    padding-block: 24px 40px;
+  }
+  .menu-movil ol { list-style: none; border-top: 1px solid var(--linea-clara); }
+  .menu-movil li { border-bottom: 1px solid var(--linea-clara); }
+  .menu-movil li a {
+    display: grid;
+    grid-template-columns: 2.4em 1fr;
+    align-items: baseline;
+    gap: 2px 8px;
+    padding-block: 18px;
+    text-decoration: none;
+  }
+  .menu-movil .display { font-size: clamp(2.6rem, 12vw, 3.6rem); }
+  .menu-movil .mono { color: var(--hueso-2); }
+  .menu-movil .nota { grid-column: 2; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .menu-movil a[aria-current='page'] .display { color: var(--terracota); }
+  .menu-pie { display: grid; gap: 12px; margin-top: 32px; }
+  .menu-pie .btn { justify-content: center; }
+  .menu-pie p { color: var(--hueso-2); text-align: center; margin: 8px 0 0; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menu-movil:not([hidden]) li { animation: entra 0.6s var(--ease) both; animation-delay: calc(var(--i) * 0.06s); }
+  }
+  @keyframes entra { from { opacity: 0; transform: translateY(14px); } }
+
+  @media (max-width: 860px) {
+    .nav, .cabecera-cta { display: none; }
+    .menu-boton { display: grid; }
+    .cabecera-fila { height: 64px; }
+    .menu-movil { inset: 64px 0 0 0; }
+  }
+</style>

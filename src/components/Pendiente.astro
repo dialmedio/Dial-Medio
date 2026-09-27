@@ -1,0 +1,47 @@
+---
+/**
+ * Espacio reservado para material real que aún no existe.
+ * Se ve claramente como pendiente: no simula clientes ni resultados.
+ */
+import Simbolo from './Simbolo.astro';
+
+interface Props {
+  marca?: string;
+  titulo: string;
+  texto?: string;
+  formato?: 'horizontal' | 'vertical' | 'cuadrado';
+  class?: string;
+}
+const { marca = 'Caso pendiente', titulo, texto, formato = 'horizontal', class: clase = '' } = Astro.props;
+---
+
+<article class:list={['pendiente-caja', formato, clase]} data-revela>
+  <div class="pendiente-marco" aria-hidden="true">
+    <Simbolo tono="oscuro" class="pendiente-simbolo" />
+  </div>
+  <div class="pendiente-texto">
+    <span class="pendiente">[{marca}]</span>
+    <h3 class="sub s-2">{titulo}</h3>
+    {texto && <p class="texto-2">{texto}</p>}
+  </div>
+</article>
+
+<style>
+  .pendiente-caja { display: grid; gap: 20px; align-content: start; }
+  .pendiente-marco {
+    aspect-ratio: 16 / 9;
+    border: 1px dashed rgba(156, 107, 63, 0.55);
+    background:
+      linear-gradient(135deg, transparent 49.6%, rgba(156, 107, 63, 0.18) 49.8%, rgba(156, 107, 63, 0.18) 50.2%, transparent 50.4%),
+      rgba(232, 223, 208, 0.5);
+    display: grid;
+    place-items: center;
+  }
+  :global(.tema-carbon) .pendiente-marco { background: rgba(232, 223, 208, 0.04); border-color: rgba(217, 122, 52, 0.4); }
+  .vertical .pendiente-marco { aspect-ratio: 4 / 5; }
+  .cuadrado .pendiente-marco { aspect-ratio: 1; }
+  .pendiente-marco :global(.pendiente-simbolo) { width: 22%; opacity: 0.22; }
+  :global(.tema-carbon) .pendiente-marco :global(.pendiente-simbolo) { opacity: 0.35; filter: invert(1); }
+  .pendiente-texto { display: grid; gap: 10px; justify-items: start; }
+  .pendiente-texto p { margin: 0; font-size: 0.95rem; }
+</style>

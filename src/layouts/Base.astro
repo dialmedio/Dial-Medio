@@ -1,0 +1,151 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import sitio from '../data/sitio.json';
+
+interface Props {
+  titulo?: string;
+  descripcion?: string;
+  imagen?: string;
+  noindex?: boolean;
+  tipo?: 'website' | 'article' | 'video.other';
+}
+
+const {
+  titulo,
+  descripcion = sitio.descripcion,
+  imagen = '/og.png',
+  noindex = false,
+  tipo = 'website',
+} = Astro.props;
+
+const tituloCompleto = titulo ? `${titulo} · Dial` : `Dial · ${sitio.tagline}`;
+const canonica = new URL(Astro.url.pathname, Astro.site);
+const imagenAbs = new URL(imagen, Astro.site);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Dial',
+  slogan: sitio.tagline,
+  description: sitio.descripcion,
+  url: Astro.site?.toString(),
+  logo: new URL('/favicon.svg', Astro.site).toString(),
+  email: sitio.correo,
+  address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressCountry: 'CO' },
+  sameAs: sitio.redes.map((r) => r.url),
+};
+---
+
+<!doctype html>
+<html lang="es-CO">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{tituloCompleto}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonica} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#1a1613" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content={tipo} />
+    <meta property="og:site_name" content="Dial" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={tituloCompleto} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonica} />
+    <meta property="og:image" content={imagenAbs} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://i.ytimg.com" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body>
+    <a class="saltar" href="#contenido">Saltar al contenido</a>
+    <Header />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+
+    <script>
+      // Menú móvil
+      const boton = document.querySelector<HTMLButtonElement>('[data-menu-boton]');
+      const menu = document.querySelector<HTMLElement>('[data-menu]');
+      const cerrar = () => {
+        if (!boton || !menu) return;
+        boton.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+        document.body.style.overflow = '';
+      };
+      boton?.addEventListener('click', () => {
+        if (!menu) return;
+        const abierto = boton.getAttribute('aria-expanded') === 'true';
+        if (abierto) return cerrar();
+        boton.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+        document.body.style.overflow = 'hidden';
+      });
+      document.addEventListener('keydown', (e) => e.key === 'Escape' && cerrar());
+      matchMedia('(min-width: 861px)').addEventListener('change', cerrar);
+
+      // Borde de la cabecera al hacer scroll
+      const cabecera = document.querySelector('[data-cabecera]');
+      const alScroll = () => cabecera?.classList.toggle('con-scroll', scrollY > 8);
+      addEventListener('scroll', alScroll, { passive: true });
+      alScroll();
+
+      // Videos livianos: el reproductor solo carga al hacer clic
+      document.addEventListener('click', (e) => {
+        const btn = (e.target as HTMLElement).closest('.video-boton');
+        if (!btn) return;
+        const cont = btn.closest<HTMLElement>('[data-video]');
+        if (!cont) return;
+        const { video: id, plataforma, titulo } = cont.dataset;
+        const src =
+          plataforma === 'vimeo'
+            ? `https://player.vimeo.com/video/${id}?autoplay=1&dnt=1`
+            : `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+        iframe.title = titulo ?? 'Video';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        cont.classList.add('reproduciendo');
+        btn.replaceWith(iframe);
+        iframe.focus();
+      });
+      // Si YouTube no tiene miniatura en alta resolución, usa la estándar.
+      document.querySelectorAll<HTMLImageElement>('img[data-respaldo]').forEach((img) => {
+        const cambiar = () => {
+          if (img.dataset.respaldo && img.src !== img.dataset.respaldo) img.src = img.dataset.respaldo;
+        };
+        // YouTube responde 120x90 cuando no existe la versión grande.
+        const revisar = () => img.naturalWidth > 0 && img.naturalWidth <= 120 && cambiar();
+        img.addEventListener('error', cambiar);
+        img.complete ? revisar() : img.addEventListener('load', revisar, { once: true });
+      });
+
+      // Revelado suave al entrar en pantalla
+      const io = new IntersectionObserver(
+        (entradas) =>
+          entradas.forEach((en) => {
+            if (en.isIntersecting) {
+              en.target.classList.add('visible');
+              io.unobserve(en.target);
+            }
+          }),
+        { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+      );
+      document.querySelectorAll('[data-revela]').forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

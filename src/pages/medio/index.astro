@@ -1,0 +1,274 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Simbolo from '../../components/Simbolo.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import PiezaCard from '../../components/PiezaCard.astro';
+import Pendiente from '../../components/Pendiente.astro';
+import sitio from '../../data/sitio.json';
+import { anio, dos, estados, formatos, urlVideo } from '../../lib/util';
+
+const todo = (await getCollection('medio', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+const debates = todo.filter((m) => m.data.formato === 'debate');
+const [destacado] = debates;
+const clips = todo.filter((m) => m.data.formato === 'clip');
+const documentales = todo.filter((m) => m.data.formato === 'documental');
+const podcasts = todo.filter((m) => m.data.formato === 'videopodcast');
+
+const reglas = [
+  { n: '1', titulo: 'Una voz, diez alrededor', texto: 'Un debatiente fijo frente a un círculo de diez que piensan distinto. Los retadores rotan.' },
+  { n: '2', titulo: 'Rondas y banderas', texto: 'Rondas cronometradas y un sistema de banderas para pedir la palabra. Escuchar antes de responder.' },
+  { n: '3', titulo: 'Antes y después', texto: 'Encuestamos a la sala al entrar y al salir. La pregunta no es quién ganó, sino quién cambió.' },
+];
+---
+
+<Base
+  titulo="Dial Medio"
+  descripcion="La obra propia de Dial: debates entre sectores enfrentados, videopodcast y documentales. Sintonizar es conversar."
+>
+  <section class="medio-portada tema-carbon grano">
+    <div class="contenedor medio-portada-grid">
+      <div class="medio-portada-texto">
+        <p class="kicker"><span class="acento">Dial Medio</span> · Obra propia</p>
+        <h1 class="logotipo" aria-label="Dial Medio">
+          <span class="lt-dial">Dial</span><span class="lt-punto" aria-hidden="true"></span><span class="lt-medio">Medio</span>
+        </h1>
+        <p class="mono firma">Sintonizar es conversar</p>
+        <p class="lead texto-2">
+          Debates entre sectores enfrentados, videopodcast y documentales. Aquí probamos, con tiempo y sin encargo, el método
+          que luego llevamos a cada proyecto.
+        </p>
+        <ul class="redes">
+          {
+            sitio.redes.map((r) => (
+              <li>
+                <a href={r.url} target="_blank" rel="noopener" class="etiqueta">
+                  {r.nombre} {r.usuario}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <Simbolo tono="claro" anima class="medio-simbolo" />
+    </div>
+  </section>
+
+  {
+    destacado && (
+      <section class="seccion tema-carbon debate">
+        <div class="contenedor">
+          <header class="cabeza doble">
+            <div data-revela>
+              <p class="kicker">{dos(1)} — Debate</p>
+              <h2 class="display d-2">{destacado.data.titulo}</h2>
+            </div>
+            <p class="texto-2" data-revela>{destacado.data.resumen}</p>
+          </header>
+          <div class="debate-grid">
+            <div data-revela>
+              <VideoLite video={destacado.data.video!} titulo={destacado.data.titulo} />
+            </div>
+            <aside class="capitulos" data-revela style="--retraso:.1s">
+              <p class="kicker sin-linea">Tesis en debate · {destacado.data.duracion}</p>
+              <ol>
+                {destacado.data.capitulos.map((c) => (
+                  <li>
+                    <a href={`https://www.youtube.com/watch?v=${destacado.data.video!.id}&t=${c.tiempo.split(':').reduce((s, x) => s * 60 + Number(x), 0)}s`} target="_blank" rel="noopener">
+                      <span class="mono acento">{c.tiempo}</span>
+                      <span>{c.titulo}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+              <a href={`/medio/${destacado.id}`} class="enlace">Ficha completa <span>→</span></a>
+            </aside>
+          </div>
+
+          <ol class="reglas">
+            {reglas.map((r, i) => (
+              <li data-revela style={`--retraso:${i * 0.07}s`}>
+                <span class="display regla-n">{r.n}</span>
+                <h3 class="sub s-2">{r.titulo}</h3>
+                <p class="texto-2">{r.texto}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    clips.length > 0 && (
+      <section class="seccion compacta tema-carbon clips-sec">
+        <div class="contenedor">
+          <header class="clips-cabeza" data-revela>
+            <p class="kicker">{dos(2)} — Clips</p>
+            <a href={sitio.redes.find((r) => r.nombre === 'YouTube')?.url} class="enlace" target="_blank" rel="noopener">
+              Ver todo en YouTube <span>↗</span>
+            </a>
+          </header>
+        </div>
+        <div class="clips" role="list">
+          {clips.map((c) => (
+            <div class="clip" role="listitem">
+              <VideoLite video={c.data.video!} titulo={c.data.titulo} />
+              <p class="clip-titulo">{c.data.titulo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="seccion tema-papel" id="documentales">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — Documentales</p>
+          <h2 class="display d-2">Música, territorio y memoria.</h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Incluye Sámara, una serie sobre la música como fenómeno social, rodada en Colombia y en tres países de Asia.
+        </p>
+      </header>
+      <div class="rejilla-2">
+        {
+          documentales.map((d) => (
+            <PiezaCard
+              titulo={d.data.titulo}
+              video={d.data.video}
+              href={d.data.estado === 'publicado' ? `/medio/${d.id}` : undefined}
+              kicker={`Documental${d.data.serie ? ' · Serie ' + d.data.serie : ''}`}
+              resumen={d.data.resumen}
+              meta={d.data.estado === 'publicado' ? `${d.data.lugar} · ${anio(d.data.fecha)}` : d.data.lugar}
+              estado={estados[d.data.estado] || undefined}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-hueso">
+    <div class="contenedor podcast">
+      <div data-revela>
+        <p class="kicker">{dos(4)} — Videopodcast</p>
+        <h2 class="display d-3">Conversaciones uno a uno.</h2>
+        <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su territorio.</p>
+      </div>
+      {
+        podcasts.length > 0 ? (
+          podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={`/medio/${p.id}`} kicker="Videopodcast" />)
+        ) : (
+          <Pendiente marca="Episodios pendientes" titulo="Primeros episodios del videopodcast" texto="Cuando estén publicados, aparecen aquí automáticamente." />
+        )
+      }
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-terracota grano puente">
+    <div class="contenedor puente-grid">
+      <h2 class="display d-3" data-revela>¿Quieres llevar este método a tu organización?</h2>
+      <div data-revela style="--retraso:.1s">
+        <p class="lead">
+          Diseñamos conversaciones y piezas con medición para equipos, comunidades y audiencias que necesitan encontrarse.
+        </p>
+        <a href="/contacto?linea=impacto&servicio=pieza-con-medicion" class="btn">Conversemos <span class="flecha">→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .medio-portada { position: relative; overflow: hidden; padding-block: clamp(64px, 9vw, 128px); }
+  .medio-portada-grid { display: grid; gap: 40px; align-items: center; }
+  .medio-portada-texto { display: grid; gap: 24px; justify-items: start; }
+  .medio-portada .lead { margin: 0; max-width: 46ch; }
+  .logotipo {
+    font-family: var(--f-display);
+    text-transform: uppercase;
+    font-size: clamp(3.6rem, 1rem + 11vw, 10rem);
+    line-height: 0.86;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Versión principal del manual: apilada, DIAL en hueso y MEDIO en terracota, sin punto. */
+  .lt-punto { display: none; }
+  .lt-dial { color: var(--hueso); }
+  .lt-medio { color: var(--terracota); }
+  .lt-punto {
+    width: 0.3em; height: 0.3em;
+    border-radius: 50%;
+    background: var(--terracota);
+    margin: 0 0.07em;
+  }
+  .firma { color: var(--ambar); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.8rem; margin: -6px 0 0; }
+  .redes { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+  .redes a { text-decoration: none; color: var(--hueso-2); transition: color 0.2s, border-color 0.2s; }
+  .redes a:hover { color: var(--hueso); border-color: var(--hueso); }
+  .medio-portada :global(.medio-simbolo) { width: min(70vw, 420px); justify-self: center; }
+  @media (min-width: 980px) {
+    .medio-portada-grid { grid-template-columns: 1.4fr 1fr; }
+  }
+
+  .debate { padding-top: 0; }
+  .debate-grid { display: grid; gap: 32px; align-items: start; }
+  @media (min-width: 1000px) { .debate-grid { grid-template-columns: 1.7fr 1fr; gap: 40px; } }
+  .capitulos { display: grid; gap: 16px; justify-items: start; }
+  .capitulos ol { list-style: none; width: 100%; border-top: 1px solid var(--borde); }
+  .capitulos li a {
+    display: grid;
+    grid-template-columns: 4.6em 1fr;
+    gap: 10px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--borde);
+    text-decoration: none;
+    font-size: 0.92rem;
+    line-height: 1.4;
+    transition: color 0.2s, padding 0.3s var(--ease);
+  }
+  .capitulos li a:hover { color: var(--hueso); padding-left: 6px; }
+  .capitulos li a span:last-child { color: var(--hueso-2); }
+  .capitulos li a:hover span:last-child { color: var(--hueso); }
+  .capitulos .mono { font-size: 0.75rem; }
+
+  .reglas { list-style: none; display: grid; gap: 36px; margin-top: clamp(64px, 8vw, 104px); }
+  .reglas li { display: grid; gap: 12px; align-content: start; }
+  .reglas p { margin: 0; }
+  .regla-n { font-size: 4rem; line-height: 1; color: var(--terracota); }
+  @media (min-width: 900px) { .reglas { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
+
+  .clips-sec { border-top: 1px solid var(--linea-clara); }
+  .clips-cabeza { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }
+  .clips {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(62vw, 240px);
+    gap: 16px;
+    overflow-x: auto;
+    padding-inline: var(--gutter);
+    padding-bottom: 12px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: thin;
+    scrollbar-color: var(--carbon-3) transparent;
+  }
+  @media (min-width: 1400px) {
+    .clips { padding-inline: calc((100vw - var(--ancho)) / 2); }
+  }
+  .clip { scroll-snap-align: start; display: grid; gap: 12px; align-content: start; }
+  .clip-titulo { margin: 0; font-size: 0.92rem; line-height: 1.35; color: var(--hueso-2); }
+
+  .rejilla-2 { display: grid; gap: 64px 32px; }
+  @media (min-width: 760px) { .rejilla-2 { grid-template-columns: repeat(2, 1fr); } }
+
+  .podcast { display: grid; gap: 40px; align-items: center; }
+  .podcast h2 { margin-block: 18px; }
+  @media (min-width: 900px) { .podcast { grid-template-columns: 1fr 1fr; gap: 72px; } }
+
+  .puente-grid { display: grid; gap: 28px; align-items: end; }
+  .puente .lead { color: #f7f2ea; margin-bottom: 24px; }
+  @media (min-width: 900px) { .puente-grid { grid-template-columns: 1.2fr 1fr; gap: 64px; } }
+</style>

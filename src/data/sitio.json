@@ -1,0 +1,20 @@
+{
+  "nombre": "Dial",
+  "tagline": "Del ruido a la señal",
+  "promesa": "Contamos, y medimos, el encuentro humano.",
+  "descripcion": "Productora audiovisual colombiana con medio propio. Producimos historias reales de personas, comunidades y organizaciones, de la investigación al estreno.",
+  "ciudad": "Bogotá, Colombia",
+  "correo": "dialmediocol@gmail.com",
+  "whatsapp": {
+    "numero": "573104813624",
+    "visible": "+57 310 481 3624",
+    "contacto": "Martín Perea",
+    "mensaje": "Hola, Martín. Vi el sitio de Dial y quiero cotizar un proyecto."
+  },
+  "redes": [
+    { "nombre": "Instagram", "usuario": "@dialmedio", "url": "https://www.instagram.com/dialmedio/" },
+    { "nombre": "YouTube", "usuario": "@Dialmedio", "url": "https://www.youtube.com/@Dialmedio" },
+    { "nombre": "TikTok", "usuario": "@dialmedio", "url": "https://www.tiktok.com/@dialmedio" }
+  ],
+  "respuesta": "Respondemos en máximo dos días hábiles."
+}

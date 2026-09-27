@@ -1,0 +1,95 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import { anio, formatos, miniatura } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const piezas = await getCollection(
+    'medio',
+    (m) => !m.data.borrador && m.data.formato !== 'clip' && m.data.estado === 'publicado' && !!m.data.video,
+  );
+  return piezas.map((pieza) => ({ params: { pieza: pieza.id }, props: { pieza } }));
+}
+
+const { pieza } = Astro.props;
+const d = pieza.data;
+const { Content } = await render(pieza);
+const kicker = `${formatos[d.formato]}${d.serie ? ' · Serie ' + d.serie : ''}`;
+const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x), 0);
+---
+
+<Base titulo={d.titulo} descripcion={d.resumen} imagen={d.video ? miniatura(d.video) : undefined} tipo="video.other">
+  <section class="tema-carbon grano pieza-portada">
+    <div class="contenedor">
+      <a href="/medio" class="mono volver">← Dial Medio</a>
+      <p class="kicker"><span class="acento">{kicker}</span></p>
+      <h1 class="display d-2">{d.titulo}</h1>
+      <div class="pieza-video"><VideoLite video={d.video!} titulo={d.titulo} cargaInmediata /></div>
+      <dl class="ficha mono">
+        {d.lugar && <div><dt>Lugar</dt><dd>{d.lugar}</dd></div>}
+        <div><dt>Año</dt><dd>{anio(d.fecha)}</dd></div>
+        {d.duracion && <div><dt>Duración</dt><dd>{d.duracion}</dd></div>}
+        <div><dt>Producción</dt><dd>Dial · Obra propia</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor cuerpo">
+      <div class="prosa">
+        <p class="lead-xl">{d.resumen}</p>
+        <Content />
+      </div>
+      <aside class="lado">
+        {
+          d.capitulos.length > 0 && (
+            <div>
+              <p class="kicker sin-linea">Capítulos</p>
+              <ol class="caps">
+                {d.capitulos.map((c) => (
+                  <li>
+                    <a href={`https://www.youtube.com/watch?v=${d.video!.id}&t=${aSegundos(c.tiempo)}s`} target="_blank" rel="noopener">
+                      <span class="mono acento">{c.tiempo}</span> {c.titulo}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+        {
+          d.participantes.map((g) => (
+            <div>
+              <p class="kicker sin-linea">{g.grupo}</p>
+              <ul class="nombres">{g.nombres.map((n) => <li>{n}</li>)}</ul>
+            </div>
+          ))
+        }
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pieza-portada { padding-block: clamp(48px, 7vw, 96px); position: relative; }
+  .pieza-portada .contenedor { display: grid; gap: 22px; }
+  .volver { text-decoration: none; color: var(--hueso-2); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .volver:hover { color: var(--terracota); }
+  .pieza-portada h1 { max-width: 20ch; }
+  .pieza-video { margin-top: 12px; }
+  .ficha { display: flex; flex-wrap: wrap; gap: 12px 48px; margin: 6px 0 0; }
+  .ficha dt { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hueso-2); }
+  .ficha dd { margin: 4px 0 0; }
+
+  .cuerpo { display: grid; gap: 56px; }
+  @media (min-width: 980px) { .cuerpo { grid-template-columns: 1.5fr 1fr; gap: 88px; } }
+  .prosa { max-width: 64ch; font-size: 1.08rem; }
+  .prosa .lead-xl { margin-bottom: 1.2em; }
+  .lado { display: grid; gap: 40px; align-content: start; }
+  .caps, .nombres { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
+  .caps li, .nombres li { border-bottom: 1px solid var(--borde); padding: 10px 0; font-size: 0.92rem; line-height: 1.4; }
+  .caps a { text-decoration: none; display: grid; grid-template-columns: 4.4em 1fr; gap: 8px; }
+  .caps a:hover { color: var(--terracota-ink); }
+  .caps .mono { font-size: 0.75rem; }
+</style>

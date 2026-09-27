@@ -1,0 +1,176 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PortadaPagina from '../../components/PortadaPagina.astro';
+import ServicioDetalle from '../../components/ServicioDetalle.astro';
+import PiezaCard from '../../components/PiezaCard.astro';
+import Pendiente from '../../components/Pendiente.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import { dos, rutaCaso } from '../../lib/util';
+
+const servicios = (await getCollection('servicios', (s) => s.data.linea === 'encuentros')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'encuentros')).sort(
+  (a, b) => b.data.anio - a.data.anio,
+);
+
+const capas = [
+  { titulo: 'Producción y logística', texto: 'Cronograma, proveedores, permisos y un equipo en sitio de principio a fin.' },
+  { titulo: 'Programación artística', texto: 'Curaduría y coordinación de artistas, invitados y momentos del evento.' },
+  { titulo: 'Tarima y sonido', texto: 'Sonido profesional y tarimas a la medida del espacio y del público.' },
+  { titulo: 'Música en vivo', texto: 'Músicos y arreglos pensados para el encuentro, no una lista de reproducción.' },
+  { titulo: 'Proyecciones y videomapping', texto: 'Imagen proyectada sobre el espacio para que el lugar también cuente.' },
+  { titulo: 'Cobertura multicámara y dron', texto: 'Registro completo para que lo vivido se pueda volver a ver y compartir.' },
+];
+
+const espacios = [
+  { nombre: 'Taller Graphito', nota: 'Bogotá · [DATOS DEL ESPACIO PENDIENTES]' },
+  { nombre: 'Teatro Acto Latino', nota: 'Bogotá · [DATOS DEL ESPACIO PENDIENTES]' },
+  { nombre: 'Espacio propio', nota: 'Para eventos íntimos · [DATOS PENDIENTES]' },
+];
+---
+
+<Base
+  titulo="Dial Encuentros"
+  descripcion="Producción y cobertura de eventos: foros, festivales, lanzamientos y música en vivo. Tarima, sonido, programación, videomapping y cobertura con un solo equipo."
+>
+  <PortadaPagina
+    kicker="Dial Encuentros"
+    titulo="Producimos el encuentro. Y lo dejamos <em>contado.</em>"
+    bajada="Foros, festivales, lanzamientos y música en vivo. De la tarima a la pantalla, con un solo equipo."
+  >
+    <div class="acciones">
+      <a href="/contacto?linea=encuentros" class="btn">Cotizar un evento <span class="flecha">→</span></a>
+      <a href="#servicios" class="btn linea">Ver servicios</a>
+    </div>
+  </PortadaPagina>
+
+  <section class="seccion tema-papel" id="servicios">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — Servicios</p>
+          <h2 class="display d-2">Todo el evento, o solo la cobertura.</h2>
+        </div>
+        <p class="texto-2" data-revela>Cada encuentro se cotiza a la medida: tamaño, lugar, duración y lo que quieras llevarte después.</p>
+      </header>
+      <div class="rejilla-2">{servicios.map((s, i) => <ServicioDetalle servicio={s} n={i + 1} />)}</div>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(2)} — <span class="acento">De la tarima a la pantalla</span></p>
+          <h2 class="display d-2">Seis capas, un solo equipo.</h2>
+        </div>
+        <p class="texto-2" data-revela>Nos encargamos de cada capa del evento para que tú te ocupes de la gente que llega.</p>
+      </header>
+      <ol class="capas">
+        {
+          capas.map((c, i) => (
+            <li data-revela style={`--retraso:${i * 0.05}s`}>
+              <span class="mono acento">{dos(i + 1)}</span>
+              <h3 class="sub s-2">{c.titulo}</h3>
+              <p class="texto-2">{c.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-hueso">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — Espacios</p>
+          <h2 class="display d-2">Dónde encontrarnos.</h2>
+        </div>
+        <p class="texto-2" data-revela>Trabajamos con espacios aliados en Bogotá y también llevamos la producción a tu lugar.</p>
+      </header>
+      <div class="rejilla-3">
+        {
+          espacios.map((e) => (
+            <Pendiente marca="Foto pendiente" titulo={e.nombre} texto={e.nota} formato="cuadrado" />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel" id="portafolio">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(4)} — Portafolio</p>
+          <h2 class="display d-2">Encuentros que hemos producido.</h2>
+        </div>
+      </header>
+      <div class="rejilla-2">
+        {
+          casos.map((c) => (
+            <PiezaCard
+              titulo={c.data.titulo}
+              video={c.data.video}
+              href={rutaCaso('encuentros', c.id)}
+              kicker={c.data.organizacion}
+              resumen={c.data.resumen}
+              meta={`${c.data.lugar} · ${c.data.anio}`}
+            />
+          ))
+        }
+        {
+          casos.length === 0 && (
+            <>
+              <Pendiente titulo="Evento completo" texto="Un evento producido de principio a fin: tarima, sonido, música en vivo, videomapping y cobertura." />
+              <Pendiente titulo="Cobertura de foro o festival" texto="Video resumen y fotografías de un encuentro de una organización." />
+            </>
+          )
+        }
+      </div>
+
+      <a href="/encuentros/celebraciones" class="celebra" data-revela>
+        <span class="kicker">¿Es una celebración privada?</span>
+        <span class="display d-3">Bodas, aniversarios y serenatas tienen su propia página →</span>
+      </a>
+    </div>
+  </section>
+
+  <CTAFinal
+    titulo="¿Qué encuentro estás preparando?"
+    texto="Cuéntanos la fecha, el lugar y cuántas personas esperas. Te proponemos cómo producirlo y cómo dejarlo contado."
+    linea="encuentros"
+    mensajeWhatsapp="Hola, Martín. Vi el sitio de Dial y quiero cotizar un evento."
+  />
+</Base>
+
+<style>
+  .rejilla-2 { display: grid; gap: 64px 56px; }
+  @media (min-width: 900px) { .rejilla-2 { grid-template-columns: 1fr 1fr; } }
+  .rejilla-3 { display: grid; gap: 40px 28px; }
+  @media (min-width: 760px) { .rejilla-3 { grid-template-columns: repeat(3, 1fr); } }
+  .capas { list-style: none; display: grid; gap: 0; border-top: 1px solid var(--borde); }
+  .capas li { display: grid; gap: 10px; padding: 28px 0; border-bottom: 1px solid var(--borde); }
+  .capas p { margin: 0; font-size: 0.95rem; }
+  @media (min-width: 760px) {
+    .capas { grid-template-columns: repeat(2, 1fr); column-gap: 48px; }
+  }
+  @media (min-width: 1100px) {
+    .capas { grid-template-columns: repeat(3, 1fr); }
+  }
+  .celebra {
+    margin-top: clamp(64px, 8vw, 112px);
+    display: grid;
+    gap: 16px;
+    padding: clamp(28px, 4vw, 48px);
+    background: var(--hueso);
+    text-decoration: none;
+    border-left: 4px solid var(--terracota);
+    transition: background 0.3s;
+  }
+  .celebra:hover { background: #e2d7c5; }
+  .celebra .display { max-width: 24ch; }
+</style>

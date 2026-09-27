@@ -1,0 +1,65 @@
+---
+import VideoLite from './VideoLite.astro';
+import type { Video } from '../lib/util';
+
+interface Props {
+  titulo: string;
+  video?: Video;
+  kicker?: string;
+  meta?: string;
+  resumen?: string;
+  href?: string;
+  etiqueta?: string;
+  estado?: string;
+  grande?: boolean;
+  class?: string;
+}
+const { titulo, video, kicker, meta, resumen, href, etiqueta, estado, grande = false, class: clase = '' } = Astro.props;
+---
+
+<article class:list={['pieza', { grande }, clase]} data-revela>
+  {
+    video ? (
+      <VideoLite video={video} titulo={titulo} />
+    ) : (
+      <div class="pieza-vacia grano" aria-hidden="true">
+        <span class="mono">{estado ?? 'Próximamente'}</span>
+      </div>
+    )
+  }
+  <div class="pieza-texto">
+    <div class="pieza-meta">
+      {kicker && <p class="kicker sin-linea">{kicker}</p>}
+      {etiqueta && <span class="etiqueta">{etiqueta}</span>}
+      {estado && video && <span class="etiqueta">{estado}</span>}
+    </div>
+    <h3 class:list={['sub', grande ? 's-1' : 's-2']}>
+      {href ? <a href={href}>{titulo}</a> : titulo}
+    </h3>
+    {resumen && <p class="texto-2 pieza-resumen">{resumen}</p>}
+    {meta && <p class="mono texto-2 pieza-lugar">{meta}</p>}
+  </div>
+</article>
+
+<style>
+  .pieza { display: grid; gap: 20px; align-content: start; }
+  .pieza-texto { display: grid; gap: 10px; }
+  .pieza-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .pieza h3 a { text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.4s var(--ease); }
+  .pieza h3 a:hover { background-size: 100% 1px; }
+  .pieza-resumen { margin: 0; font-size: 0.98rem; max-width: 56ch; }
+  .pieza-lugar { margin: 0; font-size: 0.74rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .pieza-vacia {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: var(--carbon-2);
+    display: grid;
+    place-items: center;
+    color: var(--hueso-2);
+    border: 1px dashed var(--linea-clara);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+  }
+  .grande .pieza-resumen { font-size: 1.05rem; }
+</style>

@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PortadaPagina from '../../components/PortadaPagina.astro';
+import EscalaMedicion from '../../components/EscalaMedicion.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import Pendiente from '../../components/Pendiente.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import { dos } from '../../lib/util';
+
+const debate = (await getCollection('medio', (m) => m.data.formato === 'debate' && m.data.destacado && !m.data.borrador))[0];
+
+const pasos = [
+  { titulo: 'Definimos qué debería cambiar', texto: 'Contigo acordamos qué queremos saber: percepción, empatía, confianza, conocimiento o intención de actuar.' },
+  { titulo: 'Encuesta antes', texto: 'Una encuesta breve a la audiencia, antes de ver la pieza. Cuidamos el consentimiento y el anonimato.' },
+  { titulo: 'La audiencia ve la pieza', texto: 'En una proyección, un taller o un evento de tu organización, o en línea.' },
+  { titulo: 'Encuesta después e informe', texto: 'Repetimos las mismas preguntas y comparamos. Te entregamos los resultados listos para reportar.' },
+];
+
+const indicadores = [
+  { titulo: 'Percepción', texto: 'Cómo ve la audiencia a una comunidad, un tema o una organización.' },
+  { titulo: 'Empatía y calidez', texto: 'Qué tan cerca se siente la audiencia de las personas de la historia.' },
+  { titulo: 'Confianza', texto: 'Cuánto confía en el otro, en un proceso o en una institución.' },
+  { titulo: 'Intención de actuar', texto: 'Si la pieza mueve a participar, apoyar o cambiar un hábito.' },
+];
+
+const informe = ['Resultados antes y después, por pregunta', 'Gráficos listos para presentaciones', 'Lectura de los cambios más importantes', 'Recomendaciones para la difusión de la pieza'];
+---
+
+<Base
+  titulo="Pieza + medición"
+  descripcion="Medimos el efecto de una pieza audiovisual en su audiencia con una evaluación antes y después. Resultados que tu organización puede reportar."
+>
+  <PortadaPagina
+    kicker="Dial Impacto · Pieza + medición"
+    titulo="Medimos lo que una historia <em>mueve.</em>"
+    bajada="Una pieza audiovisual con una evaluación antes y después de verla. Tu organización sabe qué cambió en su audiencia y lo puede reportar."
+  >
+    <div class="acciones">
+      <a href="/contacto?linea=impacto&servicio=pieza-con-medicion" class="btn">Cotizar pieza con medición <span class="flecha">→</span></a>
+    </div>
+  </PortadaPagina>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — El método</p>
+          <h2 class="display d-2">Cuatro pasos, una pregunta: ¿qué cambió?</h2>
+        </div>
+      </header>
+      <ol class="pasos-med">
+        {
+          pasos.map((p, i) => (
+            <li data-revela style={`--retraso:${i * 0.08}s`}>
+              <span class="display paso-num">{dos(i + 1)}</span>
+              <h3 class="sub s-2">{p.titulo}</h3>
+              <p class="texto-2">{p.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano">
+    <div class="contenedor med-grid">
+      <div class="med-texto">
+        <p class="kicker" data-revela>{dos(2)} — Qué medimos</p>
+        <h2 class="display d-3" data-revela>Adaptamos el instrumento a tu objetivo.</h2>
+        <ul class="indicadores">
+          {
+            indicadores.map((d, i) => (
+              <li data-revela style={`--retraso:${i * 0.06}s`}>
+                <h3 class="sub s-3">{d.titulo}</h3>
+                <p class="texto-2">{d.texto}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <EscalaMedicion indicador="Calidez hacia el otro grupo · escala 1 a 10" />
+    </div>
+  </section>
+
+  <section class="seccion tema-hueso">
+    <div class="contenedor informe">
+      <div data-revela>
+        <p class="kicker">{dos(3)} — Qué recibes</p>
+        <h2 class="display d-3">Un informe que puedes presentar.</h2>
+        <ul class="informe-lista">{informe.map((i) => <li>{i}</li>)}</ul>
+        <p class="texto-2 nota">
+          Una evaluación antes y después mide el cambio inmediato en quienes vieron la pieza. Es una evidencia valiosa para
+          tus reportes, pero no reemplaza una evaluación de impacto de largo plazo. Te lo decimos desde el principio.
+        </p>
+      </div>
+      <Pendiente
+        marca="Ejemplo de informe pendiente"
+        titulo="Muestra de informe de resultados"
+        texto="Aquí irá una página de ejemplo de un informe real, con permiso de la organización."
+        formato="vertical"
+      />
+    </div>
+  </section>
+
+  {
+    debate && (
+      <section class="seccion tema-papel">
+        <div class="contenedor origen">
+          <div data-revela>
+            <p class="kicker">{dos(4)} — De dónde viene</p>
+            <h2 class="display d-3">Lo probamos primero en casa.</h2>
+            <p class="lead texto-2">
+              En los debates de Dial Medio encuestamos a la sala al entrar y al salir. La pregunta no es quién ganó, sino quién
+              cambió de opinión. Ese es el mismo método que hoy llevamos a los proyectos de las organizaciones.
+            </p>
+            <a href={`/medio/${debate.id}`} class="enlace">Ver el debate <span>→</span></a>
+          </div>
+          <div data-revela style="--retraso:.1s">
+            <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CTAFinal
+    titulo="¿Quieres saber qué mueve tu próxima pieza?"
+    texto="Cuéntanos qué necesitas reportar y a qué audiencia quieres llegar. Diseñamos la pieza y la medición juntas."
+    linea="impacto&servicio=pieza-con-medicion"
+  />
+</Base>
+
+<style>
+  .pasos-med { list-style: none; display: grid; gap: 40px; }
+  .pasos-med li { display: grid; gap: 12px; align-content: start; border-top: 1px solid var(--borde); padding-top: 22px; }
+  .pasos-med p { margin: 0; }
+  .paso-num { font-size: 3.4rem; line-height: 1; color: var(--terracota); }
+  @media (min-width: 900px) { .pasos-med { grid-template-columns: repeat(4, 1fr); gap: 32px; } }
+
+  .med-grid { display: grid; gap: 56px; align-items: center; }
+  .med-texto { display: grid; gap: 24px; }
+  @media (min-width: 980px) { .med-grid { grid-template-columns: 1fr 1.05fr; gap: 88px; } }
+  .indicadores { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 24px 28px; margin-top: 8px; }
+  .indicadores li { border-top: 1px solid var(--borde); padding-top: 14px; }
+  .indicadores p { margin: 6px 0 0; font-size: 0.92rem; }
+
+  .informe { display: grid; gap: 56px; align-items: start; }
+  .informe h2 { margin-top: 18px; }
+  .informe-lista { list-style: none; display: grid; margin: 32px 0; border-top: 1px solid var(--borde); }
+  .informe-lista li { padding: 14px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: 1.15rem; }
+  .nota { font-size: 0.92rem; max-width: 56ch; border-left: 2px solid var(--terracota); padding-left: 16px; }
+  @media (min-width: 900px) { .informe { grid-template-columns: 1.2fr 1fr; gap: 88px; } }
+
+  .origen { display: grid; gap: 48px; align-items: center; }
+  .origen h2 { margin-block: 18px 22px; }
+  .origen .lead { margin-bottom: 28px; }
+  @media (min-width: 980px) { .origen { grid-template-columns: 1fr 1.2fr; gap: 72px; } }
+</style>

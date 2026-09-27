@@ -1,0 +1,41 @@
+---
+import { whatsapp } from '../lib/util';
+
+interface Props {
+  titulo?: string;
+  texto?: string;
+  linea?: string;
+  mensajeWhatsapp?: string;
+}
+const {
+  titulo = '¿Qué historia necesita contar tu organización?',
+  texto = 'Cuéntanos qué quieres contar, a quién y para cuándo. Armamos una propuesta a la medida de tu proyecto.',
+  linea,
+  mensajeWhatsapp,
+} = Astro.props;
+const href = linea ? `/contacto?linea=${linea}` : '/contacto';
+---
+
+<section class="cta tema-terracota grano">
+  <div class="contenedor cta-grid">
+    <h2 class="display d-2" data-revela>{titulo}</h2>
+    <div class="cta-lado" data-revela style="--retraso:.12s">
+      <p class="lead">{texto}</p>
+      <div class="acciones">
+        <a href={href} class="btn">Pedir cotización <span class="flecha">→</span></a>
+        <a href={whatsapp(mensajeWhatsapp)} class="btn linea" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta { padding-block: clamp(72px, 10vw, 136px); position: relative; }
+  .cta-grid { display: grid; gap: 36px; align-items: end; }
+  .cta h2 { max-width: 14ch; }
+  .cta-lado { display: grid; gap: 28px; }
+  .cta .lead { margin: 0; color: #f7f2ea; }
+  @media (min-width: 960px) {
+    .cta-grid { grid-template-columns: 1.3fr 1fr; gap: 64px; }
+  }
+</style>

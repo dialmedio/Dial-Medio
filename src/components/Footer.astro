@@ -1,0 +1,109 @@
+---
+import Logo from './Logo.astro';
+import sitio from '../data/sitio.json';
+import { whatsapp } from '../lib/util';
+
+const columnas = [
+  {
+    titulo: 'Líneas',
+    enlaces: [
+      { texto: 'Dial Impacto', href: '/impacto' },
+      { texto: 'Pieza + medición', href: '/impacto/medicion' },
+      { texto: 'Dial Encuentros', href: '/encuentros' },
+      { texto: 'Celebraciones', href: '/encuentros/celebraciones' },
+      { texto: 'Dial Medio', href: '/medio' },
+    ],
+  },
+  {
+    titulo: 'La casa',
+    enlaces: [
+      { texto: 'Nosotros', href: '/nosotros' },
+      { texto: 'Cómo trabajamos', href: '/nosotros#proceso' },
+      { texto: 'Criterios de la casa', href: '/nosotros#criterios' },
+      { texto: 'Cotizar', href: '/contacto' },
+    ],
+  },
+];
+---
+
+<footer class="pie tema-carbon grano">
+  <div class="contenedor">
+    <div class="pie-grid">
+      <div class="pie-marca">
+        <a href="/" aria-label="Dial, inicio" class="pie-logo"><Logo tono="claro" /></a>
+        <p class="pie-tagline mono">—{sitio.tagline}</p>
+        <p class="texto-2 pie-desc">{sitio.descripcion}</p>
+      </div>
+
+      {
+        columnas.map((c) => (
+          <nav class="pie-col" aria-label={c.titulo}>
+            <p class="kicker sin-linea">{c.titulo}</p>
+            <ul>
+              {c.enlaces.map((e) => (
+                <li>
+                  <a href={e.href}>{e.texto}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div class="pie-col">
+        <p class="kicker sin-linea">Hablemos</p>
+        <ul>
+          <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>
+          <li><a href={whatsapp()} target="_blank" rel="noopener">WhatsApp {sitio.whatsapp.visible}</a></li>
+          {
+            sitio.redes.map((r) => (
+              <li>
+                <a href={r.url} target="_blank" rel="noopener">
+                  {r.nombre} <span class="texto-2">{r.usuario}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="pie-base mono">
+      <span>© {new Date().getFullYear()} Dial · {sitio.ciudad}</span>
+      <span class="pie-frecuencia" aria-hidden="true">810 AM</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .pie { padding-block: clamp(64px, 8vw, 104px) 28px; position: relative; }
+  .pie-grid {
+    display: grid;
+    gap: 48px 32px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pie-marca { grid-column: 1 / -1; max-width: 36ch; }
+  .pie-logo { text-decoration: none; font-size: 22px; display: inline-block; }
+  .pie-tagline { color: var(--terracota); margin: 18px 0 16px; font-size: 0.95rem; }
+  .pie-desc { font-size: 0.95rem; }
+  .pie-col ul { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
+  .pie-col a { text-decoration: none; font-size: 0.98rem; transition: color 0.2s; }
+  .pie-col a:hover { color: var(--terracota); }
+  .pie-col:last-child { grid-column: 1 / -1; }
+  .pie-base {
+    margin-top: clamp(56px, 7vw, 96px);
+    padding-top: 22px;
+    border-top: 1px solid var(--linea-clara);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--hueso-2);
+    font-size: 0.75rem;
+  }
+  .pie-frecuencia { color: var(--ambar); letter-spacing: 0.12em; }
+
+  @media (min-width: 900px) {
+    .pie-grid { grid-template-columns: 1.5fr 1fr 1fr 1.2fr; }
+    .pie-marca, .pie-col:last-child { grid-column: auto; }
+  }
+</style>

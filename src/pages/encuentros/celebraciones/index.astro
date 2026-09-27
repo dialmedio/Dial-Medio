@@ -1,0 +1,175 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import Simbolo from '../../../components/Simbolo.astro';
+import PiezaCard from '../../../components/PiezaCard.astro';
+import Pendiente from '../../../components/Pendiente.astro';
+import CTAFinal from '../../../components/CTAFinal.astro';
+import { dos, rutaCaso, whatsapp } from '../../../lib/util';
+
+const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'celebraciones')).sort(
+  (a, b) => b.data.anio - a.data.anio,
+);
+
+const momentos = [
+  { titulo: 'Bodas', texto: 'La ceremonia, la fiesta y lo que pasa entre una y otra.' },
+  { titulo: 'Aniversarios', texto: 'Años juntos, contados por quienes los han vivido.' },
+  { titulo: 'Serenatas', texto: 'Música en vivo con arreglos para la persona y el momento.' },
+  { titulo: 'Reuniones y cumpleaños', texto: 'Encuentros familiares que vale la pena volver a ver.' },
+];
+
+const entregas = [
+  { titulo: 'Video editado', texto: 'La historia completa del día, con música y sonido cuidados.' },
+  { titulo: 'Fotografías', texto: 'Una selección editada, lista para imprimir y compartir.' },
+  { titulo: 'Versión corta', texto: 'Un video breve para compartir en redes y con la familia.' },
+];
+
+const mensaje = 'Hola, Martín. Vi el sitio de Dial y quiero cotizar la cobertura de una celebración.';
+---
+
+<Base
+  titulo="Celebraciones"
+  descripcion="Foto y video de bodas, aniversarios, serenatas y celebraciones privadas en Bogotá. Contado con cuidado, con música en vivo si la quieres."
+>
+  <section class="cel-portada tema-hueso">
+    <Simbolo tono="oscuro" class="cel-simbolo" anima />
+    <div class="contenedor cel-cuerpo">
+      <p class="kicker"><a href="/encuentros" class="acento">Dial Encuentros</a> · Celebraciones</p>
+      <h1 class="cel-titulo">
+        Lo que se celebra una vez, <em>se queda contado.</em>
+      </h1>
+      <p class="lead texto-2">
+        Foto y video para bodas, aniversarios, serenatas y reuniones. Estamos atentos a la gente y a los momentos que no se
+        repiten.
+      </p>
+      <div class="acciones">
+        <a href={whatsapp(mensaje)} class="btn" target="_blank" rel="noopener">Cotizar por WhatsApp <span class="flecha">→</span></a>
+        <a href="/contacto?linea=celebraciones" class="btn linea">Escribir un mensaje</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — Qué cubrimos</p>
+          <h2 class="display d-2">Momentos que reúnen.</h2>
+        </div>
+      </header>
+      <ul class="momentos">
+        {
+          momentos.map((m, i) => (
+            <li data-revela style={`--retraso:${i * 0.06}s`}>
+              <h3 class="momento-titulo">{m.titulo}</h3>
+              <p class="texto-2">{m.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="seccion tema-hueso">
+    <div class="contenedor entrega-grid">
+      <div data-revela>
+        <p class="kicker">{dos(2)} — Qué recibes</p>
+        <h2 class="display d-3">Lo que te llevas.</h2>
+        <p class="texto-2 medida">
+          Cada celebración se cotiza según su duración y lo que quieras recibir.
+        </p>
+      </div>
+      <ol class="entregas">
+        {
+          entregas.map((e, i) => (
+            <li data-revela style={`--retraso:${i * 0.06}s`}>
+              <span class="mono acento">{dos(i + 1)}</span>
+              <div>
+                <h3 class="sub s-2">{e.titulo}</h3>
+                <p class="texto-2">{e.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — Portafolio</p>
+          <h2 class="display d-2">Celebraciones.</h2>
+        </div>
+      </header>
+      <div class="rejilla-3">
+        {
+          casos.map((c) => (
+            <PiezaCard
+              titulo={c.data.titulo}
+              video={c.data.video}
+              href={rutaCaso('celebraciones', c.id)}
+              meta={`${c.data.lugar} · ${c.data.anio}`}
+            />
+          ))
+        }
+        {
+          casos.length === 0 && (
+            <>
+              <Pendiente titulo="Boda" texto="Video y fotos de una boda, con autorización de la pareja." formato="vertical" />
+              <Pendiente titulo="Aniversario" texto="Una celebración familiar contada por quienes la vivieron." formato="vertical" />
+              <Pendiente titulo="Serenata" texto="Música en vivo y registro del momento." formato="vertical" />
+            </>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <CTAFinal
+    titulo="¿Qué vas a celebrar?"
+    texto="Cuéntanos la fecha, el lugar y cuántas personas esperas. Te enviamos una propuesta a la medida."
+    linea="celebraciones"
+    mensajeWhatsapp={mensaje}
+  />
+</Base>
+
+<style>
+  .cel-portada { position: relative; overflow: hidden; padding-block: clamp(80px, 11vw, 160px) clamp(72px, 9vw, 128px); }
+  .cel-cuerpo { display: grid; gap: 28px; justify-items: start; position: relative; z-index: 1; }
+  .cel-cuerpo .kicker a { text-decoration: none; }
+  .cel-titulo {
+    font-family: var(--f-texto);
+    font-size: clamp(2.6rem, 1.4rem + 5vw, 6.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+    font-weight: 400;
+  }
+  .cel-titulo em { color: var(--terracota-ink); }
+  .cel-portada .lead { margin: 0; max-width: 44ch; }
+  .cel-portada :global(.cel-simbolo) {
+    position: absolute;
+    right: -8vw;
+    bottom: -14vw;
+    width: clamp(320px, 48vw, 760px);
+    opacity: 0.12;
+  }
+
+  .momentos { list-style: none; display: grid; border-top: 1px solid var(--borde); }
+  .momentos li { display: grid; gap: 6px 40px; padding: 26px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
+  .momentos p { margin: 0; }
+  .momento-titulo { font-family: var(--f-texto); font-style: italic; font-size: clamp(1.8rem, 1.2rem + 2.2vw, 3rem); line-height: 1.1; }
+  @media (min-width: 800px) { .momentos li { grid-template-columns: 1fr 1fr; } }
+
+  .entrega-grid { display: grid; gap: 48px; }
+  .entrega-grid h2 { margin-block: 18px; }
+  @media (min-width: 900px) { .entrega-grid { grid-template-columns: 1fr 1.2fr; gap: 88px; } }
+  .entregas { list-style: none; display: grid; border-top: 1px solid var(--borde); }
+  .entregas li { display: grid; grid-template-columns: 2.6rem 1fr; gap: 12px; padding: 24px 0; border-bottom: 1px solid var(--borde); }
+  .entregas p { margin: 6px 0 0; }
+
+  .rejilla-3 { display: grid; gap: 40px 28px; }
+  @media (min-width: 760px) { .rejilla-3 { grid-template-columns: repeat(3, 1fr); } }
+</style>

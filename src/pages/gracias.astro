@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import Simbolo from '../components/Simbolo.astro';
+import sitio from '../data/sitio.json';
+---
+
+<Base titulo="Gracias" noindex>
+  <section class="gracias tema-carbon grano">
+    <div class="contenedor gracias-cuerpo">
+      <Simbolo tono="claro" anima class="gracias-simbolo" />
+      <p class="kicker"><span class="acento">Señal recibida</span></p>
+      <h1 class="display d-2">Gracias. Ya tenemos tu mensaje.</h1>
+      <p class="lead texto-2">{sitio.respuesta} Mientras tanto, puedes ver lo que hacemos en Dial Medio.</p>
+      <div class="acciones">
+        <a href="/medio" class="btn">Ver Dial Medio <span class="flecha">→</span></a>
+        <a href="/" class="btn linea">Volver al inicio</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .gracias { min-height: calc(100svh - 72px); display: grid; align-items: center; position: relative; padding-block: 72px; }
+  .gracias-cuerpo { display: grid; gap: 24px; justify-items: start; }
+  .gracias-cuerpo :global(.gracias-simbolo) { width: 120px; margin-bottom: 12px; }
+  .gracias h1 { max-width: 16ch; }
+  .gracias .lead { margin: 0; }
+</style>

@@ -1,0 +1,47 @@
+---
+/** Portada de las páginas interiores. */
+import Simbolo from './Simbolo.astro';
+
+interface Props {
+  kicker: string;
+  titulo: string;
+  bajada?: string;
+  tema?: 'carbon' | 'hueso';
+  simbolo?: boolean;
+}
+const { kicker, titulo, bajada, tema = 'carbon', simbolo = true } = Astro.props;
+---
+
+<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon' }]}>
+  {simbolo && <Simbolo tono={tema === 'carbon' ? 'claro' : 'oscuro'} class="portada-pag-simbolo" anima />}
+  <div class="contenedor portada-pag-cuerpo">
+    <p class="kicker"><span class="acento">{kicker}</span></p>
+    <h1 class="display d-2" set:html={titulo} />
+    {bajada && <p class="lead texto-2">{bajada}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .portada-pag {
+    position: relative;
+    overflow: hidden;
+    padding-block: clamp(72px, 10vw, 140px) clamp(64px, 8vw, 112px);
+  }
+  .portada-pag-cuerpo { display: grid; gap: 26px; justify-items: start; }
+  .portada-pag h1 { max-width: 15ch; }
+  .portada-pag h1 :global(em) { font-style: normal; color: var(--terracota); }
+  .portada-pag .lead { margin: 0; max-width: 46ch; }
+  .portada-pag :global(.portada-pag-simbolo) {
+    position: absolute;
+    right: calc(-1 * clamp(80px, 12vw, 200px));
+    top: 50%;
+    width: clamp(320px, 46vw, 720px);
+    transform: translateY(-50%);
+    opacity: 0.16;
+    z-index: 0 !important;
+  }
+  @media (max-width: 700px) {
+    .portada-pag :global(.portada-pag-simbolo) { top: 30px; transform: none; width: 90vw; right: -40vw; opacity: 0.12; }
+  }
+</style>

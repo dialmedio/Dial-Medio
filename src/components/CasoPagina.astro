@@ -1,0 +1,103 @@
+---
+/** Plantilla de un caso de portafolio, compartida por las tres vitrinas. */
+import { render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import VideoLite from './VideoLite.astro';
+import EscalaMedicion from './EscalaMedicion.astro';
+import CTAFinal from './CTAFinal.astro';
+import { lineas } from '../lib/util';
+
+interface Props {
+  caso: CollectionEntry<'casos'>;
+  siguiente?: { titulo: string; href: string };
+}
+const { caso, siguiente } = Astro.props;
+const c = caso.data;
+const { Content } = await render(caso);
+const linea = lineas[c.vitrina];
+const fmt = (n: number) => n.toFixed(1).replace('.', ',');
+---
+
+<Base titulo={c.titulo} descripcion={c.resumen} tipo="article">
+  <section class="tema-carbon grano caso-portada">
+    <div class="contenedor">
+      <a href={linea.ruta} class="mono volver">← {linea.nombre}</a>
+      <h1 class="display d-2">{c.titulo}</h1>
+      <p class="lead texto-2">{c.resumen}</p>
+      {c.video && <div class="caso-video"><VideoLite video={c.video} titulo={c.titulo} cargaInmediata /></div>}
+      <dl class="caso-ficha mono">
+        {c.organizacion && <div><dt>Organización</dt><dd>{c.organizacion}</dd></div>}
+        <div><dt>Lugar</dt><dd>{c.lugar}</dd></div>
+        <div><dt>Año</dt><dd>{c.anio}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor caso-cuerpo">
+      <div class="prosa"><Content /></div>
+      {
+        c.medicion && (
+          <aside class="caso-med tema-carbon">
+            <p class="kicker">Medición</p>
+            <p class="mono texto-2">{c.medicion.indicador}</p>
+            <p class="display d-3">
+              {fmt(c.medicion.antes)} <span class="acento">→</span> {fmt(c.medicion.despues)}
+            </p>
+            <p class="mono texto-2">Promedio en escala {c.medicion.escala}, antes y después de ver la pieza.</p>
+          </aside>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    c.galeria.length > 0 && (
+      <section class="seccion compacta tema-hueso">
+        <div class="contenedor galeria">
+          {c.galeria.map((img) => (
+            <Image src={img} alt="" widths={[600, 1000, 1600]} sizes="(min-width: 900px) 50vw, 100vw" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    siguiente && (
+      <nav class="tema-papel siguiente" aria-label="Siguiente caso">
+        <a href={siguiente.href} class="contenedor">
+          <span class="kicker">Siguiente caso</span>
+          <span class="display d-3">{siguiente.titulo} →</span>
+        </a>
+      </nav>
+    )
+  }
+
+  <CTAFinal titulo="¿Tienes un proyecto parecido?" linea={c.vitrina} />
+</Base>
+
+<style>
+  .caso-portada { padding-block: clamp(56px, 8vw, 104px); position: relative; }
+  .caso-portada .contenedor { display: grid; gap: 24px; }
+  .volver { text-decoration: none; color: var(--hueso-2); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; }
+  .volver:hover { color: var(--terracota); }
+  .caso-portada h1 { max-width: 18ch; }
+  .caso-portada .lead { margin: 0; max-width: 56ch; }
+  .caso-video { margin-top: 16px; }
+  .caso-ficha { display: flex; flex-wrap: wrap; gap: 12px 48px; margin: 8px 0 0; }
+  .caso-ficha dt { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--hueso-2); }
+  .caso-ficha dd { margin: 4px 0 0; }
+  .caso-cuerpo { display: grid; gap: 48px; }
+  @media (min-width: 980px) { .caso-cuerpo { grid-template-columns: 1.4fr 1fr; gap: 88px; align-items: start; } }
+  .prosa { max-width: 64ch; font-size: 1.1rem; }
+  .prosa :global(h2) { font-family: var(--f-sub); font-weight: 500; font-size: 1.6rem; margin: 1.6em 0 0.5em; }
+  .prosa :global(h2:first-child) { margin-top: 0; }
+  .caso-med { padding: 32px; display: grid; gap: 12px; position: sticky; top: 100px; }
+  .caso-med p { margin: 0; }
+  .galeria { display: grid; gap: 16px; }
+  @media (min-width: 760px) { .galeria { grid-template-columns: 1fr 1fr; } }
+  .siguiente a { display: grid; gap: 14px; padding-block: 64px; text-decoration: none; border-top: 1px solid var(--borde); }
+  .siguiente a:hover .display { color: var(--terracota-ink); }
+</style>

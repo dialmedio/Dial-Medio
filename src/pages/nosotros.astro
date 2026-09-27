@@ -1,0 +1,233 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PortadaPagina from '../components/PortadaPagina.astro';
+import Pendiente from '../components/Pendiente.astro';
+import CTAFinal from '../components/CTAFinal.astro';
+import cap from '../data/capacidades.json';
+import { dos } from '../lib/util';
+
+const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.data.orden);
+
+const portafolio = [
+  'Debates entre sectores enfrentados',
+  'Rodajes en tres países de Asia',
+  'Material en Barranquilla, Cali y Popayán',
+  'Documental en el Pacífico colombiano',
+  'Documental sobre el terremoto en Pereira (en preparación)',
+  'Periodismo de datos',
+];
+---
+
+<Base
+  titulo="Nosotros"
+  descripcion="Dial es una productora audiovisual colombiana con medio propio. Un solo equipo de la investigación al estreno: imagen, posproducción, música original, sonido y espacios."
+>
+  <PortadaPagina
+    kicker="Nosotros"
+    titulo="Un solo equipo, de la idea al <em>estreno.</em>"
+    bajada="Dial es una productora audiovisual colombiana con medio propio. Contamos, y medimos, el encuentro humano: las historias de personas, comunidades y organizaciones."
+  />
+
+  <section class="seccion tema-papel">
+    <div class="contenedor intro">
+      <p class="kicker" data-revela>{dos(1)} — La casa</p>
+      <div class="intro-texto" data-revela>
+        <p class="lead-xl">
+          Creemos que una buena historia <em>construye puentes</em> y dignifica a quienes aparecen en ella. Por eso trabajamos
+          despacio donde hay que escuchar y con precisión donde hay que entregar.
+        </p>
+        <p class="texto-2 medida">
+          Lo comercial financia lo creativo: los proyectos que hacemos con organizaciones sostienen la obra propia de Dial
+          Medio, y la obra propia es donde afinamos el oficio y el método que luego ponemos al servicio de cada encargo.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-hueso" id="proceso">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(2)} — Cómo trabajamos</p>
+          <h2 class="display d-2">Seis momentos.</h2>
+        </div>
+        <p class="texto-2" data-revela>Tú hablas con una sola persona durante todo el proyecto. La historia no cambia de manos.</p>
+      </header>
+      <ol class="proceso">
+        {
+          cap.proceso.map((p, i) => (
+            <li data-revela style={`--retraso:${i * 0.05}s`}>
+              <span class="display proc-n">{dos(i + 1)}</span>
+              <div>
+                <h3 class="sub s-1">{p.titulo}</h3>
+                <p class="texto-2">{p.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel" id="equipo">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — Equipo</p>
+          <h2 class="display d-2">Quién está detrás.</h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Un núcleo pequeño y una red de realizadores, fotógrafos, sonidistas y músicos que se suman según cada proyecto.
+        </p>
+      </header>
+      <div class="equipo">
+        {
+          equipo.map((p) => (
+            <article class="persona" data-revela>
+              {p.data.foto ? (
+                <Image src={p.data.foto} alt={p.data.nombre} widths={[480, 800]} sizes="(min-width: 900px) 30vw, 100vw" />
+              ) : (
+                <Pendiente marca="Foto pendiente" titulo={p.data.nombre} formato="vertical" class="persona-foto" />
+              )}
+              <p class="kicker sin-linea">{p.data.rol}</p>
+              {p.data.foto && <h3 class="sub s-1">{p.data.nombre}</h3>}
+              <p class="texto-2">{p.data.bio}</p>
+            </article>
+          ))
+        }
+        <article class="persona red" data-revela>
+          <div class="red-caja tema-carbon grano">
+            <span class="display">+</span>
+            <p>Red de realizadores por proyecto</p>
+          </div>
+          <p class="kicker sin-linea">Imagen · Sonido · Montaje · Música</p>
+          <p class="texto-2">Cada proyecto reúne al equipo que necesita, bajo una misma dirección y un mismo estándar.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano" id="capacidades">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(4)} — <span class="acento">Capacidades</span></p>
+          <h2 class="display d-2">Con qué trabajamos.</h2>
+        </div>
+        <p class="texto-2" data-revela>Equipos propios y espacios aliados en Bogotá, listos para rodar o para recibir a tu público.</p>
+      </header>
+      <div class="capacidades">
+        {
+          cap.grupos.map((g, i) => (
+            <div data-revela style={`--retraso:${i * 0.06}s`}>
+              <p class="mono acento">{dos(i + 1)}</p>
+              <h3 class="sub s-1">{g.titulo}</h3>
+              <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="sueltos" data-revela>
+        <p class="kicker">Servicios sueltos, por día o por pieza</p>
+        <ul class="etiquetas">{cap.sueltos.map((s) => <li class="etiqueta">{s}</li>)}</ul>
+        <a href="/contacto?linea=suelto" class="enlace">Cotizar un servicio suelto <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor recorrido">
+      <div data-revela>
+        <p class="kicker">{dos(5)} — Recorrido</p>
+        <h2 class="display d-3">Dónde hemos filmado.</h2>
+      </div>
+      <ul>{portafolio.map((p, i) => <li data-revela style={`--retraso:${i * 0.04}s`}><span class="mono acento">{dos(i + 1)}</span>{p}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-hueso" id="criterios">
+    <div class="contenedor criterios">
+      <div data-revela>
+        <p class="kicker">{dos(6)} — Criterios de la casa</p>
+        <h2 class="display d-3">Lo que no hacemos.</h2>
+        <p class="texto-2">Todo proyecto debe acercarse a nuestra mirada o sostener la casa. Y hay cosas que no hacemos por ningún precio.</p>
+      </div>
+      <ul>
+        {
+          cap.criterios.map((c, i) => (
+            <li data-revela style={`--retraso:${i * 0.08}s`}>
+              <h3 class="sub s-2">{c.titulo}</h3>
+              <p class="texto-2">{c.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTAFinal />
+</Base>
+
+<style>
+  .intro { display: grid; gap: 28px; }
+  .intro-texto { display: grid; gap: 28px; }
+  .intro-texto p { margin: 0; }
+  .intro-texto .lead-xl { max-width: 32ch; }
+  @media (min-width: 980px) {
+    .intro { grid-template-columns: 1fr 3fr; }
+    .intro-texto { grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: end; }
+  }
+
+  .proceso { list-style: none; display: grid; border-top: 1px solid var(--borde); }
+  .proceso li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
+  .proceso p { margin: 8px 0 0; }
+  .proc-n { font-size: 2.6rem; color: var(--terracota); line-height: 1; }
+  @media (min-width: 900px) {
+    .proceso { grid-template-columns: 1fr 1fr; column-gap: 56px; }
+  }
+
+  .equipo { display: grid; gap: 48px 32px; }
+  @media (min-width: 760px) { .equipo { grid-template-columns: repeat(3, 1fr); } }
+  .persona { display: grid; gap: 14px; align-content: start; }
+  .persona p { margin: 0; }
+  .persona :global(img) { aspect-ratio: 4 / 5; object-fit: cover; width: 100%; }
+  .red-caja {
+    aspect-ratio: 4 / 5;
+    display: grid;
+    place-content: center;
+    text-align: center;
+    gap: 8px;
+    position: relative;
+  }
+  .red-caja .display { font-size: 5rem; color: var(--terracota); line-height: 1; }
+  .red-caja p { font-family: var(--f-sub); font-size: 1.2rem; max-width: 14ch; margin: 0 auto; }
+
+  .capacidades { display: grid; gap: 40px 32px; }
+  .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 12px; align-content: start; }
+  .capacidades p { margin: 0; }
+  .capacidades ul { list-style: none; display: grid; gap: 8px; }
+  .capacidades li { color: var(--hueso-2); font-size: 0.95rem; line-height: 1.45; }
+  @media (min-width: 760px) { .capacidades { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .capacidades { grid-template-columns: repeat(4, 1fr); } }
+  .sueltos { margin-top: clamp(56px, 7vw, 96px); display: grid; gap: 20px; justify-items: start; }
+  .sueltos .etiqueta { color: var(--hueso); font-size: 0.75rem; }
+
+  .recorrido { display: grid; gap: 36px; }
+  .recorrido ul { list-style: none; border-top: 1px solid var(--borde); }
+  .recorrido li { display: grid; grid-template-columns: 3rem 1fr; padding: 16px 0; border-bottom: 1px solid var(--borde); font-family: var(--f-sub); font-size: clamp(1.1rem, 1rem + 0.6vw, 1.45rem); align-items: baseline; }
+  .recorrido .mono { font-size: 0.75rem; }
+  @media (min-width: 900px) { .recorrido { grid-template-columns: 1fr 1.6fr; gap: 72px; } }
+
+  .criterios { display: grid; gap: 40px; }
+  .criterios h2 { margin-block: 18px; }
+  .criterios ul { list-style: none; display: grid; gap: 28px; }
+  .criterios li { border-top: 1px solid var(--borde); padding-top: 18px; display: grid; gap: 8px; }
+  .criterios li p { margin: 0; }
+  @media (min-width: 900px) {
+    .criterios { grid-template-columns: 1fr 2fr; }
+    .criterios ul { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

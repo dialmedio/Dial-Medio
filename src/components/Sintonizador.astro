@@ -1,0 +1,119 @@
+---
+/**
+ * Regla de frecuencias AM. La aguja barre el ruido y se detiene en 810 AM,
+ * homenaje a Radio Sutatenza. Es el gesto "del ruido a la señal".
+ */
+interface Props {
+  frecuencia?: number;
+  class?: string;
+}
+const { frecuencia = 810, class: clase = '' } = Astro.props;
+const min = 530;
+const max = 1700;
+const ancho = max - min;
+const x = (f: number) => f - min;
+const ticks = [] as { x: number; tipo: 'mayor' | 'medio' | 'menor'; f: number }[];
+for (let f = 540; f <= max; f += 10) {
+  ticks.push({ x: x(f), f, tipo: f % 100 === 0 ? 'mayor' : f % 50 === 0 ? 'medio' : 'menor' });
+}
+const etiquetas = [600, 700, 800, 1000, 1200, 1400, 1600];
+const pct = (x(frecuencia) / ancho) * 100;
+---
+
+<div class:list={['sintonizador', clase]} style={`--pos:${pct}%`} aria-hidden="true">
+  <div class="sint-etiquetas mono">
+    <span>Ruido</span>
+    <span>kHz</span>
+  </div>
+  <div class="sint-regla">
+    <svg viewBox={`0 0 ${ancho} 40`} preserveAspectRatio="none">
+      {
+        ticks.map((t) => (
+          <line
+            x1={t.x}
+            x2={t.x}
+            y1={t.tipo === 'mayor' ? 8 : t.tipo === 'medio' ? 18 : 25}
+            y2="40"
+            class={t.tipo}
+          />
+        ))
+      }
+    </svg>
+    <div class="sint-numeros mono">
+      {etiquetas.map((f) => <span style={`left:${(x(f) / ancho) * 100}%`}>{f}</span>)}
+    </div>
+    <div class="sint-aguja">
+      <span class="sint-señal mono">Señal · {frecuencia} AM</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sintonizador { position: relative; padding-top: 34px; }
+  .sint-etiquetas {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--hueso-2);
+  }
+  .sint-regla { position: relative; height: 64px; }
+  .sint-regla svg { width: 100%; height: 40px; overflow: visible; }
+  .sint-regla line { stroke: var(--hueso); vector-effect: non-scaling-stroke; stroke-width: 1; }
+  .sint-regla line.menor { opacity: 0.28; }
+  .sint-regla line.medio { opacity: 0.5; }
+  .sint-regla line.mayor { opacity: 0.85; }
+  .sint-numeros { position: relative; height: 22px; font-size: 0.66rem; color: var(--hueso-2); letter-spacing: 0.06em; }
+  .sint-numeros span { position: absolute; top: 6px; transform: translateX(-50%); }
+
+  .sint-aguja {
+    position: absolute;
+    top: -14px;
+    bottom: 18px;
+    left: var(--pos);
+    width: 2px;
+    background: var(--terracota);
+    box-shadow: 0 0 18px rgba(193, 80, 46, 0.7);
+  }
+  .sint-aguja::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--terracota);
+    transform: translateX(-50%);
+  }
+  .sint-señal {
+    position: absolute;
+    top: -34px;
+    left: 12px;
+    white-space: nowrap;
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ambar);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .sint-aguja { animation: barrer 2.6s cubic-bezier(0.5, 0, 0.2, 1) 0.3s both; }
+    .sint-señal { animation: aparece 0.6s ease 2.7s both; }
+  }
+  @keyframes barrer {
+    0% { left: 96%; }
+    35% { left: 58%; }
+    55% { left: 71%; }
+    72% { left: calc(var(--pos) - 7%); }
+    86% { left: calc(var(--pos) + 2.5%); }
+    100% { left: var(--pos); }
+  }
+  @keyframes aparece { from { opacity: 0; transform: translateY(4px); } }
+
+  @media (max-width: 600px) {
+    .sint-numeros span:nth-child(odd):not(:first-child) { display: none; }
+  }
+</style>

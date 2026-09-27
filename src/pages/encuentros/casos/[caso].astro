@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import CasoPagina from '../../../components/CasoPagina.astro';
+import { rutaCaso } from '../../../lib/util';
+
+export async function getStaticPaths() {
+  const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'encuentros')).sort(
+    (a, b) => b.data.anio - a.data.anio,
+  );
+  return casos.map((caso, i) => {
+    const sig = casos[(i + 1) % casos.length];
+    return {
+      params: { caso: caso.id },
+      props: { caso, siguiente: casos.length > 1 ? { titulo: sig.data.titulo, href: rutaCaso('encuentros', sig.id) } : undefined },
+    };
+  });
+}
+
+const { caso, siguiente } = Astro.props;
+---
+
+<CasoPagina caso={caso} siguiente={siguiente} />

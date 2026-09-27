@@ -1,0 +1,205 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PortadaPagina from '../../components/PortadaPagina.astro';
+import ServicioDetalle from '../../components/ServicioDetalle.astro';
+import EscalaMedicion from '../../components/EscalaMedicion.astro';
+import PiezaCard from '../../components/PiezaCard.astro';
+import Pendiente from '../../components/Pendiente.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import cap from '../../data/capacidades.json';
+import { anio, dos, formatos, rutaCaso } from '../../lib/util';
+
+const servicios = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'impacto')).sort(
+  (a, b) => Number(b.data.destacado) - Number(a.data.destacado) || b.data.anio - a.data.anio,
+);
+const territorio = (await getCollection('medio', (m) => !m.data.borrador && m.data.mostrarEnImpacto && !!m.data.video)).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+const muestras = (await getCollection('muestras', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+
+const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universidades', 'Marcas con propósito'];
+---
+
+<Base
+  titulo="Dial Impacto"
+  descripcion="Documental por encargo, cobertura de proyectos sociales y ambientales, video institucional y piezas con medición pre/post para ONG, fundaciones, cooperación y universidades."
+>
+  <PortadaPagina
+    kicker="Dial Impacto"
+    titulo="Historias que muestran lo que tu organización <em>transforma.</em>"
+    bajada="Documental, cobertura y video institucional para quienes trabajan con comunidades y territorios. Con la opción de medir el efecto de cada pieza en su audiencia."
+  >
+    <ul class="etiquetas publicos">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
+    <div class="acciones">
+      <a href="/contacto?linea=impacto" class="btn">Cotizar un proyecto <span class="flecha">→</span></a>
+      <a href="#servicios" class="btn linea">Ver servicios</a>
+    </div>
+  </PortadaPagina>
+
+  <!-- SERVICIOS -->
+  <section class="seccion tema-papel" id="servicios">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — Servicios</p>
+          <h2 class="display d-2">Cuatro formas de contar tu trabajo.</h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Son puntos de partida. Cada proyecto se arma y se cotiza a la medida de lo que tu organización necesita contar.
+        </p>
+      </header>
+      <div class="servicios-rejilla">
+        {servicios.map((s, i) => <ServicioDetalle servicio={s} n={i + 1} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- MEDICIÓN -->
+  <section class="seccion tema-carbon grano">
+    <div class="contenedor med-grid">
+      <div class="med-texto">
+        <p class="kicker" data-revela>{dos(2)} — <span class="acento">Nuestro diferencial</span></p>
+        <h2 class="display d-2" data-revela>Sabes qué movió tu pieza.</h2>
+        <p class="lead texto-2" data-revela>
+          Evaluamos a la audiencia antes y después de ver la pieza. Te entregamos un informe claro, listo para compartir con
+          tus aliados y donantes.
+        </p>
+        <a href="/impacto/medicion" class="btn" data-revela>Cómo medimos <span class="flecha">→</span></a>
+      </div>
+      <EscalaMedicion />
+    </div>
+  </section>
+
+  <!-- PORTAFOLIO -->
+  <section class="seccion tema-papel" id="portafolio">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — Portafolio</p>
+          <h2 class="display d-2">Trabajo en territorio.</h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Casos por encargo y documental de autor. Todo rodado donde suceden las historias.
+        </p>
+      </header>
+
+      <div class="rejilla-2">
+        {
+          territorio.map((m) => (
+            <PiezaCard
+              titulo={m.data.titulo}
+              video={m.data.video}
+              href={`/medio/${m.id}`}
+              kicker={`${formatos[m.data.formato]}${m.data.serie ? ' · Serie ' + m.data.serie : ''}`}
+              resumen={m.data.resumen}
+              meta={`${m.data.lugar} · ${anio(m.data.fecha)}`}
+              etiqueta="Obra propia"
+            />
+          ))
+        }
+        {
+          casos.map((c) => (
+            <PiezaCard
+              titulo={c.data.titulo}
+              video={c.data.video}
+              href={rutaCaso('impacto', c.id)}
+              kicker={c.data.organizacion}
+              resumen={c.data.resumen}
+              meta={`${c.data.lugar} · ${c.data.anio}`}
+            />
+          ))
+        }
+        {
+          casos.length === 0 && (
+            <>
+              <Pendiente titulo="Documental por encargo" texto="Un documental hecho para una organización, con su permiso para nombrarla." />
+              <Pendiente titulo="Cobertura de proyecto" texto="Registro de un proyecto social o ambiental: video resumen, cápsulas y fotos." />
+            </>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- MÚSICA Y SONIDO EN CASA -->
+  <section class="seccion tema-hueso">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(4)} — Hecho en casa</p>
+          <h2 class="display d-2">La música también la hacemos nosotros.</h2>
+        </div>
+        <p class="texto-2" data-revela>
+          Componemos la música original y diseñamos el sonido de cada pieza. Tu historia suena a ella misma, no a un banco de
+          música.
+        </p>
+      </header>
+      <div class="rejilla-2">
+        {
+          muestras.map((m) => (
+            <PiezaCard
+              titulo={m.data.titulo}
+              video={m.data.video}
+              kicker={m.data.disciplinas.join(' · ')}
+              resumen={m.data.rol}
+              meta={String(m.data.anio)}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CRITERIOS -->
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor criterios">
+      <div data-revela>
+        <p class="kicker">{dos(5)} — Criterios de la casa</p>
+        <h2 class="display d-3">Lo que no hacemos.</h2>
+      </div>
+      <ul>
+        {
+          cap.criterios.map((c, i) => (
+            <li data-revela style={`--retraso:${i * 0.08}s`}>
+              <h3 class="sub s-2">{c.titulo}</h3>
+              <p class="texto-2">{c.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTAFinal linea="impacto" />
+</Base>
+
+<style>
+  .publicos { margin-top: 4px; }
+  :global(.tema-carbon) .publicos .etiqueta { color: var(--hueso-2); }
+  .servicios-rejilla { display: grid; gap: 64px 56px; }
+  @media (min-width: 900px) {
+    .servicios-rejilla { grid-template-columns: 1fr 1fr; }
+  }
+  .med-grid { display: grid; gap: 56px; align-items: center; }
+  .med-texto { display: grid; gap: 24px; justify-items: start; }
+  .med-texto p { margin: 0; }
+  @media (min-width: 980px) {
+    .med-grid { grid-template-columns: 1fr 1.05fr; gap: 88px; }
+  }
+  .rejilla-2 { display: grid; gap: 64px 32px; }
+  @media (min-width: 760px) {
+    .rejilla-2 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .criterios { display: grid; gap: 40px; }
+  .criterios ul { list-style: none; display: grid; gap: 28px; }
+  .criterios li { border-top: 1px solid var(--borde); padding-top: 18px; display: grid; gap: 8px; }
+  .criterios li p { margin: 0; }
+  @media (min-width: 900px) {
+    .criterios { grid-template-columns: 1fr 2fr; }
+    .criterios ul { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

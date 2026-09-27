@@ -1,0 +1,243 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import sitio from '../data/sitio.json';
+import { whatsapp } from '../lib/util';
+
+const servicios = (await getCollection('servicios')).sort((a, b) =>
+  a.data.linea === b.data.linea ? a.data.orden - b.data.orden : a.data.linea === 'impacto' ? -1 : 1,
+);
+
+const lineasForm = [
+  { valor: 'impacto', texto: 'Dial Impacto', nota: 'Documental, cobertura, medición' },
+  { valor: 'encuentros', texto: 'Dial Encuentros', nota: 'Eventos y foros' },
+  { valor: 'celebraciones', texto: 'Celebración', nota: 'Bodas, aniversarios' },
+  { valor: 'suelto', texto: 'Servicio suelto', nota: 'Cámara, edición, música…' },
+];
+
+const presupuestos = [
+  'Aún no lo sé',
+  'Menos de 5 millones COP',
+  'Entre 5 y 15 millones COP',
+  'Entre 15 y 40 millones COP',
+  'Más de 40 millones COP',
+];
+---
+
+<Base
+  titulo="Cotizar un proyecto"
+  descripcion="Cuéntanos qué quieres contar. Te enviamos una propuesta a la medida de tu proyecto."
+>
+  <section class="contacto tema-papel">
+    <div class="contenedor contacto-grid">
+      <aside class="contacto-lado">
+        <p class="kicker"><span class="acento">Cotizar</span></p>
+        <h1 class="display d-2">Cuéntanos qué quieres contar.</h1>
+        <p class="lead texto-2">No tenemos precios fijos: cada proyecto se cotiza a la medida. Con estos datos te enviamos una propuesta.</p>
+
+        <dl class="canales">
+          <div>
+            <dt class="mono">Correo</dt>
+            <dd><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></dd>
+          </div>
+          <div>
+            <dt class="mono">WhatsApp</dt>
+            <dd><a href={whatsapp()} target="_blank" rel="noopener">{sitio.whatsapp.visible}</a> <span class="texto-2">· {sitio.whatsapp.contacto}</span></dd>
+          </div>
+          <div>
+            <dt class="mono">Redes</dt>
+            <dd>{sitio.redes.map((r, i) => <><a href={r.url} target="_blank" rel="noopener">{r.nombre}</a>{i < sitio.redes.length - 1 && ' · '}</>)}</dd>
+          </div>
+          <div>
+            <dt class="mono">Desde</dt>
+            <dd>{sitio.ciudad}. Rodamos en todo el país y fuera de él.</dd>
+          </div>
+        </dl>
+      </aside>
+
+      <form class="form" method="post" action="/api/contacto" data-form novalidate>
+        <fieldset class="lineas-form">
+          <legend class="kicker sin-linea">¿Qué necesitas?</legend>
+          <div class="opciones">
+            {
+              lineasForm.map((l, i) => (
+                <label class="opcion">
+                  <input type="radio" name="linea" value={l.valor} checked={i === 0} />
+                  <span class="opcion-caja">
+                    <span class="sub s-3">{l.texto}</span>
+                    <span class="mono texto-2">{l.nota}</span>
+                  </span>
+                </label>
+              ))
+            }
+          </div>
+        </fieldset>
+
+        <div class="campos">
+          <label class="campo">
+            <span>Nombre <abbr title="obligatorio">*</abbr></span>
+            <input name="nombre" type="text" autocomplete="name" required />
+          </label>
+          <label class="campo">
+            <span>Organización</span>
+            <input name="organizacion" type="text" autocomplete="organization" />
+          </label>
+          <label class="campo">
+            <span>Correo <abbr title="obligatorio">*</abbr></span>
+            <input name="correo" type="email" autocomplete="email" required />
+          </label>
+          <label class="campo">
+            <span>WhatsApp o teléfono</span>
+            <input name="telefono" type="tel" autocomplete="tel" inputmode="tel" />
+          </label>
+          <label class="campo">
+            <span>Tipo de proyecto</span>
+            <select name="servicio">
+              <option value="">Elige una opción</option>
+              {servicios.map((s) => <option value={s.id} data-linea={s.data.linea}>{s.data.titulo}</option>)}
+              <option value="otro">Otro / aún no sé</option>
+            </select>
+          </label>
+          <label class="campo">
+            <span>Fecha aproximada</span>
+            <input name="fecha" type="text" placeholder="Ej.: marzo de 2027" />
+          </label>
+          <label class="campo ancho">
+            <span>Presupuesto aproximado</span>
+            <select name="presupuesto">{presupuestos.map((p) => <option>{p}</option>)}</select>
+          </label>
+          <label class="campo ancho">
+            <span>Cuéntanos el proyecto <abbr title="obligatorio">*</abbr></span>
+            <textarea name="mensaje" rows="6" required placeholder="Qué quieres contar, a quién, dónde y para cuándo."></textarea>
+          </label>
+          <label class="trampa" aria-hidden="true">
+            No llenar <input name="sitio_web" type="text" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+
+        <!-- Turnstile de Cloudflare: se activa al poner la clave pública (ver README). -->
+        <div class="cf-turnstile" data-sitekey=""></div>
+
+        <div class="form-pie">
+          <button type="submit" class="btn">Enviar solicitud <span class="flecha">→</span></button>
+          <p class="mono texto-2">{sitio.respuesta}</p>
+        </div>
+        <p class="form-estado" role="status" aria-live="polite" data-estado></p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import sitio from '../data/sitio.json';
+
+  const form = document.querySelector<HTMLFormElement>('[data-form]');
+  const estado = document.querySelector<HTMLElement>('[data-estado]');
+
+  if (form && estado) {
+    // Preselección desde los botones "Cotizar…" del sitio
+    const q = new URLSearchParams(location.search);
+    const linea = q.get('linea');
+    const servicio = q.get('servicio');
+    if (linea) form.querySelector<HTMLInputElement>(`input[name=linea][value="${CSS.escape(linea)}"]`)?.click();
+    if (servicio) {
+      const sel = form.querySelector<HTMLSelectElement>('select[name=servicio]');
+      if (sel && [...sel.options].some((o) => o.value === servicio)) sel.value = servicio;
+    }
+
+    const respaldoCorreo = (datos: FormData) => {
+      const cuerpo = [...datos.entries()]
+        .filter(([k, v]) => k !== 'sitio_web' && k !== 'cf-turnstile-response' && String(v).trim())
+        .map(([k, v]) => `${k}: ${v}`)
+        .join('\n');
+      return `mailto:${sitio.correo}?subject=${encodeURIComponent('Cotización desde el sitio de Dial')}&body=${encodeURIComponent(cuerpo)}`;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      estado.className = 'form-estado';
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      const datos = new FormData(form);
+      const boton = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      boton.disabled = true;
+      estado.textContent = 'Enviando…';
+      try {
+        const r = await fetch(form.action, { method: 'POST', body: datos, headers: { Accept: 'application/json' } });
+        if (!r.ok) throw new Error(String(r.status));
+        location.href = '/gracias';
+      } catch {
+        estado.classList.add('error');
+        estado.innerHTML = `No pudimos enviar el formulario desde aquí. <a href="${respaldoCorreo(datos)}">Envíalo por correo</a> con un clic, o escríbenos por WhatsApp.`;
+        boton.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .contacto { padding-block: clamp(56px, 8vw, 112px); }
+  .contacto-grid { display: grid; gap: 56px; }
+  @media (min-width: 1000px) { .contacto-grid { grid-template-columns: 1fr 1.25fr; gap: 88px; align-items: start; } }
+  .contacto-lado { display: grid; gap: 24px; align-content: start; }
+  @media (min-width: 1000px) { .contacto-lado { position: sticky; top: 108px; } }
+  .contacto-lado .lead { margin: 0; }
+  .canales { margin: 16px 0 0; border-top: 1px solid var(--borde); }
+  .canales div { padding: 14px 0; border-bottom: 1px solid var(--borde); display: grid; grid-template-columns: 6.5rem 1fr; gap: 12px; align-items: baseline; }
+  .canales dt { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--texto-2); }
+  .canales dd { margin: 0; font-size: 0.98rem; }
+  .canales a { text-decoration: none; border-bottom: 1px solid var(--borde); }
+  .canales a:hover { color: var(--terracota-ink); border-color: currentColor; }
+
+  .form { display: grid; gap: 36px; background: #fbf8f3; padding: clamp(22px, 4vw, 48px); border: 1px solid var(--linea); }
+  fieldset { border: 0; margin: 0; padding: 0; }
+  legend { margin-bottom: 16px; }
+  .opciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .opcion { position: relative; cursor: pointer; }
+  .opcion input { position: absolute; opacity: 0; }
+  .opcion-caja {
+    display: grid;
+    gap: 4px;
+    padding: 16px;
+    border: 1px solid var(--linea);
+    height: 100%;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .opcion-caja .mono { font-size: 0.7rem; }
+  .opcion:hover .opcion-caja { border-color: var(--carbon); }
+  .opcion input:checked + .opcion-caja { border-color: var(--terracota); background: rgba(193, 80, 46, 0.06); box-shadow: inset 0 0 0 1px var(--terracota); }
+  .opcion input:focus-visible + .opcion-caja { outline: 2px solid var(--ambar); outline-offset: 2px; }
+
+  .campos { display: grid; gap: 22px 20px; }
+  @media (min-width: 640px) { .campos { grid-template-columns: 1fr 1fr; } .ancho { grid-column: 1 / -1; } }
+  .campo { display: grid; gap: 8px; }
+  .campo > span { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tinta-2); }
+  .campo abbr { color: var(--terracota-ink); text-decoration: none; }
+  .campo input, .campo select, .campo textarea {
+    font: inherit;
+    font-size: 1rem;
+    color: var(--carbon);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(26, 22, 19, 0.35);
+    border-radius: 0;
+    padding: 10px 0;
+    width: 100%;
+    transition: border-color 0.2s;
+  }
+  .campo textarea { border: 1px solid rgba(26, 22, 19, 0.35); padding: 12px; resize: vertical; min-height: 140px; }
+  .campo select { appearance: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%231a1613' stroke-width='1.4'/%3E%3C/svg%3E") no-repeat right 4px center; padding-right: 24px; }
+  .campo input:focus, .campo select:focus, .campo textarea:focus { outline: none; border-color: var(--terracota); }
+  .campo input:user-invalid, .campo textarea:user-invalid { border-color: var(--terracota); }
+  .campo ::placeholder { color: rgba(90, 79, 70, 0.6); }
+  .trampa { position: absolute; left: -9999px; }
+
+  .form-pie { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: center; }
+  .form-pie p { margin: 0; font-size: 0.75rem; }
+  .form-estado { margin: 0; min-height: 1.5em; font-size: 0.95rem; }
+  .form-estado.error { color: var(--terracota-ink); }
+  .form-estado a { font-weight: 600; }
+  .cf-turnstile:empty { display: none; }
+</style>

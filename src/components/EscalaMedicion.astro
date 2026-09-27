@@ -1,0 +1,162 @@
+---
+/**
+ * La regla de la encuesta: cada punto se desliza del "antes" al "después"
+ * en una escala de 1 a 10. Los valores de ejemplo son ilustrativos y se
+ * marcan como tales; cuando haya resultados reales se pasan por `filas`.
+ */
+interface Props {
+  filas?: { etiqueta: string; antes: number; despues: number }[];
+  indicador?: string;
+  ilustrativo?: boolean;
+  class?: string;
+}
+const {
+  filas = [
+    { etiqueta: 'P-01', antes: 2, despues: 5 },
+    { etiqueta: 'P-02', antes: 4, despues: 6 },
+    { etiqueta: 'P-03', antes: 3, despues: 3 },
+    { etiqueta: 'P-04', antes: 6, despues: 8 },
+    { etiqueta: 'P-05', antes: 1, despues: 4 },
+  ],
+  indicador = 'Confianza hacia quien piensa distinto',
+  ilustrativo = true,
+  class: clase = '',
+} = Astro.props;
+
+const prom = (k: 'antes' | 'despues') => filas.reduce((s, f) => s + f[k], 0) / filas.length;
+const fmt = (n: number) => n.toFixed(1).replace('.', ',');
+const pos = (v: number) => `${((v - 1) / 9) * 100}%`;
+---
+
+<figure class:list={['escala', clase]} data-revela>
+  <figcaption class="escala-cabeza mono">
+    <span>{indicador}</span>
+    {ilustrativo && <span class="escala-aviso">Ejemplo ilustrativo</span>}
+  </figcaption>
+
+  <div class="escala-numeros mono" aria-hidden="true">
+    {Array.from({ length: 10 }, (_, i) => <span style={`left:${pos(i + 1)}`}>{i + 1}</span>)}
+  </div>
+
+  <ol class="escala-filas">
+    {
+      filas.map((f, i) => (
+        <li class="escala-fila" style={`--a:${pos(f.antes)};--d:${pos(f.despues)};--i:${i}`}>
+          <span class="mono escala-etq">{f.etiqueta}</span>
+          <span class="escala-pista">
+            <span class="escala-estela" />
+            <span class="escala-punto antes" />
+            <span class="escala-punto despues" />
+          </span>
+          <span class="sr-only">
+            Antes {f.antes}, después {f.despues}
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="escala-resumen mono">
+    <span><span class="escala-leyenda antes" /> Antes <strong>{fmt(prom('antes'))}</strong></span>
+    <span class="escala-flecha">→</span>
+    <span><span class="escala-leyenda despues" /> Después <strong>{fmt(prom('despues'))}</strong></span>
+  </div>
+</figure>
+
+<style>
+  .escala {
+    margin: 0;
+    padding: clamp(20px, 3vw, 36px);
+    background: var(--carbon-2);
+    border: 1px solid var(--linea-clara);
+    color: var(--hueso);
+  }
+  .escala-cabeza {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hueso-2);
+    margin-bottom: 26px;
+  }
+  .escala-aviso { color: var(--ambar); }
+  .escala-numeros,
+  .escala-pista { margin-left: 52px; margin-right: 10px; position: relative; }
+  .escala-numeros { height: 20px; font-size: 0.7rem; color: var(--hueso-2); }
+  .escala-numeros span { position: absolute; transform: translateX(-50%); }
+  .escala-filas { list-style: none; display: grid; gap: 4px; margin-top: 8px; }
+  .escala-fila { display: flex; align-items: center; height: 34px; position: relative; }
+  .escala-etq { position: absolute; left: 0; font-size: 0.68rem; color: var(--hueso-2); }
+  .escala-pista {
+    flex: 1;
+    height: 1px;
+    margin-left: 52px;
+    background: repeating-linear-gradient(90deg, var(--linea-clara) 0 1px, transparent 1px calc(100% / 9));
+    background-size: calc(100% + 1px) 9px;
+    background-position: 0 50%;
+    height: 9px;
+  }
+  .escala-pista::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 1px;
+    background: var(--linea-clara);
+  }
+  .escala-punto {
+    position: absolute;
+    top: 50%;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .escala-punto.antes { left: var(--a); border: 1.5px solid var(--ambar); background: var(--carbon-2); }
+  .escala-punto.despues { left: var(--d); background: var(--ambar); box-shadow: 0 0 14px rgba(217, 122, 52, 0.55); }
+  .escala-estela {
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    left: min(var(--a), var(--d));
+    width: calc(max(var(--a), var(--d)) - min(var(--a), var(--d)));
+    background: linear-gradient(90deg, rgba(217, 122, 52, 0.1), rgba(217, 122, 52, 0.8));
+  }
+
+  .escala-resumen {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 26px;
+    padding-top: 20px;
+    border-top: 1px solid var(--linea-clara);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hueso-2);
+  }
+  .escala-resumen strong { color: var(--hueso); font-weight: 700; font-size: 1.05rem; margin-left: 4px; }
+  .escala-flecha { color: var(--ambar); }
+  .escala-leyenda { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+  .escala-leyenda.antes { border: 1.5px solid var(--ambar); }
+  .escala-leyenda.despues { background: var(--ambar); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .escala .escala-punto.despues {
+      left: var(--a);
+      opacity: 0;
+      transition: left 1.4s var(--ease), opacity 0.4s;
+      transition-delay: calc(0.5s + var(--i) * 0.12s);
+    }
+    :global(.js) .escala .escala-estela {
+      width: 0;
+      transition: width 1.4s var(--ease);
+      transition-delay: calc(0.5s + var(--i) * 0.12s);
+    }
+    :global(.js) .escala.visible .escala-punto.despues { left: var(--d); opacity: 1; }
+    :global(.js) .escala.visible .escala-estela { width: calc(max(var(--a), var(--d)) - min(var(--a), var(--d))); }
+  }
+</style>

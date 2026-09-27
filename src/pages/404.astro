@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import Sintonizador from '../components/Sintonizador.astro';
+---
+
+<Base titulo="Fuera de frecuencia" noindex>
+  <section class="nf tema-carbon grano">
+    <div class="contenedor nf-cuerpo">
+      <p class="kicker"><span class="acento">Error 404</span></p>
+      <h1 class="display d-1">Solo ruido.</h1>
+      <p class="lead texto-2">Esta página no existe o cambió de lugar. Volvamos a la señal.</p>
+      <div class="acciones">
+        <a href="/" class="btn">Ir al inicio <span class="flecha">→</span></a>
+        <a href="/contacto" class="btn linea">Escribirnos</a>
+      </div>
+      <Sintonizador frecuencia={1450} class="nf-dial" />
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: calc(100svh - 72px); display: grid; align-items: center; position: relative; padding-block: 72px; }
+  .nf-cuerpo { display: grid; gap: 24px; justify-items: start; }
+  .nf .lead { margin: 0; }
+  .nf-cuerpo :global(.nf-dial) { width: 100%; margin-top: 48px; }
+</style>

@@ -1,0 +1,60 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { dos } from '../lib/util';
+
+interface Props {
+  servicio: CollectionEntry<'servicios'>;
+  n: number;
+}
+const { servicio, n } = Astro.props;
+const s = servicio.data;
+const cotizar = `/contacto?linea=${s.linea}&servicio=${servicio.id}`;
+---
+
+<article class="sd" id={servicio.id} data-revela>
+  <header class="sd-cabeza">
+    <span class="mono acento">{dos(n)}</span>
+    <h3 class="display d-3">{s.titulo}</h3>
+  </header>
+  <p class="sd-resumen">{s.resumen}</p>
+  <p class="sd-para texto-2"><span class="mono">Para</span> {s.paraQuien}</p>
+  <div class="sd-listas">
+    <div>
+      <p class="kicker sin-linea">Incluye</p>
+      <ul>{s.incluye.map((i) => <li>{i}</li>)}</ul>
+    </div>
+    <div>
+      <p class="kicker sin-linea">Entregas</p>
+      <ul class="mono">{s.entregables.map((i) => <li>{i}</li>)}</ul>
+    </div>
+  </div>
+  <a href={cotizar} class="enlace">Cotizar {s.titulo.toLowerCase()} <span>→</span></a>
+</article>
+
+<style>
+  .sd {
+    display: grid;
+    gap: 20px;
+    align-content: start;
+    padding-top: 28px;
+    border-top: 1px solid var(--borde);
+    justify-items: start;
+  }
+  .sd-cabeza { display: grid; gap: 12px; }
+  .sd-resumen { margin: 0; font-size: 1.08rem; max-width: 52ch; }
+  .sd-para { margin: 0; font-size: 0.95rem; }
+  .sd-para .mono { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; margin-right: 6px; color: var(--cobre); }
+  .sd-listas { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; margin-block: 4px 8px; }
+  .sd-listas ul { list-style: none; display: grid; gap: 8px; margin-top: 12px; }
+  .sd-listas li { position: relative; padding-left: 16px; font-size: 0.95rem; line-height: 1.4; }
+  .sd-listas li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0.5em;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--terracota);
+  }
+  .sd-listas ul.mono li { font-size: 0.78rem; }
+  .sd-listas ul.mono li::before { background: none; border: 1px solid var(--cobre); }
+</style>

@@ -1,0 +1,80 @@
+---
+/**
+ * El símbolo de Dial: una voz, diez alrededor.
+ * Nodo central siempre terracota; los diez exteriores en hueso (sobre oscuro)
+ * o carbón (sobre claro). `detalle="compacto"` engrosa trazos para tamaños pequeños.
+ * `anima` dibuja el símbolo al cargar: el ruido se sintoniza en señal.
+ */
+interface Props {
+  tono?: 'claro' | 'oscuro';
+  detalle?: 'completo' | 'compacto';
+  anima?: boolean;
+  class?: string;
+  titulo?: string;
+}
+const { tono = 'claro', detalle = 'completo', anima = false, class: clase = '', titulo } = Astro.props;
+
+const g =
+  detalle === 'compacto'
+    ? { orbita: 70, nodo: 12, radio: 4.4, anillo: 25, anilloTrazo: 6, centro: 14.5, centroTrazo: 3 }
+    : { orbita: 64, nodo: 6.2, radio: 1.05, anillo: 20, anilloTrazo: 2, centro: 9.4, centroTrazo: 1 };
+
+const nodos = Array.from({ length: 10 }, (_, i) => {
+  const a = ((-90 + i * 36) * Math.PI) / 180;
+  return { x: +(100 + g.orbita * Math.cos(a)).toFixed(2), y: +(100 + g.orbita * Math.sin(a)).toFixed(2), i };
+});
+const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
+---
+
+<svg
+  class:list={['simbolo', { anima }, clase]}
+  viewBox="0 0 200 200"
+  role={titulo ? 'img' : undefined}
+  aria-hidden={titulo ? undefined : 'true'}
+  aria-label={titulo}
+  style={`--c:${color}`}
+>
+  <g class="radios" stroke="var(--c)" stroke-width={g.radio} stroke-linecap="round" opacity={detalle === 'compacto' ? 1 : 0.82}>
+    {nodos.map((n) => <line x1="100" y1="100" x2={n.x} y2={n.y} pathLength="1" style={`--i:${n.i}`} />)}
+  </g>
+  <circle class="anillo" cx="100" cy="100" r={g.anillo} fill="none" stroke="var(--c)" stroke-width={g.anilloTrazo} pathLength="1" />
+  <g class="nodos" fill="var(--c)">
+    {nodos.map((n) => <circle cx={n.x} cy={n.y} r={g.nodo} style={`--i:${n.i};transform-origin:${n.x}px ${n.y}px`} />)}
+  </g>
+  <circle class="centro" cx="100" cy="100" r={g.centro} fill="var(--terracota)" stroke="var(--c)" stroke-width={g.centroTrazo} />
+</svg>
+
+<style>
+  .simbolo { overflow: visible; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .anima .radios line {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: trazar 1.1s var(--ease) forwards;
+      animation-delay: calc(0.55s + var(--i) * 0.06s);
+    }
+    .anima .anillo {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: trazar 1.3s var(--ease) 0.35s forwards;
+    }
+    .anima .nodos circle {
+      transform: scale(0);
+      animation: aparecer 0.7s var(--ease) forwards;
+      animation-delay: calc(1s + var(--i) * 0.07s);
+    }
+    .anima .centro {
+      transform-origin: 100px 100px;
+      transform: scale(0);
+      animation: aparecer 0.9s cubic-bezier(0.3, 1.6, 0.4, 1) 0.15s forwards, latido 4.8s ease-in-out 2.4s infinite;
+    }
+  }
+
+  @keyframes trazar { to { stroke-dashoffset: 0; } }
+  @keyframes aparecer { to { transform: scale(1); } }
+  @keyframes latido {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+</style>
