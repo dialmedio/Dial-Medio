@@ -63,9 +63,24 @@ const [principal, secundario] = [...casos, ...propios];
           <a href="#trabajo" class="btn linea">Ver trabajo</a>
         </div>
       </div>
-      <div class="heroe-simbolo">
-        <Simbolo tono="claro" anima titulo="Símbolo de Dial: una voz y diez alrededor" />
-      </div>
+      {
+        debate && (
+          <aside class="estreno" id="debate" aria-labelledby="estreno-titulo">
+            <div class="estreno-cabeza">
+              <Simbolo tono="claro" anima detalle="compacto" class="estreno-simbolo" />
+              <p class="kicker sin-linea"><span class="acento">Estreno</span> · Dial Medio</p>
+            </div>
+            <VideoLite video={debate.data.video!} titulo={debate.data.titulo} cargaInmediata />
+            <div class="estreno-texto">
+              <h2 class="sub s-2" id="estreno-titulo">
+                <a href={`/medio/${debate.id}`}>{debate.data.titulo}</a>
+              </h2>
+              <p class="texto-2">Encuestamos a la sala al entrar y al salir: la pregunta no es quién ganó, sino quién cambió de opinión.</p>
+              <p class="meta">Debate · {debate.data.duracion}</p>
+            </div>
+          </aside>
+        )
+      }
     </div>
     <div class="contenedor heroe-dial">
       <Sintonizador />
@@ -188,15 +203,7 @@ const [principal, secundario] = [...casos, ...propios];
       <div class="linea-interior">
         <p class="kicker">{dos(5)} — <span class="acento">Dial Medio</span></p>
         <h2 class="display d-3">Nuestra obra propia.</h2>
-        {
-          debate && (
-            <div class="linea-video">
-              <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
-              <p class="meta">Debate · {debate.data.duracion}</p>
-            </div>
-          )
-        }
-        <p class="texto-2">Debates entre sectores enfrentados, videopodcast y documentales.</p>
+        <p class="texto-2">Debates entre sectores enfrentados, videopodcast y documentales: conversaciones que buscan la frecuencia común entre quienes piensan distinto.</p>
         <a href="/medio" class="enlace">Ver Dial Medio <span>→</span></a>
       </div>
     </div>
@@ -257,11 +264,19 @@ const [principal, secundario] = [...casos, ...propios];
   .heroe-grid { display: grid; grid-template-columns: 1fr; align-items: center; gap: 24px; }
   .heroe-texto { display: grid; gap: 28px; justify-items: start; position: relative; z-index: 1; }
   /* Este titular no lleva tildes: puede ir más apretado que el resto. */
-  .heroe-titulo { font-size: clamp(3rem, 0.9rem + 6.4vw, 7.4rem); line-height: 0.94; }
+  .heroe-titulo { font-size: clamp(3rem, 0.8rem + 5.4vw, 6.6rem); line-height: 0.94; }
   .heroe-titulo .l { display: block; white-space: nowrap; }
   .acento-t { color: var(--terracota); }
   .heroe-bajada { margin: 0; color: var(--hueso-2); }
-  .heroe-simbolo { order: -1; justify-self: end; width: min(40vw, 220px); margin-bottom: -12px; }
+  .estreno { display: grid; gap: 16px; align-content: start; position: relative; z-index: 1; }
+  .estreno-cabeza { display: flex; align-items: center; gap: 12px; }
+  .estreno :global(.estreno-simbolo) { width: 34px; height: 34px; flex: none; }
+  .estreno :global(.video) { box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8); outline: 1px solid var(--linea-clara); }
+  .estreno-texto { display: grid; gap: 8px; }
+  .estreno-texto p { margin: 0; }
+  .estreno-texto .texto-2 { font-size: 1rem; max-width: 48ch; }
+  .estreno h2 a { text-decoration: none; }
+  .estreno h2 a:hover { color: var(--terracota); }
   .heroe-dial { padding-block: 48px 36px; }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -276,8 +291,8 @@ const [principal, secundario] = [...casos, ...propios];
   @keyframes sube { from { opacity: 0; transform: translateY(28px); } }
 
   @media (min-width: 900px) {
-    .heroe-grid { grid-template-columns: 1.5fr 1fr; gap: 48px; }
-    .heroe-simbolo { order: 0; width: 100%; max-width: 520px; justify-self: center; margin: 0; }
+    .heroe-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); }
+
   }
 
   /* ---------- Manifiesto ---------- */
@@ -353,8 +368,6 @@ const [principal, secundario] = [...casos, ...propios];
   a.linea-caja { transition: background 0.4s var(--ease); }
   a.linea-caja:hover { background: var(--hueso); }
   a.linea-caja:hover .enlace { color: var(--terracota-ink); gap: 0.9em; }
-  .linea-video { width: 100%; display: grid; gap: 12px; }
-  .linea-video p { margin: 0; }
   @media (min-width: 980px) {
     .lineas { grid-template-columns: 1fr 1fr; }
     .linea-caja:first-child .linea-interior { margin-left: auto; margin-right: 56px; }
