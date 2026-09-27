@@ -51,7 +51,7 @@ const [principal, secundario] = [...casos, ...propios];
         <p class="kicker heroe-kicker">Productora audiovisual · {sitio.ciudad}</p>
         <h1 class="display d-1 heroe-titulo">
           <span class="l">Contamos,</span>
-          <span class="l"><span class="acento-t">y medimos,</span></span>
+          <span class="l"><em>y medimos,</em></span>
           <span class="l">el encuentro</span>
           <span class="l">humano.</span>
         </h1>
@@ -103,7 +103,7 @@ const [principal, secundario] = [...casos, ...propios];
       <header class="cabeza doble">
         <div data-revela>
           <p class="kicker">{dos(1)} — <span class="acento">Dial Impacto</span></p>
-          <h2 class="display d-2">Historias para organizaciones que <span class="acento-t">transforman.</span></h2>
+          <h2 class="display d-2">Historias para organizaciones que <em>transforman.</em></h2>
         </div>
         <p class="texto-2" data-revela style="--retraso:.1s">
           Para ONG, fundaciones, cooperación internacional, universidades y marcas con propósito.
@@ -268,7 +268,6 @@ const [principal, secundario] = [...casos, ...propios];
   /* Este titular no lleva tildes: puede ir más apretado que el resto. */
   .heroe-titulo { font-size: clamp(3rem, 0.8rem + 5.4vw, 6.6rem); line-height: 0.94; }
   .heroe-titulo .l { display: block; white-space: nowrap; }
-  .acento-t { color: var(--terracota); }
   .heroe-bajada { margin: 0; color: var(--hueso-2); }
   .estreno { display: grid; gap: 16px; align-content: start; position: relative; z-index: 1; }
   .estreno-cabeza { display: flex; align-items: center; gap: 12px; }
@@ -328,7 +327,7 @@ const [principal, secundario] = [...casos, ...propios];
   .servicio-titulo { grid-column: 1; transition: color 0.3s; }
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
   .servicio-cuerpo { grid-column: 1; display: grid; gap: 6px; max-width: 56ch; }
-  .servicio-gancho { font-style: italic; font-size: clamp(1.15rem, 1rem + .4vw, 1.35rem); line-height: 1.35; color: var(--terracota-ink); }
+  .servicio-gancho { font-family: var(--f-serif); font-style: italic; font-size: clamp(1.15rem, 1rem + .4vw, 1.35rem); line-height: 1.35; color: var(--terracota-ink); }
   .servicio-resumen { font-size: 1rem; }
   .servicio-entrega { grid-column: 1; }
   .servicio-flecha { grid-column: 2; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }

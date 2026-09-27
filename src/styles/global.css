@@ -1,49 +1,47 @@
 /* ==========================================================================
-   Dial — sistema visual
-   Paleta y tipografías del Manual de Marca v2.0
+   Dial — sistema visual · Manual de marca v3 (septiembre 2026)
+   Ver /marca para el manual completo.
    ========================================================================== */
 
-@import '@fontsource/anton/400.css';
-@import '@fontsource-variable/oswald/index.css';
-@import '@fontsource-variable/lora/index.css';
-@import '@fontsource-variable/lora/wght-italic.css';
-@import '@fontsource/space-mono/400.css';
-@import '@fontsource/space-mono/700.css';
+@import '@fontsource-variable/instrument-sans/standard.css';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
 
 :root {
-  /* Núcleo */
-  --carbon: #1a1613;
-  --terracota: #c1502e;
-  --hueso: #e8dfd0;
-  /* Apoyos */
-  --ambar: #d97a34;
-  --cobre: #9c6b3f;
-  --oliva: #6b6844;
-  --salvia: #7a8b6f;
+  /* Paleta v3: dos neutros cálidos, una señal, una brasa. */
+  --carbon: #17130f;           /* Carbón: fondo oscuro y texto principal */
+  --papel: #f4eee5;            /* Papel: fondo claro */
+  --hueso: #e9dfcf;            /* Hueso: superficie clara y texto sobre carbón */
+  --terracota: #c0442a;        /* Terracota señal: el único color de marca */
+  --ambar: #e58a3a;            /* Brasa: datos y estados "en vivo" sobre oscuro */
 
-  /* Derivados (no son colores nuevos: variaciones de luz de la tríada) */
-  --papel: #f3eee6;            /* fondo editorial, hueso aclarado */
-  --carbon-2: #231e1a;         /* superficie elevada sobre carbón */
-  --carbon-3: #2e2823;
-  --terracota-ink: #a8421f;    /* terracota legible como texto pequeño sobre claro (4.6:1) */
-  --tinta-2: #5a4f46;          /* texto secundario sobre claro */
-  --hueso-2: rgba(232, 223, 208, 0.72); /* texto secundario sobre carbón */
-  --linea: rgba(26, 22, 19, 0.16);
-  --linea-clara: rgba(232, 223, 208, 0.18);
+  /* Variaciones funcionales (no son colores nuevos) */
+  --carbon-2: #211c17;         /* superficie elevada sobre carbón */
+  --carbon-3: #2b251f;
+  --terracota-ink: #a33a1c;    /* terracota para texto pequeño sobre claro (5,8:1) */
+  --terracota-clara: #e0694a;  /* terracota para texto pequeño sobre carbón (5,6:1) */
+  --tinta-2: #5f554c;          /* Humo: texto secundario sobre claro (5,4:1) */
+  --hueso-2: #b3a897;          /* Ceniza: texto secundario sobre carbón (8:1) */
+  --cobre: #a08e7b;            /* marcas finas y viñetas */
+  --linea: rgba(23, 19, 15, 0.14);
+  --linea-clara: rgba(233, 223, 207, 0.16);
 
-  /* Tipografía */
-  --t-etq: .8rem;      /* rótulos en mono y mayúsculas: nunca más pequeños que esto */
-  --t-meta: .875rem;   /* datos en mono: lugar, año, duración, entregas */
-  --f-display: 'Anton', 'Oswald Variable', Impact, sans-serif;
-  --f-sub: 'Oswald Variable', 'Arial Narrow', sans-serif;
-  --f-texto: 'Lora Variable', Georgia, serif;
-  --f-mono: 'Space Mono', ui-monospace, monospace;
+  /* Tipografía v3: una familia (Instrument), una voz de acento (serif cursiva), un dato (mono). */
+  --f-display: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+  --f-sub: var(--f-display);
+  --f-texto: var(--f-display);
+  --f-serif: 'Instrument Serif', Georgia, serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --t-etq: .78rem;     /* rótulos en mono y mayúsculas */
+  --t-meta: .875rem;   /* datos en mono */
 
   /* Medidas */
   --gutter: clamp(16px, 4.5vw, 56px);
   --ancho: 1320px;
   --seccion: clamp(72px, 11vw, 152px);
-  --radio: 2px;
+  --radio: 3px;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
 
   color-scheme: light;
@@ -66,9 +64,11 @@ body {
   background: var(--papel);
   color: var(--carbon);
   font-family: var(--f-texto);
-  font-size: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
-  line-height: 1.65;
+  font-size: clamp(1rem, 0.97rem + 0.2vw, 1.09rem);
+  line-height: 1.6;
+  font-stretch: 100%;
   font-optical-sizing: auto;
+  font-feature-settings: 'ss01';
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
@@ -80,6 +80,9 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 button { font: inherit; color: inherit; }
 p { margin: 0 0 1em; text-wrap: pretty; }
 h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
+/* Énfasis: la voz de acento de Dial es la serif cursiva. */
+em { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal; letter-spacing: 0; font-size: 1.08em; line-height: 1; }
+.cursiva { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
 ul, ol { margin: 0; padding: 0; }
 ::selection { background: var(--terracota); color: var(--hueso); }
 
@@ -117,9 +120,9 @@ ul, ol { margin: 0; padding: 0; }
 .tema-papel  { background: var(--papel); color: var(--carbon); }
 .tema-terracota { background: var(--terracota); color: var(--hueso); }
 
-.tema-carbon { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--terracota); --acento-texto: #e0714c; }
+.tema-carbon { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--terracota); --acento-texto: var(--terracota-clara); }
 .tema-hueso, .tema-papel { --texto-2: var(--tinta-2); --borde: var(--linea); --acento: var(--terracota); --acento-texto: var(--terracota-ink); }
-.tema-terracota { --texto-2: rgba(243, 238, 230, .86); --borde: rgba(243, 238, 230, .3); --acento: var(--carbon); --acento-texto: var(--carbon); }
+.tema-terracota { --texto-2: rgba(244, 238, 229, .86); --borde: rgba(244, 238, 229, .3); --acento: var(--carbon); --acento-texto: var(--carbon); --acento-display: var(--carbon); }
 
 /* Grano análogo: solo en portadas y bandas oscuras, nunca sobre datos. */
 .grano { isolation: isolate; }
@@ -135,23 +138,26 @@ ul, ol { margin: 0; padding: 0; }
 .grano > * { position: relative; z-index: 1; }
 
 /* ---------- Tipografía ---------- */
+/* Titulares: Instrument Sans semibold, semicondensada, en caja mixta. */
 .display {
   font-family: var(--f-display);
-  text-transform: uppercase;
-  /* Interlineado suficiente para que tildes y virgulillas (Á, É, Ñ) no choquen con la línea de arriba. */
-  line-height: 1.15;
-  letter-spacing: .005em;
+  font-weight: 600;
+  font-stretch: 84%;
+  line-height: 1;
+  letter-spacing: -.024em;
 }
-.d-1 { font-size: clamp(3.1rem, 1.2rem + 8.4vw, 9.25rem); }
-.d-2 { font-size: clamp(2.5rem, 1.3rem + 5.2vw, 6rem); }
-.d-3 { font-size: clamp(2rem, 1.3rem + 3vw, 3.75rem); }
-.d-4 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); }
+.display em { font-size: 1.04em; letter-spacing: -.01em; color: var(--acento-display, var(--terracota)); }
+.d-1 { font-size: clamp(3rem, 1rem + 6.4vw, 7.6rem); line-height: .96; }
+.d-2 { font-size: clamp(2.3rem, 1.2rem + 4.3vw, 5.1rem); }
+.d-3 { font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3.3rem); line-height: 1.04; }
+.d-4 { font-size: clamp(1.5rem, 1.15rem + 1.2vw, 2.1rem); line-height: 1.08; letter-spacing: -.022em; }
 
 .sub {
   font-family: var(--f-sub);
-  font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: .005em;
+  font-weight: 600;
+  font-stretch: 92%;
+  line-height: 1.15;
+  letter-spacing: -.015em;
 }
 .s-1 { font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); }
 .s-2 { font-size: clamp(1.2rem, 1.08rem + .5vw, 1.45rem); }
@@ -159,9 +165,10 @@ ul, ol { margin: 0; padding: 0; }
 
 .kicker {
   font-family: var(--f-mono);
+  font-weight: 500;
   font-size: var(--t-etq);
   line-height: 1.4;
-  letter-spacing: .12em;
+  letter-spacing: .1em;
   text-transform: uppercase;
   color: var(--texto-2);
   display: inline-flex;
@@ -198,13 +205,15 @@ ul, ol { margin: 0; padding: 0; }
   line-height: 1.5;
   max-width: 38ch;
 }
+/* Frases de manifiesto: Instrument Serif, la voz editorial. */
 .lead-xl {
-  font-size: clamp(1.35rem, 1.05rem + 1.35vw, 2.25rem);
-  line-height: 1.34;
+  font-family: var(--f-serif);
+  font-size: clamp(1.6rem, 1.1rem + 1.9vw, 2.9rem);
+  line-height: 1.18;
   font-weight: 400;
-  letter-spacing: -.005em;
+  letter-spacing: -.01em;
 }
-.lead-xl em { font-style: italic; color: var(--acento-texto); }
+.lead-xl em { font-size: 1em; color: var(--acento-texto); }
 .texto-2 { color: var(--texto-2); }
 .acento { color: var(--acento-texto); }
 .medida { max-width: 62ch; }
@@ -216,22 +225,21 @@ ul, ol { margin: 0; padding: 0; }
   display: inline-flex;
   align-items: center;
   gap: .7em;
-  min-height: 52px;
+  min-height: 50px;
   padding: 0 1.5em;
   border: 1px solid var(--bg);
-  border-radius: var(--radio);
+  border-radius: 100px;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--f-sub);
-  font-weight: 500;
-  font-size: 1.02rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: .005em;
   text-decoration: none;
   cursor: pointer;
   transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
 }
-.btn:hover { --bg: #a9431f; }
+.btn:hover { --bg: var(--terracota-ink); }
 .btn:active { transform: translateY(1px); }
 .btn .flecha { transition: transform .3s var(--ease); }
 .btn:hover .flecha { transform: translateX(4px); }
@@ -251,10 +259,9 @@ ul, ol { margin: 0; padding: 0; }
 
 .enlace {
   font-family: var(--f-sub);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 1rem;
-  letter-spacing: .06em;
-  text-transform: uppercase;
+  letter-spacing: -.005em;
   text-decoration: none;
   display: inline-flex;
   align-items: center;

@@ -41,7 +41,7 @@ const columnas = [
     <div class="pie-grid">
       <div class="pie-marca">
         <a href="/" aria-label="Dial, inicio" class="pie-logo"><Logo tono="claro" /></a>
-        <p class="pie-tagline mono">—{sitio.tagline}</p>
+        <p class="pie-tagline cursiva">{sitio.tagline}</p>
         <p class="texto-2 pie-desc">{sitio.descripcion}</p>
       </div>
 
@@ -108,8 +108,8 @@ const columnas = [
     grid-template-columns: repeat(2, 1fr);
   }
   .pie-marca { grid-column: 1 / -1; max-width: 36ch; }
-  .pie-logo { text-decoration: none; font-size: 22px; display: inline-block; }
-  .pie-tagline { color: var(--terracota); margin: 18px 0 16px; font-size: 0.95rem; }
+  .pie-logo { text-decoration: none; font-size: 44px; display: inline-block; }
+  .pie-tagline { color: var(--terracota-clara); margin: 14px 0 16px; font-size: 1.6rem; line-height: 1.1; }
   .pie-desc { font-size: 1rem; }
   .pie-col ul { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
   .pie-col a { text-decoration: none; font-size: 1rem; transition: color 0.2s; }

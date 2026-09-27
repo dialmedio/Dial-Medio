@@ -49,3 +49,13 @@ Secretos del Worker (Cloudflare → Workers → dial-medio → Settings → Vari
 Mientras no esté configurado, el formulario ofrece enviar la solicitud por correo con un clic.
 
 Si cambia el texto de la imagen para redes: `node scripts/generar-imagenes.mjs`.
+
+## Marca (manual v3)
+
+El manual vive en https://dialmedio.org/marca (sin indexar) y en PDF.
+
+- Tipografías: Instrument Sans (titulares y texto), Instrument Serif (acentos en cursiva), IBM Plex Mono (datos).
+- Colores: carbón #17130F, papel #F4EEE5, hueso #E9DFCF, terracota #C0442A, brasa #E58A3A. Tokens en `src/styles/global.css`.
+- Logotipo y símbolo: `node scripts/generar-marca.mjs` regenera `src/data/logotipo.json` y los SVG de `public/marca/`.
+- Imágenes para compartir e íconos: `node scripts/generar-imagenes.mjs` (usa Chrome).
+- PDF del manual: con `npx astro preview --port 4350` corriendo, `node scripts/exportar-manual.mjs "ruta/salida.pdf"`.

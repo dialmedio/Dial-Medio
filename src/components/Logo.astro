@@ -1,33 +1,38 @@
 ---
-import Simbolo from './Simbolo.astro';
+/**
+ * Logotipo de Dial (manual v3): "dial" en Instrument Sans Bold, con el punto de la i
+ * como nodo central terracota. Trazos generados por scripts/generar-marca.mjs.
+ * `linea` agrega la línea de negocio en Instrument Serif cursiva (impacto, encuentros, medio).
+ */
+import logo from '../data/logotipo.json';
 
 interface Props {
   tono?: 'claro' | 'oscuro';
+  linea?: string;
   class?: string;
+  titulo?: string;
 }
-const { tono = 'claro', class: clase = '' } = Astro.props;
+const { tono = 'claro', linea, class: clase = '', titulo = linea ? `Dial ${linea}` : 'Dial' } = Astro.props;
 ---
 
 <span class:list={['logo', tono, clase]}>
-  <Simbolo tono={tono} detalle="compacto" class="logo-simbolo" />
-  <span class="logo-palabra">Dial</span>
+  <svg class="logo-palabra" viewBox={logo.viewBox} role="img" aria-label={titulo}>
+    <path d={logo.d} fill="currentColor" />
+    <circle cx={logo.punto.cx} cy={logo.punto.cy} r={logo.punto.r} fill="var(--terracota)" />
+  </svg>
+  {linea && <span class="logo-linea" aria-hidden="true">{linea}</span>}
 </span>
 
 <style>
-  .logo {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    line-height: 1;
+  .logo { display: inline-flex; align-items: baseline; gap: 0.28em; line-height: 1; }
+  .logo-palabra { height: 1em; width: auto; overflow: visible; transform: translateY(0.02em); }
+  .claro { color: var(--hueso); }
+  .oscuro { color: var(--carbon); }
+  .logo-linea {
+    font-family: var(--f-serif);
+    font-style: italic;
+    font-size: 1.02em;
+    color: var(--terracota);
+    letter-spacing: 0;
   }
-  .logo :global(.logo-simbolo) { width: 1.55em; height: 1.55em; flex: none; }
-  .logo-palabra {
-    font-family: var(--f-display);
-    text-transform: uppercase;
-    font-size: 1.5em;
-    letter-spacing: 0.02em;
-    transform: translateY(0.02em);
-  }
-  .claro .logo-palabra { color: var(--hueso); }
-  .oscuro .logo-palabra { color: var(--carbon); }
 </style>

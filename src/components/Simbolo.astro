@@ -1,9 +1,11 @@
 ---
 /**
- * El símbolo de Dial: una voz, diez alrededor.
- * Nodo central siempre terracota; los diez exteriores en hueso (sobre oscuro)
- * o carbón (sobre claro). `detalle="compacto"` engrosa trazos para tamaños pequeños.
- * `anima` dibuja el símbolo al cargar: el ruido se sintoniza en señal.
+ * Símbolo de Dial (manual v3): una voz, diez alrededor.
+ * Nodo central terracota; diez nodos en hueso (sobre oscuro) o carbón (sobre claro).
+ * Los radios nacen separados del centro: la voz no se toca, se escucha.
+ * `detalle="compacto"` quita los radios para tamaños menores de 32 px.
+ * `anima` lo dibuja al cargar: el ruido se sintoniza en señal.
+ * Geometría idéntica a scripts/generar-marca.mjs.
  */
 interface Props {
   tono?: 'claro' | 'oscuro';
@@ -14,14 +16,14 @@ interface Props {
 }
 const { tono = 'claro', detalle = 'completo', anima = false, class: clase = '', titulo } = Astro.props;
 
-const g =
-  detalle === 'compacto'
-    ? { orbita: 70, nodo: 12, radio: 4.4, anillo: 25, anilloTrazo: 6, centro: 14.5, centroTrazo: 3 }
-    : { orbita: 64, nodo: 6.2, radio: 1.05, anillo: 20, anilloTrazo: 2, centro: 9.4, centroTrazo: 1 };
-
-const nodos = Array.from({ length: 10 }, (_, i) => {
+const R = 72, rNodo = 10.5, rCentro = 18, hueco = 30, trazo = 4.2;
+const p = (a: number, d: number) => [100 + d * Math.cos(a), 100 + d * Math.sin(a)].map((v) => +v.toFixed(2));
+const radios = Array.from({ length: 10 }, (_, i) => {
   const a = ((-90 + i * 36) * Math.PI) / 180;
-  return { x: +(100 + g.orbita * Math.cos(a)).toFixed(2), y: +(100 + g.orbita * Math.sin(a)).toFixed(2), i };
+  const [x1, y1] = p(a, hueco);
+  const [x2, y2] = p(a, R - rNodo - 7);
+  const [cx, cy] = p(a, R);
+  return { x1, y1, x2, y2, cx, cy, i };
 });
 const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
 ---
@@ -34,14 +36,17 @@ const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
   aria-label={titulo}
   style={`--c:${color}`}
 >
-  <g class="radios" stroke="var(--c)" stroke-width={g.radio} stroke-linecap="round" opacity={detalle === 'compacto' ? 1 : 0.82}>
-    {nodos.map((n) => <line x1="100" y1="100" x2={n.x} y2={n.y} pathLength="1" style={`--i:${n.i}`} />)}
-  </g>
-  <circle class="anillo" cx="100" cy="100" r={g.anillo} fill="none" stroke="var(--c)" stroke-width={g.anilloTrazo} pathLength="1" />
+  {
+    detalle === 'completo' && (
+      <g class="radios" stroke="var(--c)" stroke-width={trazo} stroke-linecap="round">
+        {radios.map((r) => <line x1={r.x1} y1={r.y1} x2={r.x2} y2={r.y2} pathLength="1" style={`--i:${r.i}`} />)}
+      </g>
+    )
+  }
   <g class="nodos" fill="var(--c)">
-    {nodos.map((n) => <circle cx={n.x} cy={n.y} r={g.nodo} style={`--i:${n.i};transform-origin:${n.x}px ${n.y}px`} />)}
+    {radios.map((r) => <circle cx={r.cx} cy={r.cy} r={detalle === 'compacto' ? rNodo * 1.3 : rNodo} style={`--i:${r.i};transform-origin:${r.cx}px ${r.cy}px`} />)}
   </g>
-  <circle class="centro" cx="100" cy="100" r={g.centro} fill="var(--terracota)" stroke="var(--c)" stroke-width={g.centroTrazo} />
+  <circle class="centro" cx="100" cy="100" r={detalle === 'compacto' ? rCentro * 1.35 : rCentro} fill="var(--terracota)" />
 </svg>
 
 <style>
@@ -51,18 +56,13 @@ const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
     .anima .radios line {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: trazar 1.1s var(--ease) forwards;
-      animation-delay: calc(0.55s + var(--i) * 0.06s);
-    }
-    .anima .anillo {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      animation: trazar 1.3s var(--ease) 0.35s forwards;
+      animation: trazar 0.9s var(--ease) forwards;
+      animation-delay: calc(0.5s + var(--i) * 0.06s);
     }
     .anima .nodos circle {
       transform: scale(0);
       animation: aparecer 0.7s var(--ease) forwards;
-      animation-delay: calc(1s + var(--i) * 0.07s);
+      animation-delay: calc(0.8s + var(--i) * 0.07s);
     }
     .anima .centro {
       transform-origin: 100px 100px;
@@ -71,10 +71,10 @@ const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
     }
   }
 
-  @keyframes trazar { to { stroke-dashoffset: 0; } }
+  @keyframes trazar { from { stroke-dashoffset: -1; } to { stroke-dashoffset: 0; } }
   @keyframes aparecer { to { transform: scale(1); } }
   @keyframes latido {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.06); }
+    50% { transform: scale(1.08); }
   }
 </style>

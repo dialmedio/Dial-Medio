@@ -1,0 +1,435 @@
+---
+// Manual de marca de Dial, v3. Página sin indexar: se comparte por enlace o como PDF.
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+import Simbolo from '../components/Simbolo.astro';
+import Sintonizador from '../components/Sintonizador.astro';
+import EscalaMedicion from '../components/EscalaMedicion.astro';
+
+const decisiones = [
+  {
+    area: 'Tipografía',
+    antes: 'Cuatro familias (Anton, Oswald, Lora, Space Mono) y titulares en mayúsculas condensadas.',
+    ahora: 'Una familia, Instrument, con su sans y su serif; IBM Plex Mono para los datos. Titulares en caja mixta.',
+    porque: 'Más cálida y legible, sin choques con tildes, y con un registro editorial acorde a ONG, cooperación y universidades. La fuerza se conserva con peso y escala, no gritando.',
+  },
+  {
+    area: 'Color',
+    antes: 'Tríada más cinco apoyos (ámbar, cobre, oliva, salvia, petróleo).',
+    ahora: 'Dos neutros cálidos, una señal y una brasa. Nada más.',
+    porque: 'Un solo color de marca se reconoce. El terracota se ajustó para cumplir contraste accesible con texto claro encima.',
+  },
+  {
+    area: 'Logotipo',
+    antes: 'El canal "DIAL MEDIO" en Anton hacía de logo de toda la casa.',
+    ahora: '"dial" en minúsculas, con el punto de la i convertido en el nodo central terracota.',
+    porque: 'La sombrilla necesitaba nombre propio. El punto es la voz del símbolo: el logo y el símbolo son la misma idea.',
+  },
+  {
+    area: 'Símbolo',
+    antes: 'Radios finos y un anillo que se perdían en tamaños pequeños.',
+    ahora: 'Sin anillo; radios más gruesos que nacen separados del centro. Versión compacta para tamaños pequeños.',
+    porque: 'Se lee igual en un avatar de 20 px que en una pantalla de evento. La voz no se toca: se escucha.',
+  },
+];
+
+const colores = [
+  { nombre: 'Carbón', hex: '#17130F', rgb: '23 · 19 · 15', rol: 'Fondos oscuros, texto principal sobre claro.', clase: 'c-carbon', proporcion: '30 %' },
+  { nombre: 'Papel', hex: '#F4EEE5', rgb: '244 · 238 · 229', rol: 'Fondo claro principal.', clase: 'c-papel', proporcion: '45 %' },
+  { nombre: 'Hueso', hex: '#E9DFCF', rgb: '233 · 223 · 207', rol: 'Superficies claras; texto sobre carbón.', clase: 'c-hueso', proporcion: '15 %' },
+  { nombre: 'Terracota señal', hex: '#C0442A', rgb: '192 · 68 · 42', rol: 'El color de Dial: acentos, botones, el nodo central.', clase: 'c-terracota', proporcion: '8 %' },
+  { nombre: 'Brasa', hex: '#E58A3A', rgb: '229 · 138 · 58', rol: 'Solo datos y estados "en vivo" sobre oscuro.', clase: 'c-brasa', proporcion: '2 %' },
+];
+
+const funcionales = [
+  { nombre: 'Terracota profunda', hex: '#A33A1C', uso: 'Texto terracota pequeño sobre papel', contraste: '5,7:1' },
+  { nombre: 'Terracota clara', hex: '#E0694A', uso: 'Texto terracota pequeño sobre carbón', contraste: '5,5:1' },
+  { nombre: 'Humo', hex: '#5F554C', uso: 'Texto secundario sobre papel', contraste: '6,3:1' },
+  { nombre: 'Ceniza', hex: '#B3A897', uso: 'Texto secundario sobre carbón', contraste: '7,9:1' },
+];
+
+const escala = [
+  { nivel: 'Titular principal', muestra: 'Contamos el encuentro', clase: 'm-d1', spec: 'Instrument Sans · 600 · ancho 84 % · −2,4 % · interlineado 0,96' },
+  { nivel: 'Titular de sección', muestra: 'Historias que transforman', clase: 'm-d2', spec: 'Instrument Sans · 600 · ancho 84 % · −2,4 % · interlineado 1' },
+  { nivel: 'Subtítulo', muestra: 'Cobertura de proyecto', clase: 'm-sub', spec: 'Instrument Sans · 600 · ancho 92 % · −1,5 %' },
+  { nivel: 'Manifiesto', muestra: 'Trabajamos despacio donde hay que escuchar.', clase: 'm-man', spec: 'Instrument Serif · regular · interlineado 1,18' },
+  { nivel: 'Acento', muestra: 'y medimos,', clase: 'm-acento', spec: 'Instrument Serif cursiva · terracota · +4 % sobre el tamaño vecino' },
+  { nivel: 'Texto', muestra: 'Producimos historias reales de personas, comunidades y organizaciones.', clase: 'm-texto', spec: 'Instrument Sans · 400 · 17,5 px · interlineado 1,6' },
+  { nivel: 'Rótulo', muestra: 'Dial Impacto · Servicios', clase: 'm-rotulo', spec: 'IBM Plex Mono · 500 · mayúsculas · +10 % · mín. 12,5 px' },
+  { nivel: 'Dato', muestra: 'Bogotá · 2026 · 1:16:10', clase: 'm-dato', spec: 'IBM Plex Mono · 400 · minúsculas · 14 px' },
+];
+
+const descargas = [
+  ['Firma (símbolo + logotipo)', 'dial-firma-oscuro', 'dial-firma-claro'],
+  ['Logotipo', 'dial-logotipo-oscuro', 'dial-logotipo-claro'],
+  ['Símbolo', 'dial-simbolo-oscuro', 'dial-simbolo-claro'],
+  ['Dial Impacto', 'dial-impacto-oscuro', 'dial-impacto-claro'],
+  ['Dial Encuentros', 'dial-encuentros-oscuro', 'dial-encuentros-claro'],
+  ['Dial Medio', 'dial-medio-oscuro', 'dial-medio-claro'],
+];
+---
+
+<Base titulo="Manual de marca v3" descripcion="Manual de marca de Dial: logotipo, símbolo, color, tipografía y voz." noindex>
+  <!-- PORTADA -->
+  <section class="m-portada tema-carbon grano">
+    <div class="contenedor m-portada-grid">
+      <div class="m-portada-texto">
+        <p class="kicker"><span class="acento">Manual de marca</span> · v3 · Septiembre 2026</p>
+        <h1 class="m-portada-logo"><Logo tono="claro" titulo="Dial" /></h1>
+        <p class="lead-xl">Una sola voz: <em>cálida y precisa.</em></p>
+        <p class="lead texto-2">
+          Este manual reemplaza la versión 2.0. Conserva la esencia de Dial (del ruido a la señal, la voz y los diez, la tierra y
+          la luz) y la lleva a un sistema más simple, legible y reconocible para todas las líneas de la casa.
+        </p>
+      </div>
+      <Simbolo tono="claro" anima class="m-portada-simbolo" titulo="Símbolo de Dial" />
+    </div>
+    <div class="contenedor"><Sintonizador /></div>
+  </section>
+
+  <!-- 01 DECISIONES -->
+  <section class="seccion tema-papel" id="decisiones">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">01 — Qué cambió</p>
+          <h2 class="display d-2">Cuatro decisiones.</h2>
+        </div>
+        <p class="texto-2">Todo lo demás se desprende de estas cuatro. Si una pieza duda, vuelve aquí.</p>
+      </header>
+      <ol class="decisiones">
+        {
+          decisiones.map((d, i) => (
+            <li>
+              <p class="kicker sin-linea"><span class="acento">{String(i + 1).padStart(2, '0')}</span> · {d.area}</p>
+              <dl>
+                <div><dt class="meta">Antes</dt><dd class="texto-2">{d.antes}</dd></div>
+                <div><dt class="meta">Ahora</dt><dd class="d-ahora">{d.ahora}</dd></div>
+                <div><dt class="meta">Por qué</dt><dd class="texto-2">{d.porque}</dd></div>
+              </dl>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 02 LOGOTIPO -->
+  <section class="seccion tema-hueso" id="logotipo">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">02 — Logotipo</p>
+          <h2 class="display d-2">El punto es la voz.</h2>
+        </div>
+        <p class="texto-2">
+          "dial" en Instrument Sans Bold (ancho 92 %), en minúsculas. El punto de la i es el nodo central del símbolo, siempre en
+          terracota. El logotipo es la señal ya sintonizada: siempre limpio, sin texturas ni sombras.
+        </p>
+      </header>
+
+      <div class="logos">
+        <div class="logo-caja c-papel"><Logo tono="oscuro" /></div>
+        <div class="logo-caja c-carbon"><Logo tono="claro" /></div>
+        <div class="logo-caja c-terracota sobre-terracota"><Logo tono="claro" /></div>
+      </div>
+      <ul class="notas">
+        <li><strong>Protección:</strong> alrededor del logotipo, un espacio libre igual al alto de la letra d.</li>
+        <li><strong>Tamaño mínimo:</strong> 64 px de ancho en pantalla, 18 mm impreso.</li>
+        <li><strong>Sobre terracota:</strong> todo en papel, incluido el punto.</li>
+        <li><strong>No:</strong> deformar, cambiar el color del punto, usar el antiguo "Dial●Medio" en Anton, contornos, sombras ni degradados.</li>
+      </ul>
+
+      <h3 class="sub s-1 m-h3">Firmas por línea</h3>
+      <p class="texto-2 m-p">La línea de negocio se escribe en Instrument Serif cursiva terracota, a la derecha del logotipo.</p>
+      <div class="firmas">
+        {['impacto', 'encuentros', 'medio'].map((l) => (
+          <div class="logo-caja c-papel firma"><Logo tono="oscuro" linea={l} /></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 SÍMBOLO -->
+  <section class="seccion tema-carbon grano" id="simbolo">
+    <div class="contenedor simbolo-grid">
+      <div>
+        <p class="kicker">03 — Símbolo</p>
+        <h2 class="display d-2">Una voz, diez alrededor.</h2>
+        <p class="texto-2 m-p">
+          El círculo del debate visto desde arriba, el disco del teléfono y la escala del 1 al 10. El nodo central siempre es
+          terracota; los diez, hueso sobre oscuro o carbón sobre claro. Los radios nacen separados del centro: la voz no se toca, se
+          escucha.
+        </p>
+        <ul class="notas claro">
+          <li><strong>Completo:</strong> desde 48 px.</li>
+          <li><strong>Compacto</strong> (sin radios): por debajo de 48 px, favicon y sellos.</li>
+          <li><strong>Avatar de redes:</strong> símbolo completo en hueso sobre carbón.</li>
+        </ul>
+      </div>
+      <div class="simbolos">
+        <div class="s-grande"><Simbolo tono="claro" /></div>
+        <div class="s-fila">
+          <div><Simbolo tono="claro" /><span class="meta">64 px</span></div>
+          <div class="s-32"><Simbolo tono="claro" detalle="compacto" /><span class="meta">32 px · compacto</span></div>
+          <div class="s-20"><Simbolo tono="claro" detalle="compacto" /><span class="meta">20 px · compacto</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 COLOR -->
+  <section class="seccion tema-papel" id="color">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">04 — Color</p>
+          <h2 class="display d-2">Tierra y luz.</h2>
+        </div>
+        <p class="texto-2">
+          Dos neutros cálidos hacen casi todo el trabajo. El terracota es la señal: aparece poco para que se note. Nunca rojo
+          puro, nunca azul político, nunca verde saturado.
+        </p>
+      </header>
+      <div class="barra" aria-hidden="true">
+        {colores.map((c) => <span class={c.clase} style={`flex:${parseFloat(c.proporcion)}`} />)}
+      </div>
+      <div class="colores">
+        {
+          colores.map((c) => (
+            <article class="color">
+              <div class:list={['muestra', c.clase]} />
+              <h3 class="sub s-2">{c.nombre}</h3>
+              <p class="meta">{c.hex} · RGB {c.rgb}</p>
+              <p class="texto-2">{c.rol}</p>
+              <p class="meta">Proporción {c.proporcion}</p>
+            </article>
+          ))
+        }
+      </div>
+      <h3 class="sub s-1 m-h3">Variaciones para texto accesible</h3>
+      <table class="tabla">
+        <thead><tr><th>Nombre</th><th>Hex</th><th>Uso</th><th>Contraste</th></tr></thead>
+        <tbody>
+          {funcionales.map((f) => (
+            <tr><td><span class="punto" style={`background:${f.hex}`} />{f.nombre}</td><td class="meta">{f.hex}</td><td>{f.uso}</td><td class="meta">{f.contraste}</td></tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="texto-2 m-p">
+        Texto sobre terracota: #F7F2EA, mínimo 16 px en semibold (4,5:1). Terracota como texto sobre papel o carbón, solo en
+        titulares grandes.
+      </p>
+    </div>
+  </section>
+
+  <!-- 05 TIPOGRAFÍA -->
+  <section class="seccion tema-hueso" id="tipografia">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">05 — Tipografía</p>
+          <h2 class="display d-2">Tres voces, cada una con su trabajo.</h2>
+        </div>
+        <p class="texto-2">Todas gratuitas en Google Fonts. Instrument Sans e Instrument Serif fueron diseñadas como pareja.</p>
+      </header>
+      <div class="familias">
+        <article>
+          <p class="kicker sin-linea">Titulares y texto</p>
+          <p class="fam fam-sans">Instrument Sans</p>
+          <p class="texto-2">Variable: peso 400–700 y ancho 75–100 %. Titulares en semibold semicondensado; texto en regular.</p>
+        </article>
+        <article>
+          <p class="kicker sin-linea">Acento y manifiesto</p>
+          <p class="fam fam-serif"><em>Instrument Serif</em></p>
+          <p class="texto-2">La voz cálida: énfasis, frases gancho, citas y manifiestos. En cursiva, casi siempre terracota.</p>
+        </article>
+        <article>
+          <p class="kicker sin-linea">Datos y rótulos</p>
+          <p class="fam fam-mono">IBM Plex Mono</p>
+          <p class="texto-2">Cuando aparece, algo se está midiendo: fechas, duraciones, frecuencias, encuestas.</p>
+        </article>
+      </div>
+      <ol class="escala-tipo">
+        {
+          escala.map((e) => (
+            <li>
+              <span class="meta">{e.nivel}</span>
+              <span class={e.clase}>{e.clase === 'm-acento' ? <em>{e.muestra}</em> : e.muestra}</span>
+              <span class="meta spec">{e.spec}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- 06 ELEMENTOS -->
+  <section class="seccion tema-carbon grano" id="elementos">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">06 — Elementos</p>
+          <h2 class="display d-2">Del ruido a la señal, en pantalla.</h2>
+        </div>
+        <p class="texto-2">
+          El ruido es direccional: vive en portadas, intros y fondos oscuros como grano sutil. Los datos y el logotipo, siempre
+          limpios.
+        </p>
+      </header>
+      <div class="elementos">
+        <article>
+          <h3 class="sub s-2">El dial</h3>
+          <p class="texto-2">Regla de frecuencias AM. La aguja busca y a veces encuentra la señal en 810 AM, homenaje a Radio Sutatenza.</p>
+          <Sintonizador />
+        </article>
+        <article>
+          <h3 class="sub s-2">La escala antes → después</h3>
+          <p class="texto-2">La pieza que explica la medición. Mono y brasa sobre carbón; marcar siempre si los datos son ilustrativos.</p>
+          <EscalaMedicion />
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 VOZ -->
+  <section class="seccion tema-papel" id="voz">
+    <div class="contenedor voz">
+      <div>
+        <p class="kicker">07 — Voz</p>
+        <h2 class="display d-2">Cálida y precisa.</h2>
+      </div>
+      <div class="voz-reglas">
+        <p class="lead-xl"><em>Del ruido a la señal.</em></p>
+        <p class="texto-2">Firma de Dial. En Instrument Serif cursiva, nunca en mayúsculas. Dial Medio conserva la suya: <em>Sintonizar es conversar.</em></p>
+        <ul class="notas">
+          <li><strong>Desde las personas,</strong> no desde el equipo técnico: se cuenta el encuentro, no la cámara.</li>
+          <li><strong>Frases cortas y verbos concretos.</strong> Tuteo, español de Colombia, sin sensacionalismo.</li>
+          <li><strong>Caja de oración</strong> en títulos y botones. Las mayúsculas quedan para los rótulos en mono.</li>
+          <li><strong>Datos con fuente.</strong> Si es ilustrativo, se dice.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 APLICACIONES Y DESCARGAS -->
+  <section class="seccion tema-hueso" id="descargas">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">08 — Aplicaciones y descargas</p>
+          <h2 class="display d-2">Llevarlo a todas partes.</h2>
+        </div>
+        <p class="texto-2">
+          Miniaturas y portadas: título en Instrument Sans semibold, el acento en serif cursiva terracota, la firma de la línea en
+          una esquina. El antiguo logotipo en Anton se retira de a poco, empezando por los próximos episodios.
+        </p>
+      </header>
+      <table class="tabla descargas">
+        <thead><tr><th>Archivo</th><th>Para fondo claro</th><th>Para fondo oscuro</th></tr></thead>
+        <tbody>
+          {descargas.map(([n, o, c]) => (
+            <tr><td>{n}</td><td><a href={`/marca/${o}.svg`} download>SVG ↓</a></td><td><a href={`/marca/${c}.svg`} download>SVG ↓</a></td></tr>
+          ))}
+          <tr><td>Avatar de redes</td><td colspan="2"><a href="/marca/dial-avatar.svg" download>SVG ↓</a></td></tr>
+          <tr><td>Fuentes</td><td colspan="2"><a href="https://fonts.google.com/specimen/Instrument+Sans" target="_blank" rel="noopener">Instrument Sans</a> · <a href="https://fonts.google.com/specimen/Instrument+Serif" target="_blank" rel="noopener">Instrument Serif</a> · <a href="https://fonts.google.com/specimen/IBM+Plex+Mono" target="_blank" rel="noopener">IBM Plex Mono</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .m-portada { position: relative; overflow: hidden; padding-block: clamp(64px, 9vw, 128px) 40px; }
+  .m-portada-grid { display: grid; gap: 48px; align-items: center; margin-bottom: 56px; }
+  .m-portada-texto { display: grid; gap: 24px; justify-items: start; }
+  .m-portada-texto p { margin: 0; }
+  .m-portada-logo { font-size: clamp(5rem, 2rem + 12vw, 12rem); line-height: 1; font-weight: 400; }
+  .m-portada .lead { max-width: 52ch; }
+  .m-portada :global(.m-portada-simbolo) { width: min(70vw, 420px); justify-self: center; }
+  @media (min-width: 980px) { .m-portada-grid { grid-template-columns: 1.4fr 1fr; } }
+
+  .decisiones { list-style: none; display: grid; gap: 24px; }
+  @media (min-width: 900px) { .decisiones { grid-template-columns: 1fr 1fr; } }
+  .decisiones li { border-top: 2px solid var(--carbon); padding-top: 18px; display: grid; gap: 16px; }
+  .decisiones dl { margin: 0; display: grid; gap: 12px; }
+  .decisiones dl div { display: grid; grid-template-columns: 5.5rem 1fr; gap: 12px; align-items: baseline; }
+  .decisiones dd { margin: 0; }
+  .d-ahora { font-weight: 600; }
+
+  .logos { display: grid; gap: 16px; }
+  @media (min-width: 900px) { .logos { grid-template-columns: repeat(3, 1fr); } }
+  .logo-caja { display: grid; place-items: center; aspect-ratio: 16 / 10; font-size: clamp(3rem, 1.5rem + 4vw, 5.5rem); border-radius: 4px; }
+  .sobre-terracota :global(circle) { fill: var(--papel); }
+  .sobre-terracota :global(.logo) { color: var(--papel); }
+  .firmas { display: grid; gap: 16px; margin-top: 24px; }
+  @media (min-width: 900px) { .firmas { grid-template-columns: repeat(3, 1fr); } }
+  .firma { font-size: clamp(2rem, 1rem + 2vw, 2.6rem); aspect-ratio: 16 / 8; }
+  .c-carbon { background: var(--carbon); }
+  .c-papel { background: var(--papel); box-shadow: inset 0 0 0 1px var(--linea); }
+  .c-hueso { background: var(--hueso); }
+  .c-terracota { background: var(--terracota); }
+  .c-brasa { background: var(--ambar); }
+
+  .notas { list-style: none; display: grid; gap: 10px; margin-top: 28px; max-width: 70ch; }
+  .notas li { padding-left: 18px; position: relative; }
+  .notas li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 7px; height: 7px; border-radius: 50%; background: var(--terracota); }
+  .m-h3 { margin-top: clamp(56px, 7vw, 88px); }
+  .m-p { margin: 12px 0 0; max-width: 62ch; }
+
+  .simbolo-grid { display: grid; gap: 56px; align-items: center; }
+  .simbolo-grid h2 { margin-top: 18px; }
+  @media (min-width: 980px) { .simbolo-grid { grid-template-columns: 1fr 1fr; gap: 88px; } }
+  .simbolos { display: grid; gap: 40px; justify-items: center; }
+  .s-grande { width: min(80vw, 340px); }
+  .s-fila { display: flex; gap: 40px; align-items: flex-end; }
+  .s-fila > div { display: grid; gap: 10px; justify-items: center; }
+  .s-fila > div :global(svg) { width: 64px; height: 64px; }
+  .s-fila .s-32 :global(svg) { width: 32px; height: 32px; }
+  .s-fila .s-20 :global(svg) { width: 20px; height: 20px; }
+
+  .barra { display: flex; height: 18px; border-radius: 100px; overflow: hidden; margin-bottom: 40px; box-shadow: inset 0 0 0 1px var(--linea); }
+  .colores { display: grid; gap: 28px 20px; grid-template-columns: repeat(2, 1fr); }
+  @media (min-width: 900px) { .colores { grid-template-columns: repeat(5, 1fr); } }
+  .color { display: grid; gap: 8px; align-content: start; }
+  .color p { margin: 0; }
+  .muestra { aspect-ratio: 1; border-radius: 4px; margin-bottom: 8px; }
+
+  .tabla { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  .tabla th { text-align: left; font-family: var(--f-mono); font-weight: 500; font-size: var(--t-etq); letter-spacing: .1em; text-transform: uppercase; color: var(--texto-2); padding: 10px 12px 10px 0; border-bottom: 1px solid var(--borde); }
+  .tabla td { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--borde); vertical-align: middle; }
+  .punto { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 10px; vertical-align: -2px; }
+  .descargas a { font-weight: 600; text-underline-offset: 0.25em; }
+
+  .familias { display: grid; gap: 32px; margin-bottom: clamp(56px, 7vw, 88px); }
+  @media (min-width: 900px) { .familias { grid-template-columns: repeat(3, 1fr); } }
+  .familias article { border-top: 2px solid var(--carbon); padding-top: 18px; display: grid; gap: 12px; align-content: start; }
+  .familias p { margin: 0; }
+  .fam { font-size: clamp(2.4rem, 1.5rem + 2.4vw, 3.6rem); line-height: 1; }
+  .fam-sans { font-weight: 600; font-stretch: 84%; letter-spacing: -.024em; }
+  .fam-serif em { font-size: 1.05em; color: var(--terracota-ink); }
+  .fam-mono { font-family: var(--f-mono); font-size: clamp(1.8rem, 1.2rem + 1.6vw, 2.6rem); }
+
+  .escala-tipo { list-style: none; border-top: 1px solid var(--borde); }
+  .escala-tipo li { display: grid; gap: 8px 32px; padding: 22px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
+  @media (min-width: 1000px) { .escala-tipo li { grid-template-columns: 11rem 1fr 22rem; } }
+  .spec { font-size: .8rem; }
+  .m-d1 { font-weight: 600; font-stretch: 84%; letter-spacing: -.024em; font-size: clamp(2.6rem, 1rem + 4vw, 4.8rem); line-height: .96; }
+  .m-d2 { font-weight: 600; font-stretch: 84%; letter-spacing: -.024em; font-size: clamp(2rem, 1rem + 2.4vw, 3.2rem); line-height: 1; }
+  .m-sub { font-weight: 600; font-stretch: 92%; letter-spacing: -.015em; font-size: 1.6rem; }
+  .m-man { font-family: var(--f-serif); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.4rem); line-height: 1.18; }
+  .m-acento em { font-size: clamp(2rem, 1rem + 2.2vw, 3rem); color: var(--terracota-ink); }
+  .m-texto { font-size: 1.09rem; max-width: 52ch; }
+  .m-rotulo { font-family: var(--f-mono); font-weight: 500; font-size: var(--t-etq); letter-spacing: .1em; text-transform: uppercase; }
+  .m-dato { font-family: var(--f-mono); font-size: var(--t-meta); }
+
+  .elementos { display: grid; gap: 56px; }
+  .elementos article { display: grid; gap: 14px; align-content: start; }
+  .elementos p { margin: 0 0 20px; }
+  @media (min-width: 980px) { .elementos { grid-template-columns: 1fr 1fr; gap: 72px; } }
+
+  .voz { display: grid; gap: 40px; }
+  .voz h2 { margin-top: 18px; }
+  .voz-reglas p { margin: 0 0 16px; }
+  @media (min-width: 980px) { .voz { grid-template-columns: 1fr 1.3fr; gap: 88px; } }
+</style>

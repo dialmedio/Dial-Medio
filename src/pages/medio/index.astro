@@ -5,6 +5,7 @@ import Simbolo from '../../components/Simbolo.astro';
 import VideoLite from '../../components/VideoLite.astro';
 import PiezaCard from '../../components/PiezaCard.astro';
 import Pendiente from '../../components/Pendiente.astro';
+import Logo from '../../components/Logo.astro';
 import Boletin from '../../components/Boletin.astro';
 import sitio from '../../data/sitio.json';
 import { anio, dos, estados } from '../../lib/util';
@@ -33,9 +34,7 @@ const reglas = [
     <div class="contenedor medio-portada-grid">
       <div class="medio-portada-texto">
         <p class="kicker"><span class="acento">Dial Medio</span> · Obra propia</p>
-        <h1 class="logotipo" aria-label="Dial Medio">
-          <span class="lt-dial">Dial</span><span class="lt-punto" aria-hidden="true"></span><span class="lt-medio">Medio</span>
-        </h1>
+        <h1 class="logotipo"><Logo tono="claro" linea="medio" titulo="Dial Medio" /></h1>
         <p class="mono firma">Sintonizar es conversar</p>
         <p class="lead texto-2">
           Debates entre sectores enfrentados, videopodcast y documentales. Conversaciones que buscan la frecuencia común entre
@@ -218,25 +217,8 @@ const reglas = [
   .medio-portada-grid { display: grid; gap: 40px; align-items: center; }
   .medio-portada-texto { display: grid; gap: 24px; justify-items: start; }
   .medio-portada .lead { margin: 0; max-width: 46ch; }
-  .logotipo {
-    font-family: var(--f-display);
-    text-transform: uppercase;
-    font-size: clamp(3.6rem, 1rem + 11vw, 10rem);
-    line-height: 0.86;
-    display: flex;
-    flex-direction: column;
-  }
-  /* Versión principal del manual: apilada, DIAL en hueso y MEDIO en terracota, sin punto. */
-  .lt-punto { display: none; }
-  .lt-dial { color: var(--hueso); }
-  .lt-medio { color: var(--terracota); }
-  .lt-punto {
-    width: 0.3em; height: 0.3em;
-    border-radius: 50%;
-    background: var(--terracota);
-    margin: 0 0.07em;
-  }
-  .firma { color: var(--ambar); letter-spacing: 0.26em; text-transform: uppercase; font-size: 0.9rem; margin: -6px 0 0; }
+  .logotipo { font-size: clamp(3.4rem, 1rem + 8vw, 7.5rem); line-height: 1; font-weight: 400; }
+  .firma { color: var(--ambar); letter-spacing: 0.22em; text-transform: uppercase; font-size: 0.85rem; margin: 0; }
   .redes { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
   .redes a { text-decoration: none; color: var(--hueso-2); transition: color 0.2s, border-color 0.2s; }
   .redes a:hover { color: var(--hueso); border-color: var(--hueso); }
