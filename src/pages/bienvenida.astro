@@ -1,33 +1,139 @@
 ---
 // Destino después de confirmar la suscripción en Buttondown
-// (Buttondown > Settings > Subscribing > "After confirming" → https://dialmedio.org/bienvenida).
+// (configurado por API: subscription_confirmation_redirect_url → https://dialmedio.org/bienvenida).
+// Es el primer contacto real con quien se suscribe: presenta a Dial y abre la puerta a cotizar.
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Simbolo from '../components/Simbolo.astro';
+import VideoLite from '../components/VideoLite.astro';
 import sitio from '../data/sitio.json';
+import { whatsapp } from '../lib/util';
+
+const servicios = (await getCollection('servicios')).sort((a, b) =>
+  a.data.linea === b.data.linea ? a.data.orden - b.data.orden : a.data.linea === 'impacto' ? -1 : 1,
+);
+const debate = (await getCollection('medio', (m) => m.data.formato === 'debate' && m.data.destacado && !m.data.borrador))[0];
+const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ? `/impacto#${s.id}` : `/encuentros#${s.id}`);
 ---
 
 <Base titulo="Bienvenida al boletín" noindex>
-  <section class="bienvenida tema-carbon grano">
-    <div class="contenedor bienvenida-cuerpo">
-      <Simbolo tono="claro" anima class="bienvenida-simbolo" />
-      <p class="kicker"><span class="acento">Suscripción confirmada</span></p>
-      <h1 class="display d-2">Ya estás en la frecuencia.</h1>
-      <p class="lead texto-2">
-        Te escribiremos {sitio.boletin.frecuencia.toLowerCase()} con trabajo nuevo, lo que aprendemos midiendo y convocatorias
-        que vale la pena mirar. Sin ruido.
-      </p>
-      <div class="acciones">
-        <a href="/impacto" class="btn">Ver lo que hacemos <span class="flecha">→</span></a>
-        <a href="/medio" class="btn linea">Dial Medio</a>
+  <section class="bv-portada tema-carbon grano">
+    <div class="contenedor bv-portada-grid">
+      <div class="bv-portada-texto">
+        <Simbolo tono="claro" anima class="bv-simbolo" />
+        <p class="kicker"><span class="acento">Suscripción confirmada</span></p>
+        <h1 class="display d-2">Ya estás en la frecuencia.</h1>
+        <p class="lead texto-2">
+          Gracias por sumarte. Te escribiremos {sitio.boletin.frecuencia.toLowerCase()}: trabajo nuevo, lo que aprendemos
+          midiendo y convocatorias para organizaciones que vale la pena mirar. Mientras tanto, te contamos quiénes somos.
+        </p>
+      </div>
+      <dl class="bv-datos">
+        <div><dt class="kicker sin-linea">Somos</dt><dd>Productora audiovisual con medio propio, en Bogotá.</dd></div>
+        <div><dt class="kicker sin-linea">Hacemos</dt><dd>Documental, cobertura, eventos y piezas con medición.</dd></div>
+        <div><dt class="kicker sin-linea">Nos diferencia</dt><dd>Todo en casa, incluida la música, y medimos el efecto de cada pieza.</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">Lo que podemos hacer juntos</p>
+          <h2 class="display d-2">Seis formas de trabajar con Dial.</h2>
+        </div>
+        <p class="texto-2">Cada proyecto se cotiza a la medida. Elige el que se parezca más a lo que tienes en mente.</p>
+      </header>
+      <ul class="bv-servicios">
+        {
+          servicios.map((s) => (
+            <li>
+              <a href={destino(s)} class="bv-servicio">
+                <span class="kicker sin-linea">{s.data.linea === 'impacto' ? 'Dial Impacto' : 'Dial Encuentros'}</span>
+                <span class="display d-4">{s.data.titulo}</span>
+                {s.data.gancho && <span class="bv-gancho">{s.data.gancho}</span>}
+                <span class="meta">{s.data.entregables.join(' · ')}</span>
+                <span class="bv-flecha" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    debate && (
+      <section class="seccion tema-carbon grano">
+        <div class="contenedor bv-debate">
+          <div>
+            <p class="kicker"><span class="acento">Míralo en acción</span></p>
+            <h2 class="display d-3">La pregunta no es quién ganó, sino quién cambió de opinión.</h2>
+            <p class="texto-2">
+              En nuestro primer debate, dos economistas conservadores se sentaron frente a diez voces progresistas. Encuestamos
+              a la sala al entrar y al salir. Ese mismo método lo llevamos a las piezas que hacemos para organizaciones.
+            </p>
+            <a href="/impacto/medicion" class="enlace">Cómo medimos <span>→</span></a>
+          </div>
+          <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class="cta-bv tema-terracota grano">
+    <div class="contenedor cta-bv-grid">
+      <h2 class="display d-2">¿Tienes un proyecto en mente?</h2>
+      <div>
+        <p class="lead">Cuéntanos qué quieres contar, a quién y para cuándo. Te respondemos con una propuesta a la medida.</p>
+        <div class="acciones">
+          <a href="/contacto" class="btn">Pedir cotización <span class="flecha">→</span></a>
+          <a href={whatsapp()} class="btn linea" target="_blank" rel="noopener">Escribir por WhatsApp</a>
+        </div>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .bienvenida { min-height: calc(100svh - 72px); display: grid; align-items: center; position: relative; padding-block: 72px; }
-  .bienvenida-cuerpo { display: grid; gap: 24px; justify-items: start; }
-  .bienvenida-cuerpo :global(.bienvenida-simbolo) { width: 120px; margin-bottom: 12px; }
-  .bienvenida h1 { max-width: 16ch; }
-  .bienvenida .lead { margin: 0; max-width: 48ch; }
+  .bv-portada { position: relative; padding-block: clamp(64px, 9vw, 120px); }
+  .bv-portada-grid { display: grid; gap: 48px; align-items: end; }
+  .bv-portada-texto { display: grid; gap: 22px; justify-items: start; }
+  .bv-portada-texto :global(.bv-simbolo) { width: 96px; margin-bottom: 8px; }
+  .bv-portada h1 { max-width: 16ch; }
+  .bv-portada .lead { margin: 0; max-width: 50ch; }
+  .bv-datos { margin: 0; border-top: 1px solid var(--borde); }
+  .bv-datos div { padding: 16px 0; border-bottom: 1px solid var(--borde); display: grid; gap: 6px; }
+  .bv-datos dd { margin: 0; font-size: 1.08rem; }
+  @media (min-width: 1000px) { .bv-portada-grid { grid-template-columns: 1.4fr 1fr; gap: 88px; } }
+
+  .bv-servicios { list-style: none; display: grid; gap: 16px; }
+  @media (min-width: 760px) { .bv-servicios { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .bv-servicios { grid-template-columns: repeat(3, 1fr); } }
+  .bv-servicio {
+    position: relative;
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    height: 100%;
+    padding: 28px 28px 32px;
+    border: 1px solid var(--borde);
+    text-decoration: none;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .bv-servicio:hover { border-color: var(--terracota); background: #fbf8f3; }
+  .bv-gancho { font-style: italic; font-size: 1.15rem; line-height: 1.35; color: var(--terracota-ink); }
+  .bv-flecha { position: absolute; right: 24px; top: 24px; font-size: 1.4rem; transition: transform 0.3s var(--ease); }
+  .bv-servicio:hover .bv-flecha { transform: translateX(4px); color: var(--terracota-ink); }
+
+  .bv-debate { display: grid; gap: 48px; align-items: center; }
+  .bv-debate > div { display: grid; gap: 20px; justify-items: start; }
+  .bv-debate p { margin: 0; max-width: 52ch; }
+  @media (min-width: 980px) { .bv-debate { grid-template-columns: 1fr 1.15fr; gap: 72px; } }
+
+  .cta-bv { position: relative; padding-block: clamp(72px, 9vw, 120px); }
+  .cta-bv-grid { display: grid; gap: 32px; align-items: end; }
+  .cta-bv .lead { color: #f7f2ea; margin: 0 0 24px; }
+  @media (min-width: 960px) { .cta-bv-grid { grid-template-columns: 1.2fr 1fr; gap: 64px; } }
 </style>

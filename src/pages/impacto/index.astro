@@ -23,13 +23,13 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
 ---
 
 <Base
-  titulo="Dial Impacto"
+  titulo="Dial Impacto · Documental y video para organizaciones"
   descripcion="Documental por encargo, cobertura de proyectos sociales y ambientales, video institucional y piezas con medición antes y después, para ONG, fundaciones, cooperación y universidades."
 >
   <PortadaPagina
     kicker="Dial Impacto"
     titulo="Historias que muestran lo que tu organización <em>transforma.</em>"
-    bajada="Documental, cobertura y video para quienes trabajan con comunidades y territorios."
+    bajada="Documental, cobertura y video para organizaciones que trabajan con comunidades, en la ciudad y en el territorio."
     indice={[...servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` })), { texto: 'Trabajo', href: '#portafolio' }]}
   >
     <ul class="etiquetas publicos" aria-label="Para quién">{publicos.map((p) => <li class="etiqueta">{p}</li>)}</ul>
@@ -72,9 +72,9 @@ const publicos = ['ONG', 'Fundaciones', 'Cooperación internacional', 'Universid
       <header class="cabeza doble">
         <div data-revela>
           <p class="kicker">{dos(2)} — Trabajo</p>
-          <h2 class="display d-2">En territorio.</h2>
+          <h2 class="display d-2">De la ciudad al territorio.</h2>
         </div>
-        <p class="texto-2" data-revela>Rodamos donde suceden las historias. Esto es parte de lo que hemos hecho.</p>
+        <p class="texto-2" data-revela>Rodamos donde suceden las historias: en un set, en la calle, en un evento o en el campo.</p>
       </header>
 
       <div class="rejilla-2">

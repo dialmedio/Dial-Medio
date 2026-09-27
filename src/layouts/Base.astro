@@ -12,17 +12,32 @@ interface Props {
   tipo?: 'website' | 'article' | 'video.other';
 }
 
+// Imagen para compartir de cada página (se generan con scripts/generar-imagenes.mjs).
+const tarjetas: Record<string, string> = {
+  '/': 'inicio',
+  '/impacto': 'impacto',
+  '/impacto/medicion': 'medicion',
+  '/encuentros': 'encuentros',
+  '/encuentros/celebraciones': 'celebraciones',
+  '/medio': 'medio',
+  '/nosotros': 'nosotros',
+  '/contacto': 'contacto',
+};
+const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
+
 const {
   titulo,
   descripcion = sitio.descripcion,
-  imagen = '/og.png',
+  imagen = `/og/${tarjetas[ruta] ?? 'inicio'}.jpg`,
   noindex = false,
   tipo = 'website',
 } = Astro.props;
 
-const tituloCompleto = titulo ? `${titulo} · Dial` : `Dial · ${sitio.tagline}`;
+const tituloCompleto = !titulo ? 'Dial · Productora audiovisual en Bogotá' : titulo.startsWith('Dial') ? titulo : `${titulo} · Dial`;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagenAbs = new URL(imagen, Astro.site);
+const imagenPropia = imagenAbs.hostname === Astro.site?.hostname;
+const imagenAlt = titulo ? `${titulo} — Dial, productora audiovisual` : 'Dial: contamos, y medimos, el encuentro humano';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -60,9 +75,16 @@ const jsonLd = {
     <meta property="og:description" content={descripcion} />
     <meta property="og:url" content={canonica} />
     <meta property="og:image" content={imagenAbs} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:secure_url" content={imagenAbs} />
+    <meta property="og:image:alt" content={imagenAlt} />
+    {imagenPropia && <meta property="og:image:type" content="image/jpeg" />}
+    {imagenPropia && <meta property="og:image:width" content="1200" />}
+    {imagenPropia && <meta property="og:image:height" content="630" />}
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={tituloCompleto} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={imagenAbs} />
+    <meta name="twitter:image:alt" content={imagenAlt} />
 
     <link rel="preconnect" href="https://i.ytimg.com" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />

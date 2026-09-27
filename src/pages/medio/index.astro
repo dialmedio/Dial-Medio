@@ -26,7 +26,7 @@ const reglas = [
 ---
 
 <Base
-  titulo="Dial Medio"
+  titulo="Dial Medio · Debates, videopodcast y documentales"
   descripcion="La obra propia de Dial: debates entre sectores enfrentados, videopodcast y documentales. Sintonizar es conversar."
 >
   <section class="medio-portada tema-carbon grano">
@@ -177,7 +177,7 @@ const reglas = [
           <div data-revela>
             <p class="kicker">{dos(4)} — Videopodcast</p>
             <h2 class="display d-3">Conversaciones uno a uno.</h2>
-            <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su territorio.</p>
+            <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su ciudad o en su territorio.</p>
           </div>
           {podcasts.length > 0 ? (
             podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={'/medio/' + p.id} kicker="Videopodcast" />)

@@ -42,7 +42,7 @@ const propios = medio
 const [principal, secundario] = [...casos, ...propios];
 ---
 
-<Base>
+<Base descripcion="Productora audiovisual en Bogotá: documental, cobertura y eventos para organizaciones, y un medio propio de debates. Contamos, y medimos, el encuentro humano.">
   <!-- PORTADA: del ruido a la señal -->
   <section class="heroe tema-carbon grano">
     <canvas class="estatica" data-estatica aria-hidden="true"></canvas>
@@ -115,7 +115,6 @@ const [principal, secundario] = [...casos, ...propios];
           impacto.map((s, i) => (
             <li data-revela style={`--retraso:${i * 0.06}s`}>
               <a href={`/impacto#${s.id}`} class="servicio">
-                <span class="mono servicio-num">{dos(i + 1)}</span>
                 <span class="display d-4 servicio-titulo">{s.data.titulo}</span>
                 <span class="servicio-cuerpo">
                   {s.data.gancho && <span class="servicio-gancho">{s.data.gancho}</span>}
@@ -140,10 +139,10 @@ const [principal, secundario] = [...casos, ...propios];
           <header class="cabeza doble">
             <div data-revela>
               <p class="kicker">{dos(2)} — Trabajo</p>
-              <h2 class="display d-2">En territorio.</h2>
+              <h2 class="display d-2">De la ciudad al territorio.</h2>
             </div>
             <p class="texto-2" data-revela style="--retraso:.1s">
-              Rodamos donde suceden las historias, con un equipo pequeño y cuidadoso.
+              Rodamos donde suceden las historias: en un set, en la calle, en un evento o en el campo.
             </p>
           </header>
 
@@ -309,8 +308,8 @@ const [principal, secundario] = [...casos, ...propios];
   .servicios li { border-bottom: 1px solid var(--borde); }
   .servicio {
     display: grid;
-    grid-template-columns: 2.6rem 1fr auto;
-    gap: 8px 16px;
+    grid-template-columns: 1fr auto;
+    gap: 10px 16px;
     padding-block: 28px;
     text-decoration: none;
     position: relative;
@@ -326,20 +325,19 @@ const [principal, secundario] = [...casos, ...propios];
     transition: transform 0.6s var(--ease);
   }
   .servicio:hover::before { transform: scaleX(1); }
-  .servicio-num { color: var(--terracota-ink); padding-top: 0.5em; }
-  .servicio-titulo { grid-column: 2; transition: color 0.3s; }
+  .servicio-titulo { grid-column: 1; transition: color 0.3s; }
   .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
-  .servicio-cuerpo { grid-column: 2; display: grid; gap: 6px; max-width: 56ch; }
+  .servicio-cuerpo { grid-column: 1; display: grid; gap: 6px; max-width: 56ch; }
   .servicio-gancho { font-style: italic; font-size: clamp(1.15rem, 1rem + .4vw, 1.35rem); line-height: 1.35; color: var(--terracota-ink); }
   .servicio-resumen { font-size: 1rem; }
-  .servicio-entrega { grid-column: 2; }
-  .servicio-flecha { grid-column: 3; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
+  .servicio-entrega { grid-column: 1; }
+  .servicio-flecha { grid-column: 2; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
   .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
   @media (min-width: 1000px) {
-    .servicio { grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1fr) 2rem; align-items: baseline; padding-block: 36px; }
-    .servicio-cuerpo { grid-column: 3; grid-row: 1; }
-    .servicio-entrega { grid-column: 3; }
-    .servicio-flecha { grid-column: 4; justify-self: end; }
+    .servicio { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) 2rem; column-gap: 48px; align-items: baseline; padding-block: 36px; }
+    .servicio-cuerpo { grid-column: 2; grid-row: 1; }
+    .servicio-entrega { grid-column: 2; }
+    .servicio-flecha { grid-column: 3; justify-self: end; }
   }
   .nota-cotiza { margin: 28px 0 0; }
 
