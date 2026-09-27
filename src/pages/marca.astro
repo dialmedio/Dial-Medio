@@ -59,6 +59,8 @@ const escala = [
   { nivel: 'Dato', muestra: 'Bogotá · 2026 · 1:16:10', clase: 'm-dato', spec: 'IBM Plex Mono · 400 · minúsculas · 14 px' },
 ];
 
+// Enlaces absolutos: funcionan también dentro del PDF.
+const M = 'https://dialmedio.org/marca/';
 const descargas = [
   ['Firma (símbolo + logotipo)', 'dial-firma-oscuro', 'dial-firma-claro'],
   ['Logotipo', 'dial-logotipo-oscuro', 'dial-logotipo-claro'],
@@ -327,11 +329,13 @@ const descargas = [
       </header>
       <table class="tabla descargas">
         <thead><tr><th>Archivo</th><th>Para fondo claro</th><th>Para fondo oscuro</th></tr></thead>
+        <caption class="texto-2">PNG en alta resolución con fondo transparente, para documentos, redes y presentaciones. SVG para impresión y diseño.</caption>
         <tbody>
           {descargas.map(([n, o, c]) => (
-            <tr><td>{n}</td><td><a href={`/marca/${o}.svg`} download>SVG ↓</a></td><td><a href={`/marca/${c}.svg`} download>SVG ↓</a></td></tr>
+            <tr><td>{n}</td><td><a href={`${M}${o}.png`} download>PNG</a> · <a href={`${M}${o}.svg`} download>SVG</a></td><td><a href={`${M}${c}.png`} download>PNG</a> · <a href={`${M}${c}.svg`} download>SVG</a></td></tr>
           ))}
-          <tr><td>Avatar de redes</td><td colspan="2"><a href="/marca/dial-avatar.svg" download>SVG ↓</a></td></tr>
+          <tr><td>Avatar de redes</td><td colspan="2"><a href={`${M}dial-avatar.png`} download>PNG</a> · <a href={`${M}dial-avatar.svg`} download>SVG</a></td></tr>
+          <tr><td>Logotipo sobre terracota</td><td colspan="2"><a href={`${M}dial-logotipo-sobre-terracota.png`} download>PNG</a> · <a href={`${M}dial-logotipo-sobre-terracota.svg`} download>SVG</a></td></tr>
           <tr><td>Fuentes</td><td colspan="2"><a href="https://fonts.google.com/specimen/Instrument+Sans" target="_blank" rel="noopener">Instrument Sans</a> · <a href="https://fonts.google.com/specimen/Instrument+Serif" target="_blank" rel="noopener">Instrument Serif</a> · <a href="https://fonts.google.com/specimen/IBM+Plex+Mono" target="_blank" rel="noopener">IBM Plex Mono</a></td></tr>
         </tbody>
       </table>
@@ -400,6 +404,7 @@ const descargas = [
   .tabla td { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--borde); vertical-align: middle; }
   .punto { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 10px; vertical-align: -2px; }
   .descargas a { font-weight: 600; text-underline-offset: 0.25em; }
+  .descargas caption { caption-side: bottom; text-align: left; padding-top: 16px; font-size: 1rem; }
 
   .familias { display: grid; gap: 32px; margin-bottom: clamp(56px, 7vw, 88px); }
   @media (min-width: 900px) { .familias { grid-template-columns: repeat(3, 1fr); } }
