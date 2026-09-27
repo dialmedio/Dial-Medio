@@ -1,14 +1,20 @@
 /**
- * Cloudflare Pages Function: recibe el formulario de cotización y lo envía por correo con Resend.
+ * Worker de Dial: sirve el sitio estático (carpeta dist/) y atiende el formulario de cotización.
  *
- * Variables de entorno (Cloudflare Pages > Settings > Variables and Secrets):
- *   RESEND_API_KEY     clave de Resend (secreta)
+ * - www.dialmedio.org redirige a dialmedio.org.
+ * - POST /api/contacto envía la solicitud por correo con Resend.
+ * - Todo lo demás lo sirven los archivos estáticos.
+ *
+ * Secretos (Cloudflare > Workers > dial-medio > Settings > Variables and Secrets,
+ * o `npx wrangler secret put NOMBRE`):
+ *   RESEND_API_KEY     clave de Resend
  *   CONTACTO_DESTINO   correo que recibe las solicitudes (p. ej. dialmediocol@gmail.com)
- *   CONTACTO_REMITENTE remitente verificado en Resend (p. ej. "Sitio Dial <sitio@tu-dominio>")
+ *   CONTACTO_REMITENTE remitente verificado en Resend (p. ej. "Sitio Dial <sitio@dialmedio.org>")
  *   TURNSTILE_SECRET   (opcional) clave secreta de Cloudflare Turnstile
  */
 
 interface Env {
+  ASSETS: { fetch: (req: Request) => Promise<Response> };
   RESEND_API_KEY?: string;
   CONTACTO_DESTINO?: string;
   CONTACTO_REMITENTE?: string;
@@ -34,7 +40,7 @@ const json = (cuerpo: unknown, status = 200) =>
 const escapar = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+async function contacto(request: Request, env: Env): Promise<Response> {
   const form = await request.formData();
 
   // Trampa para bots: un humano nunca llena este campo.
@@ -46,15 +52,14 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   if (env.TURNSTILE_SECRET) {
-    const token = String(form.get('cf-turnstile-response') ?? '');
-    const verif = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+    const verif = (await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       body: new URLSearchParams({
         secret: env.TURNSTILE_SECRET,
-        response: token,
+        response: String(form.get('cf-turnstile-response') ?? ''),
         remoteip: request.headers.get('CF-Connecting-IP') ?? '',
       }),
-    }).then((r) => r.json<{ success: boolean }>());
+    }).then((r) => r.json())) as { success: boolean };
     if (!verif.success) return json({ ok: false, error: 'Verificación fallida.' }, 403);
   }
 
@@ -62,7 +67,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return json({ ok: false, error: 'El envío de correo aún no está configurado.' }, 503);
   }
 
-  const filas = CAMPOS.filter((c) => datos[c])
+  const llenos = CAMPOS.filter((c) => datos[c]);
+  const filas = llenos
     .map(
       (c) =>
         `<tr><td style="padding:6px 12px 6px 0;color:#5a4f46;font:12px monospace;text-transform:uppercase;vertical-align:top">${ETIQUETAS[c]}</td><td style="padding:6px 0;font:15px Georgia,serif;white-space:pre-wrap">${escapar(datos[c])}</td></tr>`,
@@ -78,10 +84,28 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       reply_to: datos.correo,
       subject: `Cotización · ${datos.linea || 'sitio'} · ${datos.nombre}${datos.organizacion ? ' (' + datos.organizacion + ')' : ''}`,
       html: `<h2 style="font-family:Georgia,serif">Nueva solicitud desde el sitio de Dial</h2><table>${filas}</table>`,
-      text: CAMPOS.filter((c) => datos[c]).map((c) => `${ETIQUETAS[c]}: ${datos[c]}`).join('\n'),
+      text: llenos.map((c) => `${ETIQUETAS[c]}: ${datos[c]}`).join('\n'),
     }),
   });
 
   if (!r.ok) return json({ ok: false, error: 'No se pudo enviar el correo.' }, 502);
   return json({ ok: true });
+}
+
+export default {
+  async fetch(request: Request, env: Env): Promise<Response> {
+    const url = new URL(request.url);
+
+    if (url.hostname.startsWith('www.')) {
+      url.hostname = url.hostname.slice(4);
+      return Response.redirect(url.toString(), 301);
+    }
+
+    if (url.pathname === '/api/contacto') {
+      if (request.method !== 'POST') return json({ ok: false, error: 'Método no permitido.' }, 405);
+      return contacto(request, env);
+    }
+
+    return env.ASSETS.fetch(request);
+  },
 };

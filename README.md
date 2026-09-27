@@ -28,19 +28,24 @@ El campo `vitrina` decide en qué portafolio aparece.
 
 **Videos:** solo el ID de YouTube (lo que va después de `v=`). Para Vimeo: `plataforma: vimeo` y una `miniatura`.
 
+## Publicación
+
+El sitio es un Worker de Cloudflare llamado `dial-medio` (configuración en `wrangler.jsonc`),
+conectado al repositorio `dialmedio/Dial-Medio`. Cada push a `main` lo compila y publica solo (Workers Builds).
+También se puede publicar desde aquí con `npm run deploy` (usa la llave de `.env`, que no se sube a GitHub).
+
+Dominio: https://dialmedio.org (www redirige al dominio principal).
+
 ## Formulario de contacto
 
-`functions/api/contacto.ts` es una Pages Function que envía el formulario con [Resend](https://resend.com).
-Variables en Cloudflare Pages → Settings → Variables and Secrets:
+`worker/index.ts` atiende `POST /api/contacto` y envía la solicitud con [Resend](https://resend.com).
+Secretos del Worker (Cloudflare → Workers → dial-medio → Settings → Variables and Secrets, o `npx wrangler secret put NOMBRE`):
 
 - `RESEND_API_KEY`
 - `CONTACTO_DESTINO` (p. ej. dialmediocol@gmail.com)
-- `CONTACTO_REMITENTE` (un remitente del dominio verificado en Resend)
+- `CONTACTO_REMITENTE` (p. ej. `Sitio Dial <sitio@dialmedio.org>`, con el dominio verificado en Resend)
 - `TURNSTILE_SECRET` (opcional, antispam) + poner la clave pública en `data-sitekey` de `src/pages/contacto.astro`
 
 Mientras no esté configurado, el formulario ofrece enviar la solicitud por correo con un clic.
 
-## Pendiente al tener dominio
-
-- Cambiar `SITE` en `astro.config.mjs`.
-- Regenerar la imagen para redes si cambia el texto: `node scripts/generar-imagenes.mjs`.
+Si cambia el texto de la imagen para redes: `node scripts/generar-imagenes.mjs`.

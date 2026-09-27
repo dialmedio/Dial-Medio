@@ -2,8 +2,8 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// PROVISIONAL: cambiar por el dominio definitivo cuando exista.
-const SITE = 'https://dial-web.pages.dev';
+// Dominio definitivo.
+const SITE = 'https://dialmedio.org';
 
 export default defineConfig({
   site: SITE,
