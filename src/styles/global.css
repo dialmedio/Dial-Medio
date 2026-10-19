@@ -1,5 +1,7 @@
 /* ==========================================================================
-   Dial — sistema visual · Manual de marca v3 (septiembre 2026)
+   Dial — sistema visual · Manual de marca v3.2 (octubre 2026)
+   Una sola estética con Al Aire: titular de impacto, acento en franja brasa,
+   rótulos en caja, campos planos con textura de impresión, sin degradados.
    Ver /marca para el manual completo.
    ========================================================================== */
 
@@ -15,7 +17,7 @@
   --papel: #f4eee5;            /* Papel: fondo claro */
   --hueso: #e9dfcf;            /* Hueso: superficie clara y texto sobre carbón */
   --terracota: #c0442a;        /* Terracota señal: el único color de marca */
-  --ambar: #e58a3a;            /* Brasa: datos y estados "en vivo" sobre oscuro */
+  --ambar: #e58a3a;            /* Brasa: datos, estados "en vivo" y la franja del acento */
 
   /* Variaciones funcionales (no son colores nuevos) */
   --carbon-2: #211c17;         /* superficie elevada sobre carbón */
@@ -41,7 +43,7 @@
   --gutter: clamp(16px, 4.5vw, 56px);
   --ancho: 1320px;
   --seccion: clamp(72px, 11vw, 152px);
-  --radio: 3px;
+  --radio: 0;          /* v3.2: esquinas rectas, como las piezas impresas */
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
 
   color-scheme: light;
@@ -121,43 +123,32 @@ ul, ol { margin: 0; padding: 0; }
 .tema-papel  { background: var(--papel); color: var(--carbon); }
 .tema-terracota { background: var(--terracota); color: var(--hueso); }
 
-.tema-carbon { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--terracota); --acento-texto: var(--terracota-clara); }
-.tema-hueso, .tema-papel { --texto-2: var(--tinta-2); --borde: var(--linea); --acento: var(--terracota); --acento-texto: var(--terracota-ink); }
-.tema-terracota { --texto-2: rgba(244, 238, 229, .86); --borde: rgba(244, 238, 229, .3); --acento: var(--carbon); --acento-texto: var(--carbon); --acento-display: var(--carbon); }
+.tema-carbon { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--terracota); --acento-texto: var(--terracota-clara);
+  --franja: var(--ambar); --franja-texto: var(--carbon); --caja: var(--papel); --caja-texto: var(--carbon); --caja-acento: var(--terracota-ink); }
+.tema-hueso, .tema-papel { --texto-2: var(--tinta-2); --borde: var(--linea); --acento: var(--terracota); --acento-texto: var(--terracota-ink);
+  --franja: var(--ambar); --franja-texto: var(--carbon); --caja: var(--carbon); --caja-texto: var(--papel); --caja-acento: var(--ambar); }
+.tema-terracota { --texto-2: rgba(244, 238, 229, .86); --borde: rgba(244, 238, 229, .3); --acento: var(--carbon); --acento-texto: var(--carbon);
+  --franja: var(--carbon); --franja-texto: var(--papel); --caja: var(--carbon); --caja-texto: var(--papel); --caja-acento: var(--ambar); }
 
-/* Grano análogo: solo en portadas y bandas oscuras, nunca sobre datos. */
+/* Moteado de impresión: la tinta plana nunca es perfecta. Baja frecuencia, nada de ruido fino
+   (el grano se veía como baja calidad). Solo en campos planos, nunca sobre fotos ni datos. */
 .grano { isolation: isolate; }
 .grano::after {
   content: '';
   position: absolute; inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: .085;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: .07;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 2.2 -.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  background-size: 600px 600px;
 }
 .grano > * { position: relative; z-index: 1; }
 
-/* ---------- Arte: luz, papel y serigrafía ---------- */
-/* Luz de tungsteno: resplandores cálidos, como la luz del set. Solo sobre carbón. */
-.luz {
-  background-image:
-    radial-gradient(55% 70% at 88% 12%, rgba(229, 138, 58, 0.16), transparent 62%),
-    radial-gradient(45% 60% at 6% 96%, rgba(192, 68, 42, 0.16), transparent 70%),
-    radial-gradient(30% 40% at 50% 50%, rgba(233, 223, 207, 0.03), transparent 70%);
-}
-.luz-baja {
-  background-image:
-    radial-gradient(60% 90% at 100% 100%, rgba(229, 138, 58, 0.13), transparent 60%),
-    radial-gradient(40% 70% at 0% 0%, rgba(192, 68, 42, 0.12), transparent 70%);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .luz { background-size: 140% 140%; animation: respira 18s ease-in-out infinite alternate; }
-}
-@keyframes respira {
-  from { background-position: 0% 0%; }
-  to { background-position: 100% 60%; }
-}
+/* ---------- Campos planos ---------- */
+/* v3.2: se retiran los resplandores (.luz, .luz-baja) y el degradado de la banda terracota.
+   Las clases quedan para no romper el marcado, pero ya no pintan nada. */
+.luz, .luz-baja { background-image: none; }
 
 /* Papel: diente de papel en las secciones claras, casi imperceptible. */
 .tema-papel, .tema-hueso {
@@ -165,38 +156,43 @@ ul, ol { margin: 0; padding: 0; }
   background-size: 260px 260px;
 }
 
-/* Serigrafía: la banda terracota va de terracota a brasa, con trama de semitono. */
-.tema-terracota {
-  background-image:
-    radial-gradient(circle at center, rgba(23, 19, 15, 0.22) 0 1.3px, transparent 1.6px),
-    linear-gradient(115deg, #b83d26 0%, var(--terracota) 45%, #d0602f 100%);
-  background-size: 9px 9px, 100% 100%;
-}
-.tema-terracota::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(115deg, var(--terracota) 20%, rgba(192, 68, 42, 0) 80%);
-  opacity: 0.85;
-}
+/* Terracota: tinta plana (como el campo de país en Al Aire). */
+.tema-terracota { background-image: none; }
 .tema-terracota > * { position: relative; z-index: 1; }
 
 /* ---------- Tipografía ---------- */
-/* Titulares: Instrument Sans semibold, semicondensada (88 %), en caja mixta.
-   El espaciado es óptico: más cerrado cuanto más grande, más abierto cuanto más pequeño. */
+/* Titular de impacto (v3.2): Instrument Sans bold al 75 % de ancho, en caja mixta.
+   Es el mismo titular de las piezas de Al Aire. */
 .display {
   font-family: var(--f-display);
-  font-weight: 600;
-  font-stretch: 88%;
-  line-height: 1;
-  letter-spacing: -.018em;
+  font-weight: 700;
+  font-stretch: 75%;
+  line-height: .92;
+  letter-spacing: -.008em;
 }
-.display em { font-size: 1.07em; letter-spacing: -.005em; color: var(--acento-display, var(--terracota)); }
-.d-1 { font-size: clamp(3rem, 1.1rem + 6vw, 7.25rem); line-height: .95; letter-spacing: -.022em; }
-.d-2 { font-size: clamp(2.25rem, 1.25rem + 3.8vw, 4.6rem); line-height: 1; letter-spacing: -.02em; }
-.d-3 { font-size: clamp(1.85rem, 1.25rem + 2.1vw, 3.1rem); line-height: 1.05; letter-spacing: -.016em; }
-.d-4 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); line-height: 1.1; letter-spacing: -.012em; }
+/* El acento de un titular va en franja: las palabras sobre una banda brasa (carbón sobre terracota).
+   La serif cursiva queda para el texto corrido, el manifiesto, las citas y las firmas de línea. */
+.display em {
+  font-family: inherit; font-style: normal; font-weight: inherit; font-stretch: inherit;
+  font-size: 1em; line-height: inherit; letter-spacing: inherit;
+  /* la banda se recorta arriba para no tapar la línea anterior (los titulares van muy juntos) */
+  background: linear-gradient(transparent 14%, var(--franja, var(--ambar)) 14%, var(--franja, var(--ambar)) 97%, transparent 97%);
+  color: var(--franja-texto, var(--carbon));
+  padding: 0 .08em; margin: 0 -.02em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* Titular de marca (.voz): la portada principal de la casa conserva la voz del logotipo —
+   semibold al 88 % y el acento en serif cursiva terracota, como "dial medio". Es la excepción a la franja. */
+.display.voz { font-weight: 600; font-stretch: 88%; line-height: .95; letter-spacing: -.022em; }
+.display.voz em {
+  font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal;
+  font-size: 1.07em; letter-spacing: -.005em; line-height: 1;
+  background: none; color: var(--acento-display, var(--terracota)); padding: 0; margin: 0;
+}
+.d-1 { font-size: clamp(3.2rem, 1.1rem + 6.6vw, 7.8rem); line-height: .9; }
+.d-2 { font-size: clamp(2.4rem, 1.25rem + 4.2vw, 5rem); line-height: .92; }
+.d-3 { font-size: clamp(2rem, 1.25rem + 2.4vw, 3.4rem); line-height: .95; }
+.d-4 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1; }
 
 .sub {
   font-family: var(--f-sub);
@@ -209,6 +205,8 @@ ul, ol { margin: 0; padding: 0; }
 .s-2 { font-size: clamp(1.2rem, 1.1rem + .4vw, 1.4rem); }
 .s-3 { font-size: 1.15rem; }
 
+/* Rótulo en caja (v3.2): mono en mayúsculas dentro de una caja (carbón sobre claro, papel sobre carbón).
+   .sin-linea = rótulo suelto, sin caja, para listas y fichas. */
 .kicker {
   font-family: var(--f-mono);
   font-weight: 500;
@@ -216,18 +214,22 @@ ul, ol { margin: 0; padding: 0; }
   line-height: 1.4;
   letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--texto-2);
   display: inline-flex;
   align-items: center;
-  gap: .75em;
+  gap: .6em;
+  background: var(--caja, var(--carbon));
+  color: var(--caja-texto, var(--papel));
+  padding: .5em .8em;
+  justify-self: start;
+  align-self: start;
 }
-.kicker::before {
-  content: '';
-  width: 1.8em; height: 1px;
-  background: currentColor;
-}
-.kicker.sin-linea::before { display: none; }
-.kicker .acento { color: var(--acento-texto); }
+.kicker .acento { color: var(--caja-acento, var(--ambar)); }
+.kicker.sin-linea { background: none; color: var(--texto-2); padding: 0; }
+.kicker.sin-linea .acento { color: var(--acento-texto); }
+/* Sello "en vivo": lo que está al aire o recién estrenado. */
+.kicker.vivo { background: var(--ambar); color: var(--carbon); }
+.kicker.vivo::before { content: ''; width: .55em; height: .55em; border-radius: 50%; background: currentColor; }
+.kicker.vivo .acento { color: var(--carbon); }
 
 .mono {
   font-family: var(--f-mono);
@@ -277,7 +279,7 @@ ul, ol { margin: 0; padding: 0; }
   min-height: 50px;
   padding: 0 1.5em;
   border: 1px solid var(--bg);
-  border-radius: 100px;
+  border-radius: 0;
   background: var(--bg);
   color: var(--fg);
   font-family: var(--f-sub);
@@ -356,7 +358,7 @@ ul, ol { margin: 0; padding: 0; }
   text-transform: uppercase;
   padding: .45em .95em;
   border: 1px solid var(--borde);
-  border-radius: 100px;
+  border-radius: 0;
   white-space: nowrap;
   display: inline-block;
 }

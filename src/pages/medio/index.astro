@@ -126,6 +126,28 @@ const reglas = [
     )
   }
 
+  <!-- AL AIRE: noticias del día, en carrusel -->
+  <section class="seccion compacta tema-hueso al-aire" id="al-aire">
+    <div class="contenedor al-aire-grid">
+      <div class="al-aire-texto">
+        <p class="kicker vivo"><span class="acento">Al Aire</span> · Noticias del día</p>
+        <h2 class="display d-2">La noticia, <em>en vivo.</em></h2>
+        <p class="texto-2 medida">
+          Carruseles cortos sobre lo que está pasando: la paz, la política, la cultura y la memoria, y lo que el mundo dice de
+          Colombia. Hechos con fuente, las voces de las partes y la versión oficial.
+        </p>
+        <div class="acciones">
+          <a class="btn" href={sitio.redes.find((r) => r.nombre === 'Instagram')?.url} target="_blank" rel="noopener">Síguelo en Instagram <span class="flecha">↗</span></a>
+        </div>
+      </div>
+      <ul class="al-aire-piezas" aria-label="Ejemplos de Al Aire">
+        <li><img src="/marca/al-aire/al-aire-portada.jpg" alt="Portada de Al Aire sobre las protestas en el mundo" width="720" height="900" loading="lazy" /><span class="meta">Foto: Jorge Jaramillo · CC BY-SA 4.0</span></li>
+        <li><img src="/marca/al-aire/al-aire-pais.jpg" alt="Lámina de Al Aire sobre Italia" width="720" height="900" loading="lazy" /></li>
+        <li><img src="/marca/al-aire/al-aire-citas.jpg" alt="Lámina de Al Aire con la versión de los gobiernos" width="720" height="900" loading="lazy" /></li>
+      </ul>
+    </div>
+  </section>
+
   <section class="seccion tema-papel" id="documentales">
     <div class="contenedor">
       <header class="cabeza doble">
@@ -215,6 +237,15 @@ const reglas = [
 </Base>
 
 <style>
+  .al-aire-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 980px) { .al-aire-grid { grid-template-columns: 1fr 1.25fr; gap: 64px; } }
+  .al-aire-texto { display: grid; gap: 22px; justify-items: start; }
+  .al-aire-texto p { margin: 0; }
+  .al-aire-piezas { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .al-aire-piezas li { display: grid; gap: 8px; align-content: start; }
+  .al-aire-piezas img { width: 100%; height: auto; }
+  .al-aire-piezas .meta { font-size: .72rem; }
+
   .medio-portada { position: relative; overflow: hidden; padding-block: clamp(64px, 9vw, 128px); }
   .medio-portada-grid { display: grid; gap: 40px; align-items: center; }
   .medio-onda { margin-top: clamp(40px, 5vw, 72px); }

@@ -172,7 +172,7 @@ const recorrido = [
   .persona { display: grid; gap: 24px; align-content: start; padding: clamp(28px, 4vw, 48px); border: 1px solid var(--borde); position: relative; }
   .persona.con-foto { padding: 0; border: 0; gap: 28px; align-items: end; }
   @media (min-width: 700px) { .persona.con-foto { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 36px; } }
-  .persona :global(img) { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; width: 100%; border-radius: 4px; }
+  .persona :global(img) { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; width: 100%; border-radius: 0; }
   .con-foto .persona-texto { padding-bottom: 8px; }
   .red { align-content: end; }
   .persona-texto { display: grid; gap: 14px; align-content: start; }

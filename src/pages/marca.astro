@@ -1,5 +1,5 @@
 ---
-// Manual de marca de Dial, v3. Página sin indexar: se comparte por enlace o como PDF.
+// Manual de marca de Dial, v3.2 (oct 2026: una sola estética con Al Aire — titular de impacto, acento en franja, rótulos en caja, campos planos). Página sin indexar: se comparte por enlace o como PDF.
 import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import Simbolo from '../components/Simbolo.astro';
@@ -33,12 +33,18 @@ const decisiones = [
   },
 ];
 
+const ajustes = [
+  { area: 'Tipografía', texto: 'Todos los titulares pasan a bold al 75 % de ancho (titular de impacto). El acento de un titular es una franja brasa. La excepción es el titular de marca (la portada principal), que conserva la serif cursiva para ser coherente con las firmas del logotipo. La serif cursiva sigue en el texto corrido, el manifiesto, las citas y las firmas de línea.' },
+  { area: 'Color y campos', texto: 'La brasa es la franja del acento y el sello "en vivo". Las bandas son tinta plana: se retiran los resplandores y el degradado de la banda terracota. Queda solo un moteado de impresión, sin grano.' },
+  { area: 'Rótulos y formas', texto: 'Los rótulos van en caja (mono en mayúsculas). Esquinas rectas en botones, etiquetas y marcos. Las piezas gráficas de redes pueden llevar texturas de impresión: tipo de madera, semitono y borde rasgado.' },
+];
+
 const colores = [
   { nombre: 'Carbón', hex: '#17130F', rgb: '23 · 19 · 15', rol: 'Fondos oscuros, texto principal sobre claro.', clase: 'c-carbon', proporcion: '30 %' },
   { nombre: 'Papel', hex: '#F4EEE5', rgb: '244 · 238 · 229', rol: 'Fondo claro principal.', clase: 'c-papel', proporcion: '45 %' },
   { nombre: 'Hueso', hex: '#E9DFCF', rgb: '233 · 223 · 207', rol: 'Superficies claras; texto sobre carbón.', clase: 'c-hueso', proporcion: '15 %' },
   { nombre: 'Terracota señal', hex: '#C0442A', rgb: '192 · 68 · 42', rol: 'El color de Dial: acentos, botones, el nodo central.', clase: 'c-terracota', proporcion: '8 %' },
-  { nombre: 'Brasa', hex: '#E58A3A', rgb: '229 · 138 · 58', rol: 'Solo datos y estados "en vivo" sobre oscuro.', clase: 'c-brasa', proporcion: '2 %' },
+  { nombre: 'Brasa', hex: '#E58A3A', rgb: '229 · 138 · 58', rol: 'Datos, estados "en vivo" y el color de Al Aire: el sello y la franja del acento.', clase: 'c-brasa', proporcion: '2 %' },
 ];
 
 const funcionales = [
@@ -49,13 +55,16 @@ const funcionales = [
 ];
 
 const escala = [
-  { nivel: 'Titular principal', muestra: 'Contamos el encuentro', clase: 'm-d1', spec: 'Instrument Sans · 600 · ancho 88 % · −2,2 % · interlineado 0,95' },
-  { nivel: 'Titular de sección', muestra: 'Historias que transforman', clase: 'm-d2', spec: 'Instrument Sans · 600 · ancho 88 % · −2 % · interlineado 1' },
+  { nivel: 'Titular de marca', muestra: 'Contamos, y medimos,', clase: 'm-d1', spec: 'Solo la portada principal: Instrument Sans · 600 · ancho 88 % · −2,2 % · acento en serif cursiva terracota, como las firmas del logotipo' },
+  { nivel: 'Titular principal', muestra: 'Contamos el encuentro', clase: 'm-impacto', spec: 'Titular de impacto · Instrument Sans · 700 · ancho 75 % · −0,8 % · interlineado 0,9' },
+  { nivel: 'Titular de sección', muestra: 'Historias que transforman', clase: 'm-d2', spec: 'Instrument Sans · 700 · ancho 75 % · interlineado 0,92' },
   { nivel: 'Subtítulo', muestra: 'Cobertura de proyecto', clase: 'm-sub', spec: 'Instrument Sans · 600 · ancho 94 % · −0,8 %' },
   { nivel: 'Manifiesto', muestra: 'Trabajamos despacio donde hay que escuchar.', clase: 'm-man', spec: 'Instrument Serif · regular · +0,5 % · interlineado 1,2' },
-  { nivel: 'Acento', muestra: 'y medimos,', clase: 'm-acento', spec: 'Instrument Serif cursiva · terracota · +12 % en texto, +7 % en titulares' },
+  { nivel: 'Acento en titular', muestra: 'y medimos,', clase: 'm-franja', spec: 'Franja brasa con el texto en carbón (sobre terracota: franja carbón, texto papel). De una a tres palabras' },
+  { nivel: 'Acento en texto', muestra: 'construyen puentes', clase: 'm-acento', spec: 'Instrument Serif cursiva · terracota · +12 % · en texto corrido, citas y firmas de línea' },
   { nivel: 'Texto', muestra: 'Producimos historias reales de personas, comunidades y organizaciones.', clase: 'm-texto', spec: 'Instrument Sans · 400 · 17–18 px · interlineado 1,6 · líneas de máx. 60–70 caracteres' },
   { nivel: 'Rótulo', muestra: 'Dial Impacto · Servicios', clase: 'm-rotulo', spec: 'IBM Plex Mono · 500 · mayúsculas · +10 % · mín. 12,5 px' },
+  { nivel: 'Rótulo en caja', muestra: 'Chile · siete años del estallido', clase: 'm-caja', spec: 'IBM Plex Mono · 500 · mayúsculas · en caja papel, carbón o brasa · sobre fotos y campos de color' },
   { nivel: 'Dato', muestra: 'Bogotá · 2026 · 1:16:10', clase: 'm-dato', spec: 'IBM Plex Mono · 400 · minúsculas · 14 px' },
 ];
 
@@ -68,15 +77,29 @@ const descargas = [
   ['Dial Impacto', 'dial-impacto-oscuro', 'dial-impacto-claro'],
   ['Dial Encuentros', 'dial-encuentros-oscuro', 'dial-encuentros-claro'],
   ['Dial Medio', 'dial-medio-oscuro', 'dial-medio-claro'],
+  ['Dial Impacto · solo letras', 'dial-impacto-letras-oscuro', 'dial-impacto-letras-claro'],
+  ['Dial Encuentros · solo letras', 'dial-encuentros-letras-oscuro', 'dial-encuentros-letras-claro'],
+  ['Dial Medio · solo letras', 'dial-medio-letras-oscuro', 'dial-medio-letras-claro'],
+  ['Dial Impacto · centrado', 'dial-impacto-centrado-oscuro', 'dial-impacto-centrado-claro'],
+  ['Dial Encuentros · centrado', 'dial-encuentros-centrado-oscuro', 'dial-encuentros-centrado-claro'],
+  ['Dial Medio · centrado', 'dial-medio-centrado-oscuro', 'dial-medio-centrado-claro'],
+];
+// Cuadradas, con aire para el recorte circular de las redes
+const perfiles = [
+  ['símbolo', 'simbolo'],
+  ['Dial', 'dial'],
+  ['Dial Impacto', 'impacto'],
+  ['Dial Encuentros', 'encuentros'],
+  ['Dial Medio', 'medio'],
 ];
 ---
 
-<Base titulo="Manual de marca v3" descripcion="Manual de marca de Dial: logotipo, símbolo, color, tipografía y voz." noindex>
+<Base titulo="Manual de marca v3.2" descripcion="Manual de marca de Dial: logotipo, símbolo, color, tipografía y voz." noindex>
   <!-- PORTADA -->
   <section class="m-portada tema-carbon grano">
     <div class="contenedor m-portada-grid">
       <div class="m-portada-texto">
-        <p class="kicker"><span class="acento">Manual de marca</span> · v3 · Septiembre 2026</p>
+        <p class="kicker"><span class="acento">Manual de marca</span> · v3.2 · Octubre 2026</p>
         <h1 class="m-portada-logo"><Logo tono="claro" titulo="Dial" /></h1>
         <p class="lead-xl">Una sola voz: <em>cálida y precisa.</em></p>
         <p class="lead texto-2">
@@ -113,6 +136,11 @@ const descargas = [
           ))
         }
       </ol>
+      <h3 class="sub s-1 m-h3">Ajustes v3.2 · octubre 2026</h3>
+      <p class="texto-2 m-p">Salen de Al Aire, la sección de noticias de Dial Medio, y se extienden a toda la casa: el sitio, las piezas y este manual. No cambian las cuatro decisiones; les dan más voz.</p>
+      <ul class="ajustes">
+        {ajustes.map((a) => (<li><p class="kicker sin-linea">{a.area}</p><p>{a.texto}</p></li>))}
+      </ul>
     </div>
   </section>
 
@@ -239,12 +267,12 @@ const descargas = [
         <article>
           <p class="kicker sin-linea">Titulares y texto</p>
           <p class="fam fam-sans">Instrument Sans</p>
-          <p class="texto-2">Variable: peso 400–700 y ancho 75–100 %. Titulares en semibold al 88 % de ancho, con espaciado óptico: más cerrado cuanto más grande. Texto en regular al 100 %.</p>
+          <p class="texto-2">Variable: peso 400–700 y ancho 75–100 %. Titulares en semibold al 88 % de ancho, con espaciado óptico: más cerrado cuanto más grande. Texto en regular al 100 %. Desde v3.2, los titulares van en bold al 75 % (titular de impacto); solo el titular de marca de la portada sigue en semibold al 88 %.</p>
         </article>
         <article>
           <p class="kicker sin-linea">Acento y manifiesto</p>
           <p class="fam fam-serif"><em>Instrument Serif</em></p>
-          <p class="texto-2">La voz cálida: énfasis, frases gancho, citas y manifiestos. En cursiva, casi siempre terracota.</p>
+          <p class="texto-2">La voz cálida: énfasis dentro del texto, frases gancho, citas, manifiestos y firmas de línea. En cursiva, casi siempre terracota. En titulares, solo en el titular de marca de la portada.</p>
         </article>
         <article>
           <p class="kicker sin-linea">Datos y rótulos</p>
@@ -257,7 +285,7 @@ const descargas = [
           escala.map((e) => (
             <li>
               <span class="meta">{e.nivel}</span>
-              <span class={e.clase}>{e.clase === 'm-acento' ? <em>{e.muestra}</em> : e.muestra}</span>
+              <span class={e.clase}>{e.clase === 'm-acento' ? <em>{e.muestra}</em> : e.nivel === 'Titular de marca' ? <>Contamos, <em>y medimos,</em></> : e.muestra}</span>
               <span class="meta spec">{e.spec}</span>
             </li>
           ))
@@ -275,8 +303,8 @@ const descargas = [
           <h2 class="display d-2">Del ruido a la señal, en pantalla.</h2>
         </div>
         <p class="texto-2">
-          El ruido es direccional: vive en portadas, intros y fondos oscuros como grano sutil. Los datos y el logotipo, siempre
-          limpios.
+          El ruido es direccional: vive en portadas, intros y fondos oscuros de la marca. Las fotografías, los datos y el
+          logotipo van siempre limpios, sin grano.
         </p>
       </header>
       <div class="elementos">
@@ -289,6 +317,14 @@ const descargas = [
           <h3 class="sub s-2">La escala antes → después</h3>
           <p class="texto-2">La pieza que explica la medición. Mono y brasa sobre carbón; marcar siempre si los datos son ilustrativos.</p>
           <EscalaMedicion />
+        </article>
+        <article>
+          <h3 class="sub s-2">Texturas de impresión</h3>
+          <p class="texto-2">Para piezas gráficas de redes, nunca sobre fotos ni sobre texto corrido. Si hay textura, que se note: tipo de madera con la segunda pasada corrida, semitono de una sola tinta (brasa sobre carbón) y borde rasgado. Nada de degradados de color sobre negro.</p>
+          <div class="texturas">
+            <img src="/marca/al-aire/al-aire-pais.jpg" alt="Lámina con la palabra Italia en tipo de madera sobre terracota" loading="lazy" width="720" height="900">
+            <img src="/marca/al-aire/al-aire-analisis.jpg" alt="Lámina con foto en semitono brasa y borde rasgado sobre carbón" loading="lazy" width="720" height="900">
+          </div>
         </article>
       </div>
     </div>
@@ -307,7 +343,7 @@ const descargas = [
         <ul class="notas">
           <li><strong>Desde las personas,</strong> no desde el equipo técnico: se cuenta el encuentro, no la cámara.</li>
           <li><strong>Frases cortas y verbos concretos.</strong> Tuteo, español de Colombia, sin sensacionalismo.</li>
-          <li><strong>Caja de oración</strong> en títulos y botones. Las mayúsculas quedan para los rótulos en mono.</li>
+          <li><strong>Caja de oración</strong> en títulos y botones. Las mayúsculas quedan para los rótulos en mono y para una sola palabra en tipo de madera (un país, un lugar).</li>
           <li><strong>Datos con fuente.</strong> Si es ilustrativo, se dice.</li>
         </ul>
       </div>
@@ -323,8 +359,8 @@ const descargas = [
           <h2 class="display d-2">Llevarlo a todas partes.</h2>
         </div>
         <p class="texto-2">
-          Miniaturas y portadas: título en Instrument Sans semibold, el acento en serif cursiva terracota, la firma de la línea en
-          una esquina. El antiguo logotipo en Anton se retira de a poco, empezando por los próximos episodios.
+          Miniaturas y portadas: titular de impacto, el acento en franja brasa, la firma de la línea en una esquina. Las piezas
+          de noticias siguen el sistema de Al Aire (sección 09). El antiguo logotipo en Anton se retira de a poco, empezando por los próximos episodios.
         </p>
       </header>
       <table class="tabla descargas">
@@ -335,10 +371,66 @@ const descargas = [
             <tr><td>{n}</td><td><a href={`${M}${o}.png`} download>PNG</a> · <a href={`${M}${o}.svg`} download>SVG</a></td><td><a href={`${M}${c}.png`} download>PNG</a> · <a href={`${M}${c}.svg`} download>SVG</a></td></tr>
           ))}
           <tr><td>Avatar de redes</td><td colspan="2"><a href={`${M}dial-avatar.png`} download>PNG</a> · <a href={`${M}dial-avatar.svg`} download>SVG</a></td></tr>
+          {perfiles.map(([n, a]) => (
+            <tr><td>Foto de perfil · {n}</td><td colspan="2">Fondo carbón: <a href={`${M}dial-perfil-${a}-carbon.png`} download>PNG</a> · <a href={`${M}dial-perfil-${a}-carbon.svg`} download>SVG</a> — Fondo papel: <a href={`${M}dial-perfil-${a}-papel.png`} download>PNG</a> · <a href={`${M}dial-perfil-${a}-papel.svg`} download>SVG</a></td></tr>
+          ))}
+          <tr><td>Banner de YouTube · Dial Medio</td><td colspan="2">Solo firma: <a href={`${M}dial-medio-banner-youtube.png`} download>PNG</a> · <a href={`${M}dial-medio-banner-youtube.svg`} download>SVG</a> — Con lema: <a href={`${M}dial-medio-banner-youtube-lema.png`} download>PNG</a> · <a href={`${M}dial-medio-banner-youtube-lema.svg`} download>SVG</a></td></tr>
           <tr><td>Logotipo sobre terracota</td><td colspan="2"><a href={`${M}dial-logotipo-sobre-terracota.png`} download>PNG</a> · <a href={`${M}dial-logotipo-sobre-terracota.svg`} download>SVG</a></td></tr>
           <tr><td>Fuentes</td><td colspan="2"><a href="https://fonts.google.com/specimen/Instrument+Sans" target="_blank" rel="noopener">Instrument Sans</a> · <a href="https://fonts.google.com/specimen/Instrument+Serif" target="_blank" rel="noopener">Instrument Serif</a> · <a href="https://fonts.google.com/specimen/IBM+Plex+Mono" target="_blank" rel="noopener">IBM Plex Mono</a></td></tr>
         </tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- 09 AL AIRE -->
+  <section class="seccion tema-carbon" id="al-aire">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">09 — Al Aire</p>
+          <h2 class="display d-2">La noticia, <em>en vivo.</em></h2>
+        </div>
+        <p class="texto-2">
+          Al Aire es la sección de noticias rápidas de Dial Medio: carruseles para Instagram y TikTok con el balance de Dial (hechos
+          con fuente, voces de las partes, la versión oficial) y una mirada desde Colombia. Las piezas salen de un generador; este es
+          su sistema.
+        </p>
+      </header>
+
+      <div class="aa-grid">
+        <figure><img src="/marca/al-aire/al-aire-portada.jpg" alt="Portada de Al Aire con titular de impacto y acento en franja brasa" loading="lazy" width="720" height="900"><figcaption class="meta">Portada · foto: Jorge Jaramillo, CC BY-SA 4.0</figcaption></figure>
+        <figure><img src="/marca/al-aire/al-aire-foto.jpg" alt="Lámina interior con foto, rótulo en caja y titular" loading="lazy" width="720" height="900"><figcaption class="meta">Interior · foto: Jorge Jaramillo, CC BY-SA 4.0</figcaption></figure>
+        <figure><img src="/marca/al-aire/al-aire-pais.jpg" alt="Lámina de país en tipo de madera" loading="lazy" width="720" height="900"><figcaption class="meta">País sin foto</figcaption></figure>
+        <figure><img src="/marca/al-aire/al-aire-citas.jpg" alt="Lámina de citas sobre papel" loading="lazy" width="720" height="900"><figcaption class="meta">La versión de las partes</figcaption></figure>
+        <figure><img src="/marca/al-aire/al-aire-analisis.jpg" alt="Lámina de análisis con semitono" loading="lazy" width="720" height="900"><figcaption class="meta">Análisis y cierre</figcaption></figure>
+      </div>
+
+      <div class="aa-reglas">
+        <article>
+          <h3 class="sub s-2">Cabecera</h3>
+          <p class="texto-2">En todas las láminas, arriba: el sello <span class="aa-sello">● AL AIRE</span> en caja brasa, el lugar y la fecha en caja carbón, y el logotipo de Dial Medio a la derecha.</p>
+        </article>
+        <article>
+          <h3 class="sub s-2">Formato</h3>
+          <p class="texto-2">Vertical 4:5 (1080 × 1350) y todas las láminas iguales: en horizontal se leen muy pequeñas en el celular. Un video solo va en 9:16, con la zona de botones de las redes libre. Cada foto se recorta sobre lo esencial.</p>
+        </article>
+        <article>
+          <h3 class="sub s-2">Titulares</h3>
+          <p class="texto-2">Titular de impacto en caja mixta, hasta 90 caracteres. De una a tres palabras de acento en franja brasa: la idea central, no un adorno. Bajada de dos frases.</p>
+        </article>
+        <article>
+          <h3 class="sub s-2">Láminas sin foto</h3>
+          <p class="texto-2">Tres, y nada más: país (terracota y tipo de madera), las partes (papel limpio, comillas terracota) y análisis (carbón y semitono brasa). La textura nunca va sobre las letras de las citas.</p>
+        </article>
+        <article>
+          <h3 class="sub s-2">Fotos y créditos</h3>
+          <p class="texto-2">Fotos propias o con licencia libre (CC0, CC BY, CC BY-SA), con autor, licencia, lugar y fecha en la lámina. Nunca fotos de agencias ni capturas de otros medios. Sin grano: color natural con contraste editorial.</p>
+        </article>
+        <article>
+          <h3 class="sub s-2">Voz</h3>
+          <p class="texto-2">Balance, no ataque. Los calificativos se atribuyen ("pacífico, según la Defensoría"). Lo que dicen los carteles lo muestra la foto: Dial no lo repite en su texto.</p>
+        </article>
+      </div>
     </div>
   </section>
 </Base>
@@ -411,7 +503,7 @@ const descargas = [
   .familias article { border-top: 2px solid var(--carbon); padding-top: 18px; display: grid; gap: 12px; align-content: start; }
   .familias p { margin: 0; }
   .fam { font-size: clamp(2.4rem, 1.5rem + 2.4vw, 3.6rem); line-height: 1; }
-  .fam-sans { font-weight: 600; font-stretch: 88%; letter-spacing: -.02em; }
+  .fam-sans { font-weight: 700; font-stretch: 75%; letter-spacing: -.008em; }
   .fam-serif em { font-size: 1.05em; color: var(--terracota-ink); }
   .fam-mono { font-family: var(--f-mono); font-size: clamp(1.8rem, 1.2rem + 1.6vw, 2.6rem); }
 
@@ -420,7 +512,8 @@ const descargas = [
   @media (min-width: 1000px) { .escala-tipo li { grid-template-columns: 11rem 1fr 22rem; } }
   .spec { font-size: .8rem; }
   .m-d1 { font-weight: 600; font-stretch: 88%; letter-spacing: -.022em; font-size: clamp(2.6rem, 1rem + 4vw, 4.8rem); line-height: .96; }
-  .m-d2 { font-weight: 600; font-stretch: 88%; letter-spacing: -.02em; font-size: clamp(2rem, 1rem + 2.4vw, 3.2rem); line-height: 1; }
+  .m-d1 em { color: var(--terracota-ink); font-size: 1.07em; }
+  .m-d2 { font-weight: 700; font-stretch: 75%; letter-spacing: -.008em; font-size: clamp(2rem, 1rem + 2.4vw, 3.2rem); line-height: .92; }
   .m-sub { font-weight: 600; font-stretch: 94%; letter-spacing: -.008em; font-size: 1.6rem; }
   .m-man { font-family: var(--f-serif); font-size: clamp(1.6rem, 1rem + 1.6vw, 2.4rem); line-height: 1.18; }
   .m-acento em { font-size: clamp(2rem, 1rem + 2.2vw, 3rem); color: var(--terracota-ink); }
@@ -432,6 +525,24 @@ const descargas = [
   .elementos article { display: grid; gap: 14px; align-content: start; }
   .elementos p { margin: 0 0 20px; }
   @media (min-width: 980px) { .elementos { grid-template-columns: 1fr 1fr; gap: 72px; } }
+
+  .ajustes { list-style: none; display: grid; gap: 20px; margin-top: 24px; }
+  @media (min-width: 900px) { .ajustes { grid-template-columns: repeat(3, 1fr); } }
+  .ajustes li { border-top: 2px solid var(--ambar); padding-top: 14px; display: grid; gap: 8px; }
+  .ajustes p { margin: 0; }
+  .m-impacto { font-weight: 700; font-stretch: 75%; font-size: clamp(2.6rem, 1rem + 4vw, 4.6rem); line-height: .9; }
+  .m-franja { font-weight: 700; font-stretch: 75%; font-size: clamp(2rem, 1rem + 2.6vw, 3.2rem); line-height: 1.05; background: var(--ambar); color: var(--carbon); padding: 0 .12em; justify-self: start; }
+  .m-caja { font-family: var(--f-mono); font-weight: 500; font-size: var(--t-etq); letter-spacing: .1em; text-transform: uppercase; background: var(--carbon); color: var(--papel); padding: .4em .7em; justify-self: start; }
+  .texturas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .texturas img, .aa-grid img { width: 100%; height: auto; display: block; }
+  .aa-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 8px 0 clamp(48px, 6vw, 72px); }
+  @media (min-width: 900px) { .aa-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  .aa-grid figure { margin: 0; display: grid; gap: 8px; }
+  .aa-reglas { display: grid; gap: 32px; }
+  @media (min-width: 900px) { .aa-reglas { grid-template-columns: repeat(3, 1fr); gap: 40px; } }
+  .aa-reglas article { border-top: 2px solid var(--ambar); padding-top: 16px; display: grid; gap: 10px; align-content: start; }
+  .aa-reglas p { margin: 0; }
+  .aa-sello { font-family: var(--f-mono); font-weight: 500; font-size: .85em; letter-spacing: .08em; background: var(--ambar); color: var(--carbon); padding: .1em .5em; white-space: nowrap; }
 
   .voz { display: grid; gap: 40px; }
   .voz h2 { margin-top: 18px; }
