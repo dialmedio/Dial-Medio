@@ -2,6 +2,7 @@
 // Renderiza HTML con las mismas fuentes del sitio usando Chrome (puppeteer-core).
 // Uso: node scripts/generar-imagenes.mjs   (necesita Google Chrome instalado)
 import puppeteer from 'puppeteer-core';
+import { aro } from '../src/lib/aro.mjs';
 import sharp from 'sharp';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -25,14 +26,9 @@ const paginas = {
   contacto: { kicker: 'Cotizaciones a la medida', titulo: 'Cuéntanos qué quieres <em>contar.</em>', sub: 'dialmediocol@gmail.com · WhatsApp +57 310 481 3624' },
 };
 
-const simbolo = (color, s) => {
-  const R = 72, rNodo = 10.5, rCentro = 18, hueco = 30, trazo = 4.2;
-  const ang = [...Array(10)].map((_, i) => ((-90 + i * 36) * Math.PI) / 180);
-  const p = (a, d) => [100 + d * Math.cos(a), 100 + d * Math.sin(a)].map((v) => +v.toFixed(2));
-  return `<svg viewBox="0 0 200 200" width="${s}" height="${s}"><g stroke="${color}" stroke-width="${trazo}" stroke-linecap="round">${ang
-    .map((a) => { const [x1, y1] = p(a, hueco); const [x2, y2] = p(a, R - rNodo - 7); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; })
-    .join('')}</g><g fill="${color}">${ang.map((a) => { const [cx, cy] = p(a, R); return `<circle cx="${cx}" cy="${cy}" r="${rNodo}"/>`; }).join('')}</g><circle cx="100" cy="100" r="${rCentro}" fill="${C.terracota}"/></svg>`;
-};
+// El símbolo es el aro con punto (marca v4); geometría en src/lib/aro.mjs
+let nAro = 0;
+const simbolo = (color, s) => `<svg viewBox="0 0 200 200" width="${s}" height="${s}" style="overflow:visible">${aro(color, { centro: C.terracota, id: `aro${nAro++}` })}</svg>`;
 const palabra = (alto) => `<svg viewBox="${logo.viewBox}" height="${alto}" style="overflow:visible"><path d="${logo.d}" fill="${C.hueso}"/><circle cx="${logo.punto.cx}" cy="${logo.punto.cy}" r="${logo.punto.r}" fill="${C.terracota}"/></svg>`;
 
 const regla = () => {
@@ -98,14 +94,9 @@ await b.close();
 rmSync(resolve('scripts/.og-tmp.html'), { force: true });
 await sharp('public/og/inicio.jpg').toFile('public/og.jpg');
 
-// ---------- Íconos: símbolo compacto sobre carbón ----------
-const icono = (tam, radios) => {
-  const R = 72, rNodo = radios ? 10.5 : 13.6, rCentro = radios ? 18 : 24, hueco = 30, trazo = 4.2;
-  const ang = [...Array(10)].map((_, i) => ((-90 + i * 36) * Math.PI) / 180);
-  const p = (a, d) => [100 + d * Math.cos(a), 100 + d * Math.sin(a)].map((v) => +v.toFixed(2));
-  const lineas = radios ? `<g stroke="${C.hueso}" stroke-width="${trazo}" stroke-linecap="round">${ang.map((a) => { const [x1, y1] = p(a, hueco); const [x2, y2] = p(a, R - rNodo - 7); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; }).join('')}</g>` : '';
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="${tam}" height="${tam}"><rect width="200" height="200" rx="${tam > 100 ? 0 : 40}" fill="${C.carbon}"/><g transform="translate(14 14) scale(.86)">${lineas}<g fill="${C.hueso}">${ang.map((a) => { const [cx, cy] = p(a, R); return `<circle cx="${cx}" cy="${cy}" r="${rNodo}"/>`; }).join('')}</g><circle cx="100" cy="100" r="${rCentro}" fill="${C.terracota}"/></g></svg>`;
-};
+// ---------- Íconos: el aro sobre carbón (compacto en el favicon) ----------
+const icono = (tam, completo) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="${tam}" height="${tam}"><rect width="200" height="200" rx="${tam > 100 ? 0 : 40}" fill="${C.carbon}"/><g transform="translate(22 22) scale(.78)">${aro(C.hueso, { compacto: !completo, centro: C.terracota, id: 'icono' })}</g></svg>`;
 writeFileSync('public/favicon.svg', icono(64, false));
 await sharp(Buffer.from(icono(180, true))).png().toFile('public/apple-touch-icon.png');
 await sharp(Buffer.from(icono(64, false))).png().toFile('public/favicon.png');

@@ -1,5 +1,5 @@
 ---
-// Manual de marca de Dial, v3.2 (oct 2026: una sola estética con Al Aire — titular de impacto, acento en franja, rótulos en caja, campos planos). Página sin indexar: se comparte por enlace o como PDF.
+// Manual de marca de Dial, v4 (24 oct 2026: el símbolo pasa a ser el aro con punto). Antes v3.2 (oct 2026: una sola estética con Al Aire — titular de impacto, acento en franja, rótulos en caja, campos planos). Página sin indexar: se comparte por enlace o como PDF.
 import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import Simbolo from '../components/Simbolo.astro';
@@ -27,9 +27,9 @@ const decisiones = [
   },
   {
     area: 'Símbolo',
-    antes: 'Radios finos y un anillo que se perdían en tamaños pequeños.',
-    ahora: 'Sin anillo; radios más gruesos que nacen separados del centro. Versión compacta para tamaños pequeños.',
-    porque: 'Se lee igual en un avatar de 20 px que en una pantalla de evento. La voz no se toca: se escucha.',
+    antes: 'Una voz y diez alrededor: el círculo del debate, con el que nació Dial (v3).',
+    ahora: 'El aro con punto (v4): un aro y el punto terracota de la i montado sobre él a 45°, con un respiro alrededor.',
+    porque: 'Dial ya es un medio con varias líneas, no solo el debate. El aro dice «dial» (uno ya sintonizado), sale del logotipo y se lee a 16 px.',
   },
 ];
 
@@ -94,12 +94,12 @@ const perfiles = [
 ];
 ---
 
-<Base titulo="Manual de marca v3.2" descripcion="Manual de marca de Dial: logotipo, símbolo, color, tipografía y voz." noindex>
+<Base titulo="Manual de marca v4" descripcion="Manual de marca de Dial: logotipo, símbolo, color, tipografía y voz." noindex>
   <!-- PORTADA -->
   <section class="m-portada tema-carbon grano">
     <div class="contenedor m-portada-grid">
       <div class="m-portada-texto">
-        <p class="kicker"><span class="acento">Manual de marca</span> · v3.2 · Octubre 2026</p>
+        <p class="kicker"><span class="acento">Manual de marca</span> · v4 · Octubre 2026</p>
         <h1 class="m-portada-logo"><Logo tono="claro" titulo="Dial" /></h1>
         <p class="lead-xl">Una sola voz: <em>cálida y precisa.</em></p>
         <p class="lead texto-2">
@@ -185,16 +185,17 @@ const perfiles = [
     <div class="contenedor simbolo-grid">
       <div>
         <p class="kicker">03 — Símbolo</p>
-        <h2 class="display d-2">Una voz, diez alrededor.</h2>
+        <h2 class="display d-2">Un dial sintonizado.</h2>
         <p class="texto-2 m-p">
-          El círculo del debate visto desde arriba, el disco del teléfono y la escala del 1 al 10. El nodo central siempre es
-          terracota; los diez, hueso sobre oscuro o carbón sobre claro. Los radios nacen separados del centro: la voz no se toca, se
-          escucha.
+          Un aro y, montado sobre él a 45°, el punto terracota de la i del logotipo. Un respiro separa el punto del aro, el mismo
+          que separa el punto de la i de su asta. El aro va en hueso sobre oscuro o en carbón sobre claro; el punto siempre es
+          terracota. Reemplaza desde octubre de 2026 a «una voz, diez alrededor», que nació con el debate.
         </p>
         <ul class="notas claro">
-          <li><strong>Completo:</strong> desde 48 px.</li>
-          <li><strong>Compacto</strong> (sin radios): por debajo de 48 px, favicon y sellos.</li>
-          <li><strong>Avatar de redes:</strong> símbolo completo en hueso sobre carbón.</li>
+          <li><strong>Completo:</strong> desde 24 px.</li>
+          <li><strong>Compacto</strong> (aro más grueso, punto un poco mayor): por debajo de 24 px, favicon y sellos.</li>
+          <li><strong>Avatar de redes:</strong> el aro en hueso sobre carbón, o en papel sobre terracota con el punto en carbón.</li>
+          <li><strong>Líneas de Al Aire:</strong> el aro toma el color de la línea y el punto cambia de posición, como estaciones de un mismo dial.</li>
         </ul>
       </div>
       <div class="simbolos">

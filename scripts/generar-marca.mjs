@@ -46,21 +46,11 @@ const logo = {
 };
 writeFileSync('src/data/logotipo.json', JSON.stringify(logo));
 
-// ---------- Símbolo: una voz, diez alrededor ----------
-// Mismas proporciones que src/components/Simbolo.astro (viewBox 0 0 200 200).
-export const simbolo = (color, { radios = true, centro = COLOR.terracota } = {}) => {
-  const R = 72, rNodo = 10.5, rCentro = 18, hueco = 30, trazo = 4.2;
-  const ang = [...Array(10)].map((_, i) => ((-90 + i * 36) * Math.PI) / 180);
-  const p = (a, d) => [100 + d * Math.cos(a), 100 + d * Math.sin(a)].map((v) => +v.toFixed(2));
-  let o = '';
-  if (radios)
-    o += `<g stroke="${color}" stroke-width="${trazo}" stroke-linecap="round">${ang
-      .map((a) => { const [x1, y1] = p(a, hueco); const [x2, y2] = p(a, R - rNodo - 7); return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`; })
-      .join('')}</g>`;
-  o += `<g fill="${color}">${ang.map((a) => { const [cx, cy] = p(a, R); return `<circle cx="${cx}" cy="${cy}" r="${rNodo}"/>`; }).join('')}</g>`;
-  o += `<circle cx="100" cy="100" r="${rCentro}" fill="${centro}"/>`;
-  return o;
-};
+// ---------- Símbolo: el aro con punto (marca v4, 24 oct 2026) ----------
+// Geometría en src/lib/aro.mjs (la misma de src/components/Simbolo.astro), en una caja de 200 × 200.
+import { aro } from '../src/lib/aro.mjs';
+let nAro = 0;
+export const simbolo = (color, { compacto = false, centro = COLOR.terracota } = {}) => aro(color, { compacto, centro, id: `aro${nAro++}` });
 
 // ---------- Palabras en serif cursiva (líneas de negocio) ----------
 const palabra = (texto, tam) => {
@@ -103,11 +93,12 @@ guardar('dial-logotipo-sobre-terracota', logo.ancho + pad * 2, logo.alto + pad *
 
 // Símbolo
 for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]]) guardar(`dial-simbolo-${n}`, 200, 200, simbolo(c));
-guardar('dial-simbolo-compacto', 200, 200, simbolo(COLOR.carbon, { radios: false }));
+guardar('dial-simbolo-compacto', 200, 200, simbolo(COLOR.carbon, { compacto: true }));
 guardar('dial-avatar', 400, 400, `<g transform="translate(40 40) scale(1.6)">${simbolo(COLOR.papel)}</g>`, COLOR.carbon);
 
-// Firma horizontal: símbolo + logotipo
-const alturaSimbolo = asc * 1.36;
+// Firma horizontal: símbolo + logotipo. El aro mide 168 de 200: así su diámetro es 1,05 veces la altura de la l
+// (un círculo se ve más chico que una letra recta de la misma altura).
+const alturaSimbolo = asc * 1.25;
 const sEsc = alturaSimbolo / 200;
 const firma = (color, conPalabra) => {
   const gap = asc * 0.3;

@@ -1,12 +1,13 @@
 ---
 /**
- * Símbolo de Dial (manual v3): una voz, diez alrededor.
- * Nodo central terracota; diez nodos en hueso (sobre oscuro) o carbón (sobre claro).
- * Los radios nacen separados del centro: la voz no se toca, se escucha.
- * `detalle="compacto"` quita los radios para tamaños menores de 32 px.
- * `anima` lo dibuja al cargar: el ruido se sintoniza en señal.
- * Geometría idéntica a scripts/generar-marca.mjs.
+ * Símbolo de Dial (marca v4, 24 oct 2026): el aro con punto.
+ * Un aro y el punto terracota de la i montado sobre él a 45°, con un respiro alrededor: un dial ya sintonizado.
+ * Aro en hueso (sobre oscuro) o carbón (sobre claro); el punto siempre terracota.
+ * `detalle="compacto"` engrosa el aro y agranda el punto para tamaños menores de 24 px.
+ * `anima` lo dibuja al cargar: el aro se traza y el punto cae en su lugar.
+ * Geometría en src/lib/aro.mjs (la misma de scripts/generar-marca.mjs).
  */
+import { aro } from '../lib/aro.mjs';
 interface Props {
   tono?: 'claro' | 'oscuro';
   detalle?: 'completo' | 'compacto';
@@ -15,63 +16,36 @@ interface Props {
   titulo?: string;
 }
 const { tono = 'claro', detalle = 'completo', anima = false, class: clase = '', titulo } = Astro.props;
-
-const R = 72, rNodo = 10.5, rCentro = 18, hueco = 30, trazo = 4.2;
-const p = (a: number, d: number) => [100 + d * Math.cos(a), 100 + d * Math.sin(a)].map((v) => +v.toFixed(2));
-const radios = Array.from({ length: 10 }, (_, i) => {
-  const a = ((-90 + i * 36) * Math.PI) / 180;
-  const [x1, y1] = p(a, hueco);
-  const [x2, y2] = p(a, R - rNodo - 7);
-  const [cx, cy] = p(a, R);
-  return { x1, y1, x2, y2, cx, cy, i };
-});
 const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
+const id = 'aro-' + Math.random().toString(36).slice(2, 9);
+const cuerpo = aro(color, { compacto: detalle === 'compacto', centro: 'var(--terracota)', id, clases: true });
 ---
-
 <svg
   class:list={['simbolo', { anima }, clase]}
   viewBox="0 0 200 200"
   role={titulo ? 'img' : undefined}
   aria-hidden={titulo ? undefined : 'true'}
   aria-label={titulo}
-  style={`--c:${color}`}
->
-  {
-    detalle === 'completo' && (
-      <g class="radios" stroke="var(--c)" stroke-width={trazo} stroke-linecap="round">
-        {radios.map((r) => <line x1={r.x1} y1={r.y1} x2={r.x2} y2={r.y2} pathLength="1" style={`--i:${r.i}`} />)}
-      </g>
-    )
-  }
-  <g class="nodos" fill="var(--c)">
-    {radios.map((r) => <circle cx={r.cx} cy={r.cy} r={detalle === 'compacto' ? rNodo * 1.3 : rNodo} style={`--i:${r.i};transform-origin:${r.cx}px ${r.cy}px`} />)}
-  </g>
-  <circle class="centro" cx="100" cy="100" r={detalle === 'compacto' ? rCentro * 1.35 : rCentro} fill="var(--terracota)" />
-</svg>
+  set:html={cuerpo}
+/>
 
 <style>
   .simbolo { overflow: visible; }
+  .simbolo :global(.aro-punto) { transform-box: fill-box; transform-origin: center; }
 
   @media (prefers-reduced-motion: no-preference) {
-    .anima .radios line {
+    .anima :global(.aro-trazo) {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: trazar 0.9s var(--ease) forwards;
-      animation-delay: calc(0.5s + var(--i) * 0.06s);
+      animation: trazar 1.1s var(--ease) 0.2s forwards;
     }
-    .anima .nodos circle {
+    .anima :global(.aro-punto) {
       transform: scale(0);
-      animation: aparecer 0.7s var(--ease) forwards;
-      animation-delay: calc(0.8s + var(--i) * 0.07s);
-    }
-    .anima .centro {
-      transform-origin: 100px 100px;
-      transform: scale(0);
-      animation: aparecer 0.9s cubic-bezier(0.3, 1.6, 0.4, 1) 0.15s forwards, latido 4.8s ease-in-out 2.4s infinite;
+      animation: aparecer 0.8s cubic-bezier(0.3, 1.6, 0.4, 1) 1s forwards, latido 4.8s ease-in-out 2.6s infinite;
     }
   }
 
-  @keyframes trazar { from { stroke-dashoffset: -1; } to { stroke-dashoffset: 0; } }
+  @keyframes trazar { to { stroke-dashoffset: 0; } }
   @keyframes aparecer { to { transform: scale(1); } }
   @keyframes latido {
     0%, 100% { transform: scale(1); }
