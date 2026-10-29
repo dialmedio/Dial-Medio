@@ -19,17 +19,25 @@ const documentales = todo.filter((m) => m.data.formato === 'documental');
 const podcasts = todo.filter((m) => m.data.formato === 'videopodcast');
 const publicados = documentales.filter((d) => d.data.estado === 'publicado' && d.data.video);
 const enCamino = documentales.filter((d) => d.data.estado !== 'publicado');
+const otrosDebates = debates.slice(1).filter((d) => d.data.video);
+
+// Las líneas de noticias que ya se publican en Instagram (29 oct 2026). Cada una tiene su estética.
+const lineas = [
+  { nombre: 'Al Aire', cuando: 'Todos los días', texto: 'Lo que pasa en Colombia, América Latina y el mundo, con contexto: qué pasó, por qué importa y qué dicen las partes.' },
+  { nombre: 'Termómetro', cuando: 'Lunes y jueves', texto: 'Clima y ambiente: denuncias con pruebas, soluciones que ya funcionan y la ciencia detrás de cada cifra.' },
+  { nombre: 'Expediente', cuando: 'Martes y jueves', texto: 'Seguimiento a las decisiones del gobierno, con fuente y fecha. Lo hacemos con la RED Quynza.' },
+];
 
 const reglas = [
-  { n: '1', titulo: 'Una voz, diez alrededor', texto: 'Un debatiente fijo frente a un círculo de diez que piensan distinto. Los retadores rotan.' },
+  { n: '1', titulo: 'Una voz frente a muchas', texto: 'Un debatiente fijo frente a retadores que piensan distinto y se turnan la silla.' },
   { n: '2', titulo: 'Rondas y banderas', texto: 'Rondas cronometradas y un sistema de banderas para pedir la palabra. Escuchar antes de responder.' },
   { n: '3', titulo: 'Antes y después', texto: 'Encuestamos a la sala al entrar y al salir. La pregunta no es quién ganó, sino quién cambió.' },
 ];
 ---
 
 <Base
-  titulo="Dial Medio · Debates, videopodcast y documentales"
-  descripcion="La obra propia de Dial: debates entre sectores enfrentados, videopodcast y documentales. Sintonizar es conversar."
+  titulo="Dial Medio · Debates, noticias con contexto y documentales"
+  descripcion="El medio de Dial: debates entre quienes piensan distinto, noticias con contexto, documentales y podcast. Sintonizar es conversar."
 >
   <section class="medio-portada tema-carbon grano luz">
     <div class="contenedor medio-portada-grid">
@@ -38,8 +46,8 @@ const reglas = [
         <h1 class="logotipo"><Logo tono="claro" linea="medio" titulo="Dial Medio" /></h1>
         <p class="firma gancho">Sintonizar es conversar.</p>
         <p class="lead texto-2">
-          Debates entre sectores enfrentados, videopodcast y documentales. Conversaciones que buscan la frecuencia común entre
-          quienes piensan distinto.
+          Debates entre quienes piensan distinto, noticias con contexto, documentales y podcast. Ordenamos la información para
+          pasar del ruido a la señal.
         </p>
         <ul class="redes">
           {
@@ -98,6 +106,24 @@ const reglas = [
               </li>
             ))}
           </ol>
+
+          {otrosDebates.length > 0 && (
+            <div class="otros-debates">
+              <p class="kicker sin-linea">También en la mesa</p>
+              <div class="rejilla-2">
+                {otrosDebates.map((d) => (
+                  <PiezaCard
+                    titulo={d.data.titulo}
+                    video={d.data.video}
+                    href={'/medio/' + d.id}
+                    kicker="Debate"
+                    resumen={d.data.resumen}
+                    meta={(d.data.lugar ?? 'Bogotá') + ' · ' + anio(d.data.fecha)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     )
@@ -126,24 +152,32 @@ const reglas = [
     )
   }
 
-  <!-- AL AIRE: noticias del día, en carrusel -->
-  <section class="seccion compacta tema-hueso al-aire" id="al-aire">
-    <div class="contenedor al-aire-grid">
-      <div class="al-aire-texto">
-        <p class="kicker vivo"><span class="acento">Al Aire</span> · Noticias del día</p>
-        <h2 class="display d-2">La noticia, <em>en vivo.</em></h2>
+  <!-- NOTICIAS: las líneas de Al Aire, en carrusel -->
+  <section class="seccion compacta tema-hueso noticias" id="al-aire">
+    <div class="contenedor noticias-grid">
+      <div class="noticias-texto">
+        <p class="kicker vivo">Noticias · En Instagram</p>
+        <h2 class="display d-2">Noticias con <em>contexto.</em></h2>
         <p class="texto-2 medida">
-          Carruseles cortos sobre lo que está pasando: la paz, la política, la cultura y la memoria, y lo que el mundo dice de
-          Colombia. Hechos con fuente, las voces de las partes y la versión oficial.
+          Análisis, no primicia. Carruseles que explican lo que pasa con fuente, las voces de las partes y la pregunta de fondo.
+          Cada línea tiene su propia estética.
         </p>
+        <ul class="lineas">
+          {lineas.map((l) => (
+            <li>
+              <span class="sub s-2">{l.nombre}</span>
+              <span class="meta">{l.cuando}</span>
+              <span class="texto-2">{l.texto}</span>
+            </li>
+          ))}
+        </ul>
         <div class="acciones">
-          <a class="btn" href={sitio.redes.find((r) => r.nombre === 'Instagram')?.url} target="_blank" rel="noopener">Síguelo en Instagram <span class="flecha">↗</span></a>
+          <a class="btn" href={sitio.redes.find((r) => r.nombre === 'Instagram')?.url} target="_blank" rel="noopener">Síguelas en Instagram <span class="flecha">↗</span></a>
         </div>
       </div>
-      <ul class="al-aire-piezas" aria-label="Ejemplos de Al Aire">
-        <li><img src="/marca/al-aire/al-aire-portada.jpg" alt="Portada de Al Aire sobre las protestas en el mundo" width="720" height="900" loading="lazy" /><span class="meta">Foto: Jorge Jaramillo · CC BY-SA 4.0</span></li>
-        <li><img src="/marca/al-aire/al-aire-pais.jpg" alt="Lámina de Al Aire sobre Italia" width="720" height="900" loading="lazy" /></li>
-        <li><img src="/marca/al-aire/al-aire-citas.jpg" alt="Lámina de Al Aire con la versión de los gobiernos" width="720" height="900" loading="lazy" /></li>
+      <ul class="noticias-piezas" aria-label="Ejemplos de las líneas de noticias">
+        <li><img src="/marca/lineas/al-aire-grupo-la-haya.jpg" alt="Portada de Al Aire: Colombia se sale del Grupo de La Haya" width="720" height="900" loading="lazy" /><span class="meta">Al Aire · Foto: Jaber Jehad Badwan · CC BY-SA 4.0</span></li>
+        <li><img src="/marca/lineas/termometro-reserva-amazonica.jpg" alt="Portada de Termómetro: ¿revocar protección por no consultar y luego recortar la consulta?" width="720" height="900" loading="lazy" /><span class="meta">Termómetro · Foto: Nadège Mazars / UE (ECHO) · CC BY 4.0</span></li>
       </ul>
     </div>
   </section>
@@ -199,11 +233,14 @@ const reglas = [
         <div class="contenedor podcast">
           <div data-revela>
             <p class="kicker">{dos(4)} — Videopodcast</p>
-            <h2 class="display d-3">Conversaciones uno a uno.</h2>
-            <p class="texto-2 medida">Entrevistas largas con personas que están haciendo algo distinto en su ciudad o en su territorio.</p>
+            <h2 class="display d-3">Conversaciones largas.</h2>
+            <p class="texto-2 medida">
+              Entrevistas a fondo con personas que están cambiando su barrio, su ciudad o su territorio.
+              La primera serie, <em>Lo que la gente quiere es vivir</em>, la hacemos en coproducción con la RED Quynza.
+            </p>
           </div>
           {podcasts.length > 0 ? (
-            podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={'/medio/' + p.id} kicker="Videopodcast" />)
+            podcasts.map((p) => <PiezaCard titulo={p.data.titulo} video={p.data.video} href={'/medio/' + p.id} kicker={p.data.serie ?? 'Videopodcast'} resumen={p.data.resumen} meta={'Con la RED Quynza · ' + anio(p.data.fecha)} />)
           ) : (
             <Pendiente marca="Episodios pendientes" titulo="Primeros episodios del videopodcast" texto="Cuando estén publicados, aparecen aquí automáticamente." />
           )}
@@ -217,7 +254,7 @@ const reglas = [
       <div data-revela>
         <p class="kicker"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
         <h2 class="display d-3" id="boletin-medio-titulo">Lo nuevo de Dial, en tu correo.</h2>
-        <p class="texto-2">Debates, documentales y lo que aprendemos midiendo. Sin ruido.</p>
+        <p class="texto-2">Debates, noticias, documentales y lo que aprendemos midiendo. Sin ruido.</p>
       </div>
       <div data-revela style="--retraso:.1s"><Boletin id="boletin-medio" origen="medio" /></div>
     </div>
@@ -237,14 +274,19 @@ const reglas = [
 </Base>
 
 <style>
-  .al-aire-grid { display: grid; gap: 40px; align-items: center; }
-  @media (min-width: 980px) { .al-aire-grid { grid-template-columns: 1fr 1.25fr; gap: 64px; } }
-  .al-aire-texto { display: grid; gap: 22px; justify-items: start; }
-  .al-aire-texto p { margin: 0; }
-  .al-aire-piezas { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .al-aire-piezas li { display: grid; gap: 8px; align-content: start; }
-  .al-aire-piezas img { width: 100%; height: auto; }
-  .al-aire-piezas .meta { font-size: .72rem; }
+  .noticias-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 980px) { .noticias-grid { grid-template-columns: 1.1fr 1fr; gap: 64px; } }
+  .noticias-texto { display: grid; gap: 22px; justify-items: start; }
+  .noticias-texto p { margin: 0; }
+  .lineas { list-style: none; width: 100%; border-top: 1px solid var(--borde); }
+  .lineas li { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 16px 0; border-bottom: 1px solid var(--borde); }
+  .lineas .texto-2 { grid-column: 1 / -1; font-size: 1rem; line-height: 1.5; }
+  .lineas .meta { align-self: baseline; }
+  .noticias-piezas { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .noticias-piezas li { display: grid; gap: 8px; align-content: start; }
+  .noticias-piezas img { width: 100%; height: auto; }
+  .noticias-piezas .meta { font-size: .76rem; }
+  .otros-debates { margin-top: clamp(64px, 8vw, 104px); display: grid; gap: 24px; }
 
   .medio-portada { position: relative; overflow: hidden; padding-block: clamp(64px, 9vw, 128px); }
   .medio-portada-grid { display: grid; gap: 40px; align-items: center; }
@@ -252,7 +294,7 @@ const reglas = [
   .medio-portada-texto { display: grid; gap: 24px; justify-items: start; }
   .medio-portada .lead { margin: 0; max-width: 46ch; }
   .logotipo { font-size: clamp(3.4rem, 1rem + 8vw, 7.5rem); line-height: 1; font-weight: 400; }
-  .firma { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); margin: 0; color: var(--terracota-clara); }
+  .firma { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); margin: 0; }
   .redes { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
   .redes a { text-decoration: none; color: var(--hueso-2); transition: color 0.2s, border-color 0.2s; }
   .redes a:hover { color: var(--hueso); border-color: var(--hueso); }
@@ -285,7 +327,7 @@ const reglas = [
   .reglas { list-style: none; display: grid; gap: 36px; margin-top: clamp(64px, 8vw, 104px); }
   .reglas li { display: grid; gap: 12px; align-content: start; }
   .reglas p { margin: 0; }
-  .regla-n { font-size: 4rem; line-height: 1; color: var(--terracota); }
+  .regla-n { font-size: 4rem; line-height: 1; color: var(--hueso-2); font-style: italic; }
   @media (min-width: 900px) { .reglas { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
 
   .clips-sec { border-top: 1px solid var(--linea-clara); }

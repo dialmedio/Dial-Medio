@@ -1,43 +1,47 @@
 /* ==========================================================================
-   Dial — sistema visual · Manual de marca v3.2 (octubre 2026)
-   Una sola estética con Al Aire: titular de impacto, acento en franja brasa,
-   rótulos en caja, campos planos con textura de impresión, sin degradados.
-   Ver /marca para el manual completo.
+   Dial — sistema visual · Marca v5 (29 oct 2026): de la pantalla a la materia
+   El aro de pluma, negro de película, papel y una sola luz roja (el punto).
+   Titulares en serif, texto en Bricolage, rótulos en versalitas sin caja,
+   sin mono. Las fotos se revelan con película. Ver /marca para el manual.
    ========================================================================== */
 
 @import '@fontsource-variable/instrument-sans/standard.css';
+@import '@fontsource-variable/bricolage-grotesque/standard.css';
 @import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
-@import '@fontsource/ibm-plex-mono/400.css';
-@import '@fontsource/ibm-plex-mono/500.css';
 
 :root {
-  /* Paleta v3: dos neutros cálidos, una señal, una brasa. */
-  --carbon: #17130f;           /* Carbón: fondo oscuro y texto principal */
-  --papel: #f4eee5;            /* Papel: fondo claro */
-  --hueso: #e9dfcf;            /* Hueso: superficie clara y texto sobre carbón */
-  --terracota: #c0442a;        /* Terracota señal: el único color de marca */
-  --ambar: #e58a3a;            /* Brasa: datos, estados "en vivo" y la franja del acento */
+  /* Paleta v5: negro de película, papel y una sola luz roja. La foto pone el color. */
+  --carbon: #1f1c19;           /* Negro de película: fondo oscuro y texto principal (negro levantado, nunca puro) */
+  --papel: #f4eee5;            /* Papel: fondo claro y letra sobre negro */
+  --hueso: #f4eee5;            /* v5: la letra sobre negro es el mismo papel */
+  --fibra: #ebe3d6;            /* papel de fibra: segunda superficie clara (antes hueso) */
+  --kraft: #bfa078;            /* solo en impresos */
+  --luz: #d4512e;              /* Luz roja: el punto. El único color de la marca madre */
+  --terracota: var(--luz);     /* nombre antiguo, mismo color */
+  --ambar: #e58a3a;            /* brasa: es de Al Aire y Termómetro */
 
   /* Variaciones funcionales (no son colores nuevos) */
-  --carbon-2: #211c17;         /* superficie elevada sobre carbón */
-  --carbon-3: #2b251f;
-  --terracota-ink: #a33a1c;    /* terracota para texto pequeño sobre claro (5,8:1) */
-  --terracota-clara: #e0694a;  /* terracota para texto pequeño sobre carbón (5,6:1) */
-  --tinta-2: #5f554c;          /* Humo: texto secundario sobre claro (5,4:1) */
-  --hueso-2: #b3a897;          /* Ceniza: texto secundario sobre carbón (8:1) */
+  --carbon-2: #272320;         /* superficie elevada sobre negro */
+  --carbon-3: #2e2a26;
+  --terracota-ink: #a83b1e;    /* la luz para texto pequeño sobre claro */
+  --terracota-clara: #e0653f;  /* la luz para texto pequeño sobre negro */
+  --tinta-2: #5f574f;          /* Humo: texto secundario sobre claro */
+  --hueso-2: #b5aca0;          /* Plata: texto secundario sobre negro */
   --cobre: #a08e7b;            /* marcas finas y viñetas */
   --linea: rgba(23, 19, 15, 0.14);
-  --linea-clara: rgba(233, 223, 207, 0.16);
+  --linea-clara: rgba(244, 238, 229, 0.16);
 
-  /* Tipografía v3: una familia (Instrument), una voz de acento (serif cursiva), un dato (mono). */
-  --f-display: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
-  --f-sub: var(--f-display);
-  --f-texto: var(--f-display);
+  /* Tipografía v5: serif para titular, Bricolage para leer, versalitas para rotular. Sin mono.
+     (Fraunces es solo del logotipo y se dibuja como trazo: no se carga como letra.) */
+  --f-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --f-sub: 'Bricolage Grotesque Variable', 'Avenir Next', 'Segoe UI', sans-serif;
+  --f-texto: var(--f-sub);
   --f-serif: 'Instrument Serif', Georgia, serif;
-  --f-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --t-etq: .78rem;     /* rótulos en mono y mayúsculas */
-  --t-meta: .875rem;   /* datos en mono */
+  --f-rotulo: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: var(--f-texto); /* v5: los datos van en Bricolage con cifras tabulares (el nombre se conserva) */
+  --t-etq: .74rem;     /* rótulos en versalitas */
+  --t-meta: .9rem;     /* datos */
 
   /* Medidas */
   --gutter: clamp(16px, 4.5vw, 56px);
@@ -68,8 +72,9 @@ body {
   font-family: var(--f-texto);
   font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
   line-height: 1.6;
-  font-stretch: 100%;
-  letter-spacing: .004em;
+  font-weight: 380;
+  font-stretch: 92%;
+  letter-spacing: 0;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -82,15 +87,15 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 button { font: inherit; color: inherit; }
 p { margin: 0 0 1em; text-wrap: pretty; }
 h1, h2, h3, h4 { margin: 0; font-weight: 400; text-wrap: balance; }
-/* Énfasis: la voz de acento de Dial es la serif cursiva. */
-/* Instrument Serif tiene menor altura de x que la sans: se compensa con +12 % para que no se vea pequeña. */
-em { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal; letter-spacing: .005em; font-size: 1.12em; line-height: 1; }
+b, strong { font-weight: 650; }
+/* Énfasis: la serif cursiva. Instrument Serif tiene menor altura de x que Bricolage: +10 % para igualarlas. */
+em { font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal; letter-spacing: .005em; font-size: 1.1em; line-height: 1; }
 .cursiva { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
 ul, ol { margin: 0; padding: 0; }
-::selection { background: var(--terracota); color: var(--hueso); }
+::selection { background: var(--luz); color: var(--papel); }
 
 :focus-visible {
-  outline: 2px solid var(--ambar);
+  outline: 2px solid var(--luz);
   outline-offset: 3px;
 }
 
@@ -102,7 +107,7 @@ ul, ol { margin: 0; padding: 0; }
 .saltar {
   position: absolute; left: 12px; top: -60px; z-index: 100;
   background: var(--terracota); color: var(--hueso);
-  padding: 10px 16px; font-family: var(--f-mono); font-size: .8rem;
+  padding: 10px 16px; font-family: var(--f-rotulo); font-size: .8rem;
 }
 .saltar:focus { top: 12px; }
 
@@ -119,30 +124,31 @@ ul, ol { margin: 0; padding: 0; }
 
 /* Temas de sección */
 .tema-carbon { background: var(--carbon); color: var(--hueso); }
-.tema-hueso  { background: var(--hueso); color: var(--carbon); }
+.tema-hueso  { background: var(--fibra); color: var(--carbon); }
 .tema-papel  { background: var(--papel); color: var(--carbon); }
-.tema-terracota { background: var(--terracota); color: var(--hueso); }
+.tema-terracota { background: var(--carbon); color: var(--hueso); } /* v5: la marca madre deja de pintar campos de color */
 
 .tema-carbon { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--terracota); --acento-texto: var(--terracota-clara);
   --franja: var(--ambar); --franja-texto: var(--carbon); --caja: var(--papel); --caja-texto: var(--carbon); --caja-acento: var(--terracota-ink); }
 .tema-hueso, .tema-papel { --texto-2: var(--tinta-2); --borde: var(--linea); --acento: var(--terracota); --acento-texto: var(--terracota-ink);
   --franja: var(--ambar); --franja-texto: var(--carbon); --caja: var(--carbon); --caja-texto: var(--papel); --caja-acento: var(--ambar); }
-.tema-terracota { --texto-2: rgba(244, 238, 229, .86); --borde: rgba(244, 238, 229, .3); --acento: var(--carbon); --acento-texto: var(--carbon);
-  --franja: var(--carbon); --franja-texto: var(--papel); --caja: var(--carbon); --caja-texto: var(--papel); --caja-acento: var(--ambar); }
+.tema-terracota { --texto-2: var(--hueso-2); --borde: var(--linea-clara); --acento: var(--luz); --acento-texto: var(--terracota-clara);
+  --franja: var(--carbon-3); --franja-texto: var(--papel); --caja: var(--papel); --caja-texto: var(--carbon); --caja-acento: var(--terracota-ink); }
 
-/* Moteado de impresión: la tinta plana nunca es perfecta. Baja frecuencia, nada de ruido fino
-   (el grano se veía como baja calidad). Solo en campos planos, nunca sobre fotos ni datos. */
+/* Grano de película (v5): fino, casi del tamaño del píxel y claro, como el de una copia revelada.
+   En los campos negros y sobre fotos; nunca sobre datos. */
 .grano { isolation: isolate; }
 .grano::after {
   content: '';
   position: absolute; inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: .07;
-  mix-blend-mode: soft-light;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 2.2 -.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
-  background-size: 600px 600px;
+  opacity: .1;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.1 -.36'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
 }
+.tema-papel.grano::after, .tema-hueso.grano::after { mix-blend-mode: multiply; opacity: .06; }
 .grano > * { position: relative; z-index: 1; }
 
 /* ---------- Campos planos ---------- */
@@ -156,89 +162,73 @@ ul, ol { margin: 0; padding: 0; }
   background-size: 260px 260px;
 }
 
-/* Terracota: tinta plana (como el campo de país en Al Aire). */
+/* El antiguo campo terracota es ahora negro de película. */
 .tema-terracota { background-image: none; }
 .tema-terracota > * { position: relative; z-index: 1; }
 
 /* ---------- Tipografía ---------- */
-/* Titular de impacto (v3.2): Instrument Sans bold al 75 % de ancho, en caja mixta.
-   Es el mismo titular de las piezas de Al Aire. */
+/* Titular (v5): Instrument Serif, la misma voz de los titulares de las láminas. El acento va en cursiva,
+   en la misma tinta: sin franja ni color (el rojo es solo del punto). */
 .display {
   font-family: var(--f-display);
-  font-weight: 700;
-  font-stretch: 75%;
-  line-height: .92;
-  letter-spacing: -.008em;
+  font-weight: 400;
+  font-stretch: normal;
+  line-height: .98;
+  letter-spacing: -.012em;
 }
-/* El acento de un titular va en franja: las palabras sobre una banda brasa (carbón sobre terracota).
-   La serif cursiva queda para el texto corrido, el manifiesto, las citas y las firmas de línea. */
 .display em {
-  font-family: inherit; font-style: normal; font-weight: inherit; font-stretch: inherit;
-  font-size: 1em; line-height: inherit; letter-spacing: inherit;
-  /* la banda se recorta arriba para no tapar la línea anterior (los titulares van muy juntos) */
-  background: linear-gradient(transparent 14%, var(--franja, var(--ambar)) 14%, var(--franja, var(--ambar)) 97%, transparent 97%);
-  color: var(--franja-texto, var(--carbon));
-  padding: 0 .08em; margin: 0 -.02em;
-  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  font-family: var(--f-serif); font-style: italic; font-weight: 400;
+  font-size: 1em; line-height: inherit; letter-spacing: -.005em; color: inherit;
 }
-/* Titular de marca (.voz): la portada principal de la casa conserva la voz del logotipo —
-   semibold al 88 % y el acento en serif cursiva terracota, como "dial medio". Es la excepción a la franja. */
-.display.voz { font-weight: 600; font-stretch: 88%; line-height: .95; letter-spacing: -.022em; }
-.display.voz em {
-  font-family: var(--f-serif); font-style: italic; font-weight: 400; font-stretch: normal;
-  font-size: 1.07em; letter-spacing: -.005em; line-height: 1;
-  background: none; color: var(--acento-display, var(--terracota)); padding: 0; margin: 0;
-}
-.d-1 { font-size: clamp(3.2rem, 1.1rem + 6.6vw, 7.8rem); line-height: .9; }
-.d-2 { font-size: clamp(2.4rem, 1.25rem + 4.2vw, 5rem); line-height: .92; }
-.d-3 { font-size: clamp(2rem, 1.25rem + 2.4vw, 3.4rem); line-height: .95; }
-.d-4 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1; }
+.display.voz em { color: inherit; }
+.d-1 { font-size: clamp(3.4rem, 1.2rem + 7vw, 8.4rem); line-height: .94; }
+.d-2 { font-size: clamp(2.6rem, 1.3rem + 4.6vw, 5.4rem); line-height: .96; }
+.d-3 { font-size: clamp(2.1rem, 1.3rem + 2.6vw, 3.6rem); line-height: 1; }
+.d-4 { font-size: clamp(1.7rem, 1.25rem + 1.3vw, 2.4rem); line-height: 1.04; }
 
 .sub {
   font-family: var(--f-sub);
   font-weight: 600;
-  font-stretch: 94%;
+  font-stretch: 92%;
   line-height: 1.2;
-  letter-spacing: -.008em;
+  letter-spacing: -.006em;
 }
 .s-1 { font-size: clamp(1.45rem, 1.2rem + 1vw, 1.95rem); line-height: 1.15; }
 .s-2 { font-size: clamp(1.2rem, 1.1rem + .4vw, 1.4rem); }
 .s-3 { font-size: 1.15rem; }
 
-/* Rótulo en caja (v3.2): mono en mayúsculas dentro de una caja (carbón sobre claro, papel sobre carbón).
-   .sin-linea = rótulo suelto, sin caja, para listas y fichas. */
+/* Rótulo (v5): versalitas espaciadas en Instrument Sans, sin caja (las cajas se veían de pantalla).
+   Un punto de luz roja lo antecede, como el antetítulo de las láminas. .sin-linea = sin el punto. */
 .kicker {
-  font-family: var(--f-mono);
-  font-weight: 500;
+  font-family: var(--f-rotulo);
+  font-weight: 600;
   font-size: var(--t-etq);
   line-height: 1.4;
-  letter-spacing: .1em;
+  letter-spacing: .16em;
   text-transform: uppercase;
   display: inline-flex;
   align-items: center;
-  gap: .6em;
-  background: var(--caja, var(--carbon));
-  color: var(--caja-texto, var(--papel));
-  padding: .5em .8em;
+  gap: .75em;
+  color: var(--texto-2, currentColor);
   justify-self: start;
   align-self: start;
 }
-.kicker .acento { color: var(--caja-acento, var(--ambar)); }
-.kicker.sin-linea { background: none; color: var(--texto-2); padding: 0; }
-.kicker.sin-linea .acento { color: var(--acento-texto); }
-/* Sello "en vivo": lo que está al aire o recién estrenado. */
-.kicker.vivo { background: var(--ambar); color: var(--carbon); }
-.kicker.vivo::before { content: ''; width: .55em; height: .55em; border-radius: 50%; background: currentColor; }
-.kicker.vivo .acento { color: var(--carbon); }
+.kicker::before { content: ''; width: .62em; height: .62em; border-radius: 50%; background: var(--luz); flex: none; }
+.kicker .acento { color: var(--acento-texto); }
+.kicker.sin-linea::before { display: none; }
+/* "En vivo": lo que está al aire o recién estrenado. El punto se enciende con su halo. */
+.kicker.vivo { color: inherit; }
+.kicker.vivo::before { box-shadow: 0 0 .7em .15em rgba(212, 81, 46, .6); }
 
 .mono {
   font-family: var(--f-mono);
   font-size: var(--t-meta);
   letter-spacing: 0;
   line-height: 1.55;
+  font-variant-numeric: tabular-nums;
 }
 
-/* Datos: mono en minúsculas, tamaño legible, sin espaciado extra. */
+/* Datos: Bricolage con cifras tabulares (v5: sin mono). */
 .meta {
   font-family: var(--f-mono);
   font-size: var(--t-meta);
@@ -262,17 +252,17 @@ ul, ol { margin: 0; padding: 0; }
   font-weight: 400;
   letter-spacing: .005em;
 }
-.lead-xl em { font-size: 1em; color: var(--acento-texto); }
+.lead-xl em { font-size: 1em; color: inherit; }
 .texto-2 { color: var(--texto-2); }
 /* Frase gancho: serif cursiva, siempre un paso por encima del texto que presenta. */
-.gancho { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: .005em; line-height: 1.25; color: var(--acento-texto); }
+.gancho { font-family: var(--f-serif); font-style: italic; font-weight: 400; letter-spacing: .005em; line-height: 1.25; color: inherit; }
 .acento { color: var(--acento-texto); }
 .medida { max-width: 62ch; }
 
 /* ---------- Botones ---------- */
 .btn {
-  --bg: var(--terracota);
-  --fg: #f7f2ea;
+  --bg: var(--carbon);
+  --fg: var(--papel);
   display: inline-flex;
   align-items: center;
   gap: .7em;
@@ -284,13 +274,17 @@ ul, ol { margin: 0; padding: 0; }
   color: var(--fg);
   font-family: var(--f-sub);
   font-weight: 600;
+  font-stretch: 92%;
   font-size: 1rem;
-  letter-spacing: .005em;
+  letter-spacing: 0;
   text-decoration: none;
   cursor: pointer;
   transition: background .25s var(--ease), color .25s var(--ease), border-color .25s var(--ease), transform .25s var(--ease);
 }
 .btn:hover { --bg: var(--terracota-ink); }
+/* Sobre negro el botón es de papel; al pasar, se enciende la luz. */
+.tema-carbon .btn, .tema-terracota .btn { --bg: var(--papel); --fg: var(--carbon); }
+.tema-carbon .btn:hover, .tema-terracota .btn:hover { --bg: var(--luz); --fg: var(--papel); }
 .btn:active { transform: translateY(1px); }
 .btn .flecha { transition: transform .3s var(--ease); }
 .btn:hover .flecha { transform: translateX(4px); }
@@ -301,10 +295,8 @@ ul, ol { margin: 0; padding: 0; }
   border-color: var(--borde, currentColor);
 }
 .btn.linea:hover { border-color: currentColor; background: transparent; }
-.tema-terracota .btn { --bg: var(--carbon); --fg: var(--hueso); }
-.tema-terracota .btn:hover { --bg: #000; }
-.tema-terracota .btn.linea { border-color: rgba(243,238,230,.55); color: var(--hueso); }
-.tema-terracota .btn.linea:hover { border-color: var(--hueso); }
+.tema-terracota .btn.linea, .tema-carbon .btn.linea { border-color: rgba(244,238,229,.45); color: var(--hueso); background: transparent; }
+.tema-terracota .btn.linea:hover, .tema-carbon .btn.linea:hover { border-color: var(--hueso); background: transparent; }
 
 .acciones { display: flex; flex-wrap: wrap; gap: 12px; }
 
@@ -339,7 +331,7 @@ ul, ol { margin: 0; padding: 0; }
 
 /* ---------- Marcadores de contenido pendiente ---------- */
 .pendiente {
-  font-family: var(--f-mono);
+  font-family: var(--f-rotulo);
   font-size: var(--t-etq);
   letter-spacing: .08em;
   text-transform: uppercase;
@@ -351,18 +343,19 @@ ul, ol { margin: 0; padding: 0; }
 }
 
 /* ---------- Etiquetas ---------- */
+/* Etiquetas (v5): versalitas sueltas separadas por un punto medio, sin caja. */
 .etiqueta {
-  font-family: var(--f-mono);
+  font-family: var(--f-rotulo);
+  font-weight: 600;
   font-size: var(--t-etq);
-  letter-spacing: .08em;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  padding: .45em .95em;
-  border: 1px solid var(--borde);
-  border-radius: 0;
   white-space: nowrap;
   display: inline-block;
+  color: var(--texto-2, currentColor);
 }
-.etiquetas { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
+.etiquetas { display: flex; flex-wrap: wrap; gap: 6px 0; list-style: none; }
+.etiquetas > li + li::before { content: '·'; margin: 0 .7em; color: var(--texto-2, currentColor); }
 
 /* ---------- Revelado al hacer scroll ---------- */
 @media (prefers-reduced-motion: no-preference) {

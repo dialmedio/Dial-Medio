@@ -1,4 +1,4 @@
-// Genera las imágenes para compartir (public/og/*.jpg, public/og.jpg) y los íconos, con la marca v3.
+// Genera las imágenes para compartir (public/og/*.jpg, public/og.jpg) y los íconos, con la marca v5 (29 oct 2026: la pluma).
 // Renderiza HTML con las mismas fuentes del sitio usando Chrome (puppeteer-core).
 // Uso: node scripts/generar-imagenes.mjs   (necesita Google Chrome instalado)
 import puppeteer from 'puppeteer-core';
@@ -12,24 +12,30 @@ const CHROME = ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Pro
 const logo = JSON.parse(readFileSync('src/data/logotipo.json', 'utf8'));
 const f = (p) => pathToFileURL(resolve('node_modules', p)).href;
 
-const C = { carbon: '#17130f', papel: '#f4eee5', hueso: '#e9dfcf', ceniza: '#b3a897', terracota: '#c0442a', clara: '#e0694a', brasa: '#e58a3a' };
+const C = { carbon: '#1f1c19', papel: '#f4eee5', hueso: '#f4eee5', ceniza: '#b5aca0', terracota: '#d4512e', clara: '#e0653f', brasa: '#e58a3a' };
 
 // Cada página: rótulo, título (admite <em>) y bajada.
 const paginas = {
-  inicio: { kicker: 'Productora audiovisual · Bogotá', titulo: 'Contamos, <em>y medimos,</em><br>el encuentro humano.', sub: 'Documental, cobertura, eventos y un medio propio de debates.' },
+  inicio: { kicker: 'Productora audiovisual · Bogotá', titulo: 'Contamos, <em>y medimos,</em><br>el encuentro humano.', sub: 'Documental, cobertura, eventos y un medio propio: debates, noticias con contexto y documentales.' },
   impacto: { kicker: 'Dial Impacto', titulo: 'Historias para organizaciones que <em>transforman.</em>', sub: 'Documental · Cobertura · Pieza + medición · Marca con propósito' },
   medicion: { kicker: 'Dial Impacto · Pieza + medición', titulo: 'Medimos lo que una historia <em>mueve.</em>', sub: 'Evaluación antes y después de ver la pieza, lista para reportar.' },
   encuentros: { kicker: 'Dial Encuentros', titulo: 'Producimos el encuentro. Y lo dejamos <em>contado.</em>', sub: 'Foros · Festivales · Lanzamientos · Música en vivo' },
   celebraciones: { kicker: 'Dial Encuentros · Celebraciones', titulo: 'Lo que se celebra una vez, <em>se queda contado.</em>', sub: 'Bodas · Aniversarios · Serenatas', serif: true },
-  medio: { kicker: 'Obra propia · Sintonizar es conversar', titulo: '', sub: 'Debates entre sectores enfrentados, videopodcast y documentales.', linea: 'medio' },
+  medio: { kicker: 'Sintonizar es conversar', titulo: '', sub: 'Debates, noticias con contexto, documentales y podcast.', linea: 'medio' },
   nosotros: { kicker: 'Nosotros', titulo: 'Un solo equipo, de la idea al <em>estreno.</em>', sub: 'Dirección, imagen, sonido y música original, en casa.' },
   contacto: { kicker: 'Cotizaciones a la medida', titulo: 'Cuéntanos qué quieres <em>contar.</em>', sub: 'dialmediocol@gmail.com · WhatsApp +57 310 481 3624' },
 };
 
-// El símbolo es el aro con punto (marca v4); geometría en src/lib/aro.mjs
+// El símbolo es el aro de pluma (marca v5); geometría en src/lib/aro.mjs
 let nAro = 0;
 const simbolo = (color, s) => `<svg viewBox="0 0 200 200" width="${s}" height="${s}" style="overflow:visible">${aro(color, { centro: C.terracota, id: `aro${nAro++}` })}</svg>`;
-const palabra = (alto) => `<svg viewBox="${logo.viewBox}" height="${alto}" style="overflow:visible"><path d="${logo.d}" fill="${C.hueso}"/><circle cx="${logo.punto.cx}" cy="${logo.punto.cy}" r="${logo.punto.r}" fill="${C.terracota}"/></svg>`;
+const palabra = (alto, linea) => {
+  // «dial» y, si hay, el apellido en Fraunces cursiva y en la misma tinta (logotipo.json trae sus trazos)
+  const [vx, vy, vw, vh] = logo.viewBox.split(' ').map(Number);
+  const ap = linea ? logo.lineas[linea] : null;
+  const ancho = ap ? vw + logo.aireLinea + ap.ancho : vw;
+  return `<svg viewBox="${vx} ${vy} ${ancho} ${vh}" height="${alto}" style="overflow:visible"><path d="${logo.d}" fill="${C.hueso}"/><circle cx="${logo.punto.cx}" cy="${logo.punto.cy}" r="${logo.punto.r}" fill="${C.terracota}"/>${ap ? `<path transform="translate(${vw + logo.aireLinea} 0)" d="${ap.d}" fill="${C.hueso}"/>` : ''}</svg>`;
+};
 
 const regla = () => {
   let t = '';
@@ -44,23 +50,22 @@ const regla = () => {
 
 const html = (p) => `<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face { font-family: IS; src: url(${f('@fontsource-variable/instrument-sans/files/instrument-sans-latin-standard-normal.woff2')}) format('woff2'); font-weight: 400 700; font-stretch: 75% 100%; }
+@font-face { font-family: Brico; src: url(${f('@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-standard-normal.woff2')}) format('woff2'); font-weight: 200 800; font-stretch: 75% 100%; }
 @font-face { font-family: ISerif; font-style: italic; src: url(${f('@fontsource/instrument-serif/files/instrument-serif-latin-400-italic.woff2')}) format('woff2'); }
 @font-face { font-family: ISerif; font-style: normal; src: url(${f('@fontsource/instrument-serif/files/instrument-serif-latin-400-normal.woff2')}) format('woff2'); }
-@font-face { font-family: Plex; src: url(${f('@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2')}) format('woff2'); font-weight: 500; }
 * { margin: 0; box-sizing: border-box; }
-body { width: 1200px; height: 630px; background: ${C.carbon}; color: ${C.hueso}; font-family: IS; position: relative; overflow: hidden; }
-body::after { content: ''; position: absolute; inset: 0; opacity: .12; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+body { width: 1200px; height: 630px; background: ${C.carbon}; color: ${C.hueso}; font-family: Brico; font-stretch: 92%; position: relative; overflow: hidden; }
+body::after { content: ''; position: absolute; inset: 0; opacity: .1; mix-blend-mode: screen; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.4 -.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 .marca { position: absolute; left: 72px; top: 64px; }
-.url { position: absolute; right: 72px; top: 76px; font: 500 15px Plex; letter-spacing: .14em; color: ${C.brasa}; }
+.url { position: absolute; right: 72px; top: 78px; font: 600 15px IS; letter-spacing: .16em; color: ${C.ceniza}; }
 .simbolo { position: absolute; right: 64px; top: 150px; }
 .cuerpo { position: absolute; left: 72px; top: 158px; width: 720px; }
-.k { font: 500 15px Plex; letter-spacing: .12em; text-transform: uppercase; color: ${C.clara}; display: flex; gap: 14px; align-items: center; }
-.k::before { content: ''; width: 36px; height: 2px; background: ${C.terracota}; }
-h1 { margin-top: 22px; font-weight: 600; font-stretch: 88%; font-size: 74px; line-height: .98; letter-spacing: -.02em; }
-h1.serif { font-family: ISerif; font-weight: 400; font-stretch: normal; font-size: 84px; letter-spacing: -.01em; line-height: 1; }
-h1 em { font-family: ISerif; font-style: italic; font-weight: 400; color: ${C.terracota}; font-size: 1.07em; letter-spacing: -.005em; }
-.linea { margin-top: 26px; display: flex; align-items: baseline; gap: 24px; }
-.linea em { font-family: ISerif; font-style: italic; font-size: 150px; line-height: 1; color: ${C.terracota}; }
+.k { font: 600 15px IS; letter-spacing: .16em; text-transform: uppercase; color: ${C.ceniza}; display: flex; gap: 14px; align-items: center; }
+.k::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: ${C.terracota}; }
+h1 { margin-top: 22px; font-family: ISerif; font-weight: 400; font-size: 86px; line-height: .98; letter-spacing: -.012em; }
+h1.serif { font-size: 86px; }
+h1 em { font-family: ISerif; font-style: italic; font-weight: 400; letter-spacing: -.005em; }
+.linea { margin-top: 26px; }
 p { margin-top: 22px; font-size: 25px; line-height: 1.35; color: ${C.ceniza}; max-width: 680px; }
 .regla { position: absolute; left: 72px; right: 72px; bottom: 44px; height: 30px; }
 .regla i { position: absolute; bottom: 0; width: 1.2px; background: ${C.hueso}; }
@@ -72,7 +77,7 @@ ${p.linea ? '' : `<div class="marca">${palabra(46)}</div>`}
 <div class="simbolo">${simbolo(C.hueso, 300)}</div>
 <div class="cuerpo">
   <div class="k">${p.kicker}</div>
-  ${p.linea ? `<div class="linea">${palabra(150)}<em>${p.linea}</em></div>` : `<h1 class="${p.serif ? 'serif' : ''}">${p.titulo}</h1>`}
+  ${p.linea ? `<div class="linea">${palabra(112, p.linea)}</div>` : `<h1 class="${p.serif ? 'serif' : ''}">${p.titulo}</h1>`}
   <p>${p.sub}</p>
 </div>
 ${regla()}

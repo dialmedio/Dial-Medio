@@ -1,38 +1,38 @@
 ---
 /**
- * Logotipo de Dial (manual v3): "dial" en Instrument Sans Bold, con el punto de la i
- * como nodo central terracota. Trazos generados por scripts/generar-marca.mjs.
- * `linea` agrega la línea de negocio en Instrument Serif cursiva (impacto, encuentros, medio).
+ * Logotipo de Dial (marca v5, 29 oct 2026: la pluma): "dial" en Fraunces suave, con el punto de la i
+ * como nodo en luz roja. `linea` agrega la línea de negocio (impacto, encuentros, medio) en Fraunces cursiva,
+ * en la misma tinta: el rojo va solo en el punto. Trazos generados por scripts/generar-marca.mjs.
  */
 import logo from '../data/logotipo.json';
 
 interface Props {
   tono?: 'claro' | 'oscuro';
-  linea?: string;
+  linea?: 'medio' | 'impacto' | 'encuentros';
   class?: string;
   titulo?: string;
 }
 const { tono = 'claro', linea, class: clase = '', titulo = linea ? `Dial ${linea}` : 'Dial' } = Astro.props;
+const [vx, vy, vw, vh] = logo.viewBox.split(' ').map(Number);
+const ap = linea ? logo.lineas[linea] : null;
+// La línea de negocio comparte la línea base con «dial»; la caja crece hacia abajo si la cursiva baja más.
+const ancho = ap ? vw + logo.aireLinea + ap.ancho : vw;
+const abajo = ap ? Math.max(vy + vh, ap.y1 + 4) : vy + vh;
+const viewBox = `${vx} ${vy} ${ancho.toFixed(1)} ${(abajo - vy).toFixed(1)}`;
+const alto = ((abajo - vy) / vh).toFixed(4);
 ---
 
 <span class:list={['logo', tono, clase]}>
-  <svg class="logo-palabra" viewBox={logo.viewBox} role="img" aria-label={titulo}>
+  <svg class="logo-palabra" viewBox={viewBox} style={`height:${alto}em`} role="img" aria-label={titulo}>
     <path d={logo.d} fill="currentColor" />
-    <circle cx={logo.punto.cx} cy={logo.punto.cy} r={logo.punto.r} fill="var(--terracota)" />
+    <circle cx={logo.punto.cx} cy={logo.punto.cy} r={logo.punto.r} fill="var(--luz)" />
+    {ap && <path transform={`translate(${vw + logo.aireLinea} 0)`} d={ap.d} fill="currentColor" />}
   </svg>
-  {linea && <span class="logo-linea" aria-hidden="true">{linea}</span>}
 </span>
 
 <style>
-  .logo { display: inline-flex; align-items: baseline; gap: 0.28em; line-height: 1; }
+  .logo { display: inline-flex; align-items: flex-start; line-height: 1; }
   .logo-palabra { height: 1em; width: auto; overflow: visible; transform: translateY(0.02em); }
   .claro { color: var(--hueso); }
   .oscuro { color: var(--carbon); }
-  .logo-linea {
-    font-family: var(--f-serif);
-    font-style: italic;
-    font-size: 1.02em;
-    color: var(--terracota);
-    letter-spacing: 0;
-  }
 </style>

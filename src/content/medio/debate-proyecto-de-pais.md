@@ -7,8 +7,8 @@ lugar: Bogotá
 resumen: "¿Qué proyecto de país está en juego? Dos representantes de la derecha moderna se sientan frente a diez voces progresistas para debatirlo cara a cara, con rondas cronometradas, banderas para pedir la palabra y una encuesta a la sala al entrar y al salir."
 video:
   id: szMuJkTqr4c
-destacado: true
-orden: 1
+destacado: false
+orden: 2
 capitulos:
   - { tiempo: "00:00", titulo: "Introducción" }
   - { tiempo: "01:12", titulo: "El aumento del salario mínimo ya está presionando la inflación" }

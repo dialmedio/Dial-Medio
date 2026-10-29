@@ -1,4 +1,6 @@
-// Genera los archivos de marca de Dial (manual v3) a partir de las fuentes reales.
+// Genera los archivos de marca de Dial (marca v5, 29 oct 2026: la pluma) a partir de las fuentes reales.
+// «dial» en Fraunces suave (peso 600, SOFT 100, opsz 144) y el apellido en Fraunces cursiva, en la misma tinta;
+// las instancias fijas están en scripts/fuentes/Fraunces-Dial-*.ttf (OFL). El rojo va solo en el punto.
 //   - src/data/logotipo.json  → trazos del logotipo que usa el sitio
 //   - public/marca/*.svg|png  → logotipo, símbolo, firmas y líneas de negocio descargables
 // Uso: node scripts/generar-marca.mjs
@@ -7,20 +9,20 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync, statSy
 import sharp from 'sharp';
 
 const fontkit = fk.default ?? fk;
-const sans = fontkit.create(readFileSync('scripts/fuentes/InstrumentSans.ttf')).getVariation({ wght: 700, wdth: 92 });
-const serif = fontkit.create(readFileSync('scripts/fuentes/InstrumentSerif-Italic.ttf'));
+const sans = fontkit.create(readFileSync('scripts/fuentes/Fraunces-Dial-600.ttf'));
+const serif = fontkit.create(readFileSync('scripts/fuentes/Fraunces-Dial-Italica.ttf'));
 
 export const COLOR = {
   carbon: '#17130F',
   papel: '#F4EEE5',
   hueso: '#E8DECF',
-  terracota: '#C0442A',
+  terracota: '#D4512E', // la luz roja (v5): el único color de la marca madre, solo en el punto
 };
 
 // ---------- Logotipo: "dial" con el punto de la i como nodo central ----------
 const EM = 1000; // unidades de trabajo
 const esc = EM / sans.unitsPerEm;
-const tracking = -0.012 * EM;
+const tracking = 0;
 const run = sans.layout('dıal');
 let x = 0;
 let dLogo = '';
@@ -32,11 +34,24 @@ run.glyphs.forEach((g, n) => {
   x += run.positions[n].xAdvance * esc + tracking;
 });
 const anchoLogo = x - tracking;
-const l = sans.glyphForCodePoint('l'.codePointAt(0));
-const asc = l.bbox.maxY * esc; // altura de ascendente
-const grosor = (l.bbox.maxX - l.bbox.minX) * esc; // grosor del asta
-const r = (grosor * 1.28) / 2;
-const punto = { cx: (iCaja.x0 + iCaja.x1) / 2, cy: -(asc - r), r };
+const d_ = sans.glyphForCodePoint('d'.codePointAt(0));
+const asc = d_.bbox.maxY * esc; // altura de la d: el aro mide lo mismo
+// El punto de la i: el mismo tamaño y la misma altura que el punto de Fraunces (su contorno más alto)
+const cajaPunto = (() => {
+  const cmds = sans.glyphForCodePoint('i'.codePointAt(0)).path.commands;
+  let act = [], mejor = null;
+  for (const c of cmds) {
+    if (c.command === 'closePath') {
+      const ys = act.flatMap((a) => a.args.filter((_, k) => k % 2)), xs = act.flatMap((a) => a.args.filter((_, k) => k % 2 === 0));
+      if (ys.length && (!mejor || Math.min(...ys) > mejor.y0)) mejor = { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
+      act = [];
+    } else act.push(c);
+  }
+  return mejor;
+})();
+const r = (Math.max(cajaPunto.x1 - cajaPunto.x0, cajaPunto.y1 - cajaPunto.y0) / 2) * esc;
+const centroPunto = ((cajaPunto.y0 + cajaPunto.y1) / 2) * esc;
+const punto = { cx: (iCaja.x0 + iCaja.x1) / 2, cy: -(centroPunto + (r - ((cajaPunto.y1 - cajaPunto.y0) / 2) * esc) * 0.5), r };
 const logo = {
   viewBox: [0, -asc - 4, anchoLogo, asc + 4 + 12].map((v) => +v.toFixed(1)).join(' '),
   ancho: +anchoLogo.toFixed(1),
@@ -44,9 +59,8 @@ const logo = {
   d: dLogo,
   punto: { cx: +punto.cx.toFixed(1), cy: +punto.cy.toFixed(1), r: +punto.r.toFixed(1) },
 };
-writeFileSync('src/data/logotipo.json', JSON.stringify(logo));
 
-// ---------- Símbolo: el aro con punto (marca v4, 24 oct 2026) ----------
+// ---------- Símbolo: el aro de pluma (marca v5, 29 oct 2026) ----------
 // Geometría en src/lib/aro.mjs (la misma de src/components/Simbolo.astro), en una caja de 200 × 200.
 import { aro } from '../src/lib/aro.mjs';
 let nAro = 0;
@@ -71,6 +85,15 @@ const palabra = (texto, tam) => {
   return { d, ancho: xx, caja };
 };
 
+// El sitio dibuja las firmas con estos trazos (Logo.astro): el apellido va en la misma tinta que «dial»
+const TAM_LINEA = EM * 0.98, AIRE_LINEA = EM * 0.2;
+logo.lineas = Object.fromEntries(['medio', 'impacto', 'encuentros'].map((n) => {
+  const p = palabra(n, TAM_LINEA);
+  return [n, { d: p.d, ancho: +p.ancho.toFixed(1), x0: +p.caja.x0.toFixed(1), x1: +p.caja.x1.toFixed(1), y0: +p.caja.y0.toFixed(1), y1: +p.caja.y1.toFixed(1) }];
+}));
+logo.aireLinea = AIRE_LINEA;
+writeFileSync('src/data/logotipo.json', JSON.stringify(logo));
+
 // ---------- Archivos SVG ----------
 mkdirSync('public/marca', { recursive: true });
 // Solo reescribe si cambió, para que el PNG se regenere únicamente cuando su SVG es más nuevo
@@ -87,7 +110,7 @@ const logoSVG = (color, ox, oy, s = 1) =>
 // Logotipo solo
 for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]])
   guardar(`dial-logotipo-${n}`, logo.ancho + pad * 2, logo.alto + pad * 2, logoSVG(c, pad, pad + asc + 4));
-// Logotipo sobre terracota: todo en papel
+// Logotipo sobre la luz roja: todo en papel (el nombre del archivo se conserva por los enlaces)
 guardar('dial-logotipo-sobre-terracota', logo.ancho + pad * 2, logo.alto + pad * 2,
   `<g transform="translate(${pad} ${pad + asc + 4})"><path d="${logo.d}" fill="${COLOR.papel}"/><circle cx="${logo.punto.cx}" cy="${logo.punto.cy}" r="${logo.punto.r}" fill="${COLOR.papel}"/></g>`, COLOR.terracota);
 
@@ -96,20 +119,20 @@ for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]]) guardar
 guardar('dial-simbolo-compacto', 200, 200, simbolo(COLOR.carbon, { compacto: true }));
 guardar('dial-avatar', 400, 400, `<g transform="translate(40 40) scale(1.6)">${simbolo(COLOR.papel)}</g>`, COLOR.carbon);
 
-// Firma horizontal: símbolo + logotipo. El aro mide 168 de 200: así su diámetro es 1,05 veces la altura de la l
-// (un círculo se ve más chico que una letra recta de la misma altura).
-const alturaSimbolo = asc * 1.25;
+// Firma horizontal: símbolo + logotipo. La caja del aro mide 1,06 veces la altura de la d y entre la caja y la palabra
+// van 0,27 del cuerpo (las proporciones de la propuesta v5 que aprobó Martín).
+const alturaSimbolo = asc * 1.06;
 const sEsc = alturaSimbolo / 200;
 const firma = (color, conPalabra) => {
-  const gap = asc * 0.3;
+  const gap = EM * 0.27;
   let w = alturaSimbolo + gap + logo.ancho;
   let cuerpo = `<g transform="translate(${pad} ${pad}) scale(${sEsc})">${simbolo(color)}</g>`;
   const base = pad + alturaSimbolo / 2 + asc / 2;
   cuerpo += logoSVG(color, pad + alturaSimbolo + gap, base);
   if (conPalabra) {
-    const pw = palabra(conPalabra, asc * 1.02);
-    cuerpo += `<path transform="translate(${pad + alturaSimbolo + gap + logo.ancho + asc * 0.2} ${base})" d="${pw.d}" fill="${COLOR.terracota}"/>`;
-    w += asc * 0.2 + pw.ancho;
+    const pw = palabra(conPalabra, TAM_LINEA);
+    cuerpo += `<path transform="translate(${pad + alturaSimbolo + gap + logo.ancho + AIRE_LINEA} ${base})" d="${pw.d}" fill="${color}"/>`;
+    w += AIRE_LINEA + pw.ancho;
   }
   return { w: w + pad * 2, h: alturaSimbolo + pad * 2, cuerpo };
 };
@@ -126,15 +149,15 @@ for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]]) {
 //   dial-<linea>-letras-*   → horizontal, igual que la firma pero sin la esfera
 //   dial-<linea>-centrado-* → "dial" arriba y la línea en serif debajo, centradas
 const letras = (color, linea) => {
-  const pw = palabra(linea, asc * 1.02);
-  const gap = asc * 0.2;
+  const pw = palabra(linea, TAM_LINEA);
+  const gap = AIRE_LINEA;
   const w = logo.ancho + gap + pw.ancho;
   const base = pad + asc + 4;
   const cuerpo = logoSVG(color, pad, base) +
-    `<path transform="translate(${pad + logo.ancho + gap} ${base})" d="${pw.d}" fill="${COLOR.terracota}"/>`;
+    `<path transform="translate(${pad + logo.ancho + gap} ${base})" d="${pw.d}" fill="${color}"/>`;
   return { w: w + pad * 2, h: logo.alto + pad * 2, cuerpo };
 };
-const centrado = (color, linea, acento = COLOR.terracota) => {
+const centrado = (color, linea, acento = color) => {
   const pw = palabra(linea, asc * 0.88);
   const altaSerif = asc * 0.88 * 0.75; // altura de ascendente de la serif: igual para las tres líneas
   const gap = asc * 0.2;
@@ -181,9 +204,8 @@ const perfil = async (nombre, fondo, { w, h, cuerpo }) => {
   guardar(nombre, L, L,
     `<g transform="translate(${(L / 2 - k * t.cx).toFixed(2)} ${(L / 2 - k * t.cy).toFixed(2)}) scale(${k.toFixed(5)})">${cuerpo}</g>`, fondo);
 };
-// Sobre carbón la terracota se apaga en tamaño pequeño: el acento en serif va un punto más clara
-const TERRACOTA_CLARA = '#E0694A';
-for (const [n, fondo, c, acento] of [['carbon', COLOR.carbon, COLOR.papel, TERRACOTA_CLARA], ['papel', COLOR.papel, COLOR.carbon, COLOR.terracota]]) {
+// v5: el apellido va en la misma tinta; solo el punto lleva la luz roja
+for (const [n, fondo, c, acento] of [['carbon', COLOR.carbon, COLOR.papel, COLOR.papel], ['papel', COLOR.papel, COLOR.carbon, COLOR.carbon]]) {
   await perfil(`dial-perfil-simbolo-${n}`, fondo, { w: 200, h: 200, cuerpo: simbolo(c) });
   await perfil(`dial-perfil-dial-${n}`, fondo, { w: logo.ancho + pad * 2, h: logo.alto + pad * 2, cuerpo: logoSVG(c, pad, pad + asc + 4) });
   for (const linea of ['impacto', 'encuentros', 'medio'])

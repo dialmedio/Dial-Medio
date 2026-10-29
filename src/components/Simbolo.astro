@@ -1,8 +1,8 @@
 ---
 /**
- * Símbolo de Dial (marca v4, 24 oct 2026): el aro con punto.
- * Un aro y el punto terracota de la i montado sobre él a 45°, con un respiro alrededor: un dial ya sintonizado.
- * Aro en hueso (sobre oscuro) o carbón (sobre claro); el punto siempre terracota.
+ * Símbolo de Dial (marca v5, 29 oct 2026): el aro de pluma, con el punto en luz roja.
+ * El aro de la v4 trazado como la o de una pluma de punta ancha; el punto de la i a 45°, con su respiro.
+ * Aro en papel (sobre oscuro) o negro (sobre claro); el punto siempre en luz roja.
  * `detalle="compacto"` engrosa el aro y agranda el punto para tamaños menores de 24 px.
  * `anima` lo dibuja al cargar: el aro se traza y el punto cae en su lugar.
  * Geometría en src/lib/aro.mjs (la misma de scripts/generar-marca.mjs).
@@ -14,11 +14,12 @@ interface Props {
   anima?: boolean;
   class?: string;
   titulo?: string;
+  angulo?: number;
 }
-const { tono = 'claro', detalle = 'completo', anima = false, class: clase = '', titulo } = Astro.props;
+const { tono = 'claro', detalle = 'completo', anima = false, class: clase = '', titulo, angulo } = Astro.props;
 const color = tono === 'claro' ? 'var(--hueso)' : 'var(--carbon)';
 const id = 'aro-' + Math.random().toString(36).slice(2, 9);
-const cuerpo = aro(color, { compacto: detalle === 'compacto', centro: 'var(--terracota)', id, clases: true });
+const cuerpo = aro(color, { compacto: detalle === 'compacto', centro: 'var(--luz)', id, clases: true, angulo });
 ---
 <svg
   class:list={['simbolo', { anima }, clase]}
