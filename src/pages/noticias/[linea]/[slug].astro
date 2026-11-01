@@ -8,7 +8,7 @@ import Laminas from '../../../components/Laminas.astro';
 import NoticiaCard from '../../../components/NoticiaCard.astro';
 import sitio from '../../../data/sitio.json';
 import {
-  noticiasPublicadas, lineas, rotulo, conAcento, sinAcento, fechaLarga, isoDia, lectura, partirFuente, rutaNoticia, slugSerie,
+  noticiasPublicadas, lineas, rotulo, conAcento, sinAcento, fechaLarga, isoDia, lectura, partirFuente, rutaNoticia,
 } from '../../../lib/medio';
 
 export async function getStaticPaths() {
@@ -58,7 +58,7 @@ const ld = {
     <header class="contenedor nota-cabeza">
       <p class="nota-rotulos">
         <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}</a>
-        {d.serie && <a href={`/especiales/${slugSerie(d.serie.nombre)}`} class="rotulo gris">{d.serie.nombre} · Parte {d.serie.parte} de {d.serie.de}</a>}
+        {d.serie && <span class="rotulo gris">{d.serie.nombre} · Parte {d.serie.parte} de {d.serie.de}</span>}
         {d.numero && <span class="rotulo gris">N.º {d.numero}</span>}
       </p>
       <h1 class="titular nota-titulo" set:html={conAcento(d.titulo)} data-pagefind-meta="title" />
@@ -159,8 +159,8 @@ const ld = {
         {
           serie.length > 0 && (
             <nav class="lado-bloque" aria-label={d.serie!.nombre}>
-              <p class="rotulo">Especial</p>
-              <p class="titular t-3"><a href={`/especiales/${slugSerie(d.serie!.nombre)}`}>{d.serie!.nombre}</a></p>
+              <p class="rotulo">La serie</p>
+              <p class="titular t-3">{d.serie!.nombre}</p>
               <ol class="serie-lista">
                 {Array.from({ length: d.serie!.de }, (_, i) => {
                   const p = serie.find((x) => x.data.serie!.parte === i + 1);

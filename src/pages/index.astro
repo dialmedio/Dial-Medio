@@ -9,7 +9,7 @@ import Base from '../layouts/Base.astro';
 import NoticiaCard from '../components/NoticiaCard.astro';
 import VideoLite from '../components/VideoLite.astro';
 import {
-  noticiasPublicadas, columnasPublicadas, series, lineas, conAcento, fechaBreve, isoDia, rutaNoticia, rotulo,
+  noticiasPublicadas, columnasPublicadas, lineas, conAcento, fechaBreve, isoDia, rutaNoticia, rotulo,
 } from '../lib/medio';
 import { anio, estados } from '../lib/util';
 
@@ -31,7 +31,6 @@ const bloques = [
 ].filter((b) => b.piezas.length);
 const colombia = tomar((n) => n.data.region === 'colombia', 4);
 
-const [especial] = await series();
 const columnas = await columnasPublicadas();
 const conAutor = await Promise.all(columnas.slice(0, 4).map(async (c) => ({ c, autor: (await getEntry(c.data.autor))! })));
 const martin = await getEntry('autores', 'martin-perea-tobon');
@@ -69,26 +68,6 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
         <a href="/noticias" class="enlace">Todas las noticias <span>→</span></a>
       </aside>
     </section>
-
-    {/* ESPECIAL */}
-    {
-      especial && (
-        <section class="contenedor especial-sec" aria-label={`Especial: ${especial.nombre}`}>
-          <a href={`/especiales/${especial.slug}`} class="especial tema-carbon grano">
-            <div class="especial-texto">
-              <p class="kicker vivo">Especial · Entrega {especial.piezas.length} de {especial.de}</p>
-              <p class="titular t-1">{especial.nombre}</p>
-              <p class="bajada">{especial.presentacion}</p>
-            </div>
-            <ol class="especial-partes" aria-label="Entregas">
-              {Array.from({ length: especial.de }, (_, i) => (
-                <li class:list={{ lista: i < especial.piezas.length }}>{i + 1}</li>
-              ))}
-            </ol>
-          </a>
-        </section>
-      )
-    }
 
     <!-- OPINIÓN -->
     <section class="contenedor opinion-sec" aria-labelledby="opinion-t">
@@ -248,21 +227,6 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
   .ultimo-meta { margin: 0; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
   .ultimo-meta .datos { font-size: .78rem; }
   .gris { color: var(--texto-2); }
-
-  /* Especial */
-  .especial-sec { padding-bottom: clamp(48px, 6vw, 80px); }
-  .especial { display: grid; gap: 28px; padding: clamp(28px, 4vw, 56px); text-decoration: none; position: relative; align-items: end; }
-  @media (min-width: 980px) { .especial { grid-template-columns: 1.4fr 1fr; gap: 56px; } }
-  .especial-texto { display: grid; gap: 16px; }
-  .especial-texto p { margin: 0; }
-  .especial .bajada { color: var(--hueso-2); max-width: 48ch; }
-  .especial:hover .titular { color: var(--terracota-clara); }
-  .especial-partes { list-style: none; display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
-  .especial-partes li {
-    aspect-ratio: 3 / 4; display: grid; place-items: end start; padding: 6px 8px;
-    border: 1px solid var(--linea-clara); font-family: var(--f-display); font-size: clamp(1.1rem, .9rem + .8vw, 1.7rem); color: var(--hueso-2);
-  }
-  .especial-partes .lista { background: var(--papel); color: var(--carbon); border-color: var(--papel); }
 
   /* Opinión */
   .opinion-sec, .bloque-sec, .lineas-sec, .docs-sec { padding-bottom: clamp(48px, 6vw, 80px); }

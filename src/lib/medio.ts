@@ -55,7 +55,6 @@ export async function secciones() {
     { texto: 'Documentales', href: '/documentales' },
     { texto: 'Laboratorio', href: '/laboratorio' },
     ...(fotos.length ? [{ texto: 'Fotografía', href: '/fotografia' }] : []),
-    { texto: 'Especiales', href: '/especiales' },
   ];
 }
 
@@ -110,36 +109,6 @@ export const partirFuente = (t: string) => {
   const i = t.indexOf(': ');
   return i > 0 && i < 90 ? { medio: t.slice(0, i), nota: t.slice(i + 2) } : { medio: t, nota: '' };
 };
-
-/** Presentación de cada especial (por el nombre de la serie). Sin entrada, se usa la bajada de la primera parte. */
-const presentaciones: Record<string, string> = {
-  'La reforma, por partes':
-    'Ocho entregas, una por día, para entender con calma la reforma tributaria del Gobierno De la Espriella: qué propone, a quién le cuesta, qué se dijo antes y qué dicen las partes.',
-};
-
-/** Series (especiales): las noticias que comparten `serie.nombre`. */
-export async function series() {
-  const todas = await noticiasPublicadas((n) => !!n.data.serie);
-  const mapa = new Map<string, CollectionEntry<'noticias'>[]>();
-  for (const n of todas) {
-    const k = n.data.serie!.nombre;
-    mapa.set(k, [...(mapa.get(k) ?? []), n]);
-  }
-  return [...mapa.entries()].map(([nombre, piezas]) => ({
-    nombre,
-    slug: slugSerie(nombre),
-    de: piezas[0].data.serie!.de,
-    presentacion: presentaciones[nombre] ?? piezas[0].data.bajada,
-    piezas: piezas.sort((a, b) => a.data.serie!.parte - b.data.serie!.parte),
-  }));
-}
-export const slugSerie = (nombre: string) =>
-  nombre
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
 
 /** Ruta de una pieza de video según su formato (antes todo vivía en /medio). */
 export const rutaVideo = (m: CollectionEntry<'medio'>) =>

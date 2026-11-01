@@ -20,7 +20,9 @@ import al_aire  # noqa: E402  (silueta con rembg y la caché de máscaras)
 import materia as mt  # noqa: E402  (semitono)
 
 
-def retrato(foto, salida, ancho=900, foco=(0.5, 0.38), zoom=1.0, celda=5.5, proporcion=1.25):
+def retrato(foto, salida, ancho=900, foco=(0.5, 0.38), zoom=1.0, celda=5.5, proporcion=1.25, fondo=None):
+    """fondo=None: silueta recortada. fondo=0..1: conserva el fondo, aclarado en esa proporción (0 = tal cual),
+    con una transición suave alrededor de la persona; así el pelo no queda cortado (Martín, 1 nov 2026)."""
     im = Image.open(foto).convert("RGB")
     w, h = ancho, round(ancho * proporcion)
     s = max(w / im.width, h / im.height) * zoom
@@ -35,7 +37,13 @@ def retrato(foto, salida, ancho=900, foco=(0.5, 0.38), zoom=1.0, celda=5.5, prop
     m = m.resize((w, h), Image.LANCZOS) if m else Image.new("L", (w, h), 255)
     ma = np.asarray(m, np.float32) / 255
     g = np.asarray(alta.convert("L"), np.float32) / 255
-    dentro = g[ma > 0.5] if (ma > 0.5).any() else g.ravel()
+    persona = ma
+    if fondo is not None:
+        from PIL import ImageFilter
+        suave = np.asarray(m.filter(ImageFilter.MaxFilter(9)).filter(ImageFilter.GaussianBlur(w * 0.035)), np.float32) / 255
+        g = g * suave + (1 - (1 - g) * (1 - fondo)) * (1 - suave)
+        ma = np.ones_like(ma)
+    dentro = g[persona > 0.5] if (persona > 0.5).any() else g.ravel()
     lo, hi = np.percentile(dentro, 3), np.percentile(dentro, 97)
     g = np.clip((g - lo) / max(hi - lo, 1e-3), 0, 1) ** 0.9
     tinta = mt.semitono(g, celda=celda, angulo=45, semilla=7) * ma
@@ -53,5 +61,6 @@ if __name__ == "__main__":
     ap.add_argument("--foco", type=float, nargs=2, default=(0.5, 0.38))
     ap.add_argument("--zoom", type=float, default=1.0)
     ap.add_argument("--celda", type=float, default=5.5)
+    ap.add_argument("--fondo", type=float, default=None, help="conserva el fondo, aclarado 0-1")
     a = ap.parse_args()
-    retrato(a.foto, a.salida, a.ancho, tuple(a.foco), a.zoom, a.celda)
+    retrato(a.foto, a.salida, a.ancho, tuple(a.foco), a.zoom, a.celda, fondo=a.fondo)

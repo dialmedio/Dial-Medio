@@ -98,6 +98,7 @@ async function contacto(request: Request, env: Env): Promise<Response> {
  */
 function redireccion(ruta: string): string | null {
   if (ruta === '/medio' || ruta === '/medio/') return '/';
+  if (ruta === '/especiales' || ruta.startsWith('/especiales/')) return '/noticias'; // la sección se quitó (1 nov 2026)
   const m = ruta.match(/^\/medio\/([^/]+)\/?$/);
   if (!m) return null;
   const id = m[1];
