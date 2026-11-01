@@ -2,37 +2,35 @@
 import Logo from './Logo.astro';
 import Boletin from './Boletin.astro';
 import sitio from '../data/sitio.json';
-import { whatsapp } from '../lib/util';
+import { secciones, lineas } from '../lib/medio';
 
+const nav = await secciones();
 const columnas = [
+  { titulo: 'Secciones', enlaces: nav.map((n) => ({ texto: n.texto, href: n.href })) },
   {
-    titulo: 'Líneas',
-    enlaces: [
-      { texto: 'Dial Impacto', href: '/impacto' },
-      { texto: 'Pieza + medición', href: '/impacto/medicion' },
-      { texto: 'Dial Encuentros', href: '/encuentros' },
-      { texto: 'Celebraciones', href: '/encuentros/celebraciones' },
-      { texto: 'Dial Medio', href: '/medio' },
-    ],
+    titulo: 'Noticias',
+    enlaces: Object.entries(lineas).map(([k, l]) => ({ texto: l.nombre, href: `/noticias/${k}` })),
   },
   {
     titulo: 'La casa',
     enlaces: [
       { texto: 'Nosotros', href: '/nosotros' },
-      { texto: 'Cómo trabajamos', href: '/nosotros#proceso' },
-      { texto: 'Criterios de la casa', href: '/nosotros#criterios' },
-      { texto: 'Cotizar', href: '/contacto' },
+      { texto: 'Principios editoriales', href: '/principios' },
+      { texto: 'Correcciones', href: '/principios#correcciones' },
+      { texto: 'Escribe en Dial', href: '/opinion#escribe' },
+      { texto: 'Dial Estudio', href: '/estudio' },
+      { texto: 'Contacto', href: '/contacto' },
     ],
   },
 ];
 ---
 
-<footer class="pie tema-carbon grano luz-baja">
+<footer class="pie tema-carbon grano">
   <div class="contenedor">
     <section class="pie-boletin" id="boletin" aria-labelledby="boletin-titulo">
       <div class="pie-boletin-texto">
-        <p class="kicker sin-linea"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
-        <h2 class="display d-4" id="boletin-titulo">Sintoniza a Dial en tu correo.</h2>
+        <p class="kicker">Boletín · {sitio.boletin.frecuencia}</p>
+        <h2 class="display d-3" id="boletin-titulo">Dial en tu <em>correo.</em></h2>
         <p class="texto-2">{sitio.boletin.descripcion}</p>
       </div>
       <Boletin id="boletin-pie" origen="pie" />
@@ -43,6 +41,10 @@ const columnas = [
         <a href="/" aria-label="Dial, inicio" class="pie-logo"><Logo tono="claro" /></a>
         <p class="pie-tagline cursiva">{sitio.tagline}</p>
         <p class="texto-2 pie-desc">{sitio.descripcion}</p>
+        <ul class="pie-redes">
+          {sitio.redes.map((r) => <li><a href={r.url} target="_blank" rel="noopener">{r.nombre}</a></li>)}
+          <li><a href="/rss.xml">RSS</a></li>
+        </ul>
       </div>
 
       {
@@ -59,28 +61,12 @@ const columnas = [
           </nav>
         ))
       }
-
-      <div class="pie-col">
-        <p class="kicker sin-linea">Hablemos</p>
-        <ul>
-          <li><a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></li>
-          <li><a href={whatsapp()} target="_blank" rel="noopener">WhatsApp {sitio.whatsapp.visible}</a></li>
-          {
-            sitio.redes.map((r) => (
-              <li>
-                <a href={r.url} target="_blank" rel="noopener">
-                  {r.nombre} <span class="texto-2">{r.usuario}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
     </div>
 
-    <div class="pie-base mono">
+    <div class="pie-base">
       <span>© {new Date().getFullYear()} Dial · {sitio.ciudad}</span>
-      <span class="pie-frecuencia" aria-hidden="true">810 AM</span>
+      <span>Las fotos de terceros conservan su licencia; ver créditos en cada pieza.</span>
+      <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a>
     </div>
   </div>
 </footer>
@@ -102,33 +88,30 @@ const columnas = [
     .pie-boletin { grid-template-columns: 1fr 1fr; }
     .pie-boletin :global(.boletin) { justify-self: end; }
   }
-  .pie-grid {
-    display: grid;
-    gap: 48px 32px;
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .pie-marca { grid-column: 1 / -1; max-width: 36ch; }
-  .pie-logo { text-decoration: none; font-size: 44px; display: inline-block; }
+  .pie-grid { display: grid; gap: 48px 32px; grid-template-columns: repeat(2, 1fr); }
+  .pie-marca { grid-column: 1 / -1; max-width: 38ch; }
+  .pie-logo { text-decoration: none; font-size: 52px; display: inline-block; }
   .pie-tagline { color: var(--hueso); margin: 14px 0 16px; font-size: 1.6rem; line-height: 1.1; }
   .pie-desc { font-size: 1rem; }
+  .pie-redes { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 20px; }
+  .pie-redes a, .pie-col a { text-decoration: none; font-size: 1rem; transition: color .2s; }
+  .pie-redes a:hover, .pie-col a:hover { color: var(--terracota-clara); }
   .pie-col ul { list-style: none; display: grid; gap: 10px; margin-top: 18px; }
-  .pie-col a { text-decoration: none; font-size: 1rem; transition: color 0.2s; }
-  .pie-col a:hover { color: var(--terracota); }
   .pie-col:last-child { grid-column: 1 / -1; }
   .pie-base {
     margin-top: clamp(56px, 7vw, 96px);
     padding-top: 22px;
     border-top: 1px solid var(--linea-clara);
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 16px;
+    gap: 10px 24px;
     color: var(--hueso-2);
-    font-size: var(--t-etq);
+    font-size: .8rem;
   }
-  .pie-frecuencia { color: var(--ambar); letter-spacing: 0.12em; }
-
-  @media (min-width: 900px) {
-    .pie-grid { grid-template-columns: 1.5fr 1fr 1fr 1.2fr; }
+  .pie-base a { color: inherit; text-decoration: none; }
+  @media (min-width: 980px) {
+    .pie-grid { grid-template-columns: 1.6fr 1fr 1fr 1fr; }
     .pie-marca, .pie-col:last-child { grid-column: auto; }
   }
 </style>

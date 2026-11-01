@@ -1,6 +1,6 @@
 // Modelo de contenido del sitio de Dial.
 // Todo lo que está en src/content/ se puede editar sin tocar componentes.
-import { defineCollection } from 'astro:content';
+import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
@@ -105,4 +105,104 @@ const equipo = defineCollection({
     }),
 });
 
-export const collections = { servicios, casos, medio, muestras, equipo };
+/* ---------- El medio (nov 2026): noticias, opinión, autores y fotografía ---------- */
+
+const enlace = z.object({ texto: z.string(), url: z.string().nullable().optional() });
+/** Fe de erratas: se muestra al final de la pieza. */
+const correccion = z.object({ fecha: z.coerce.date(), texto: z.string() });
+
+/**
+ * Noticias de las líneas de Al Aire. Cada pieza es una carpeta con index.md, portada.jpg y laminas/.
+ * Se arman con scripts/importar_noticias.py a partir de lo que ya salió en Instagram; después se pueden
+ * corregir a mano. El cuerpo del .md es el texto completo.
+ */
+const noticias = defineCollection({
+  loader: glob({ pattern: '*/index.md', base: './src/content/noticias', generateId: ({ entry }) => entry.split('/')[0] }),
+  schema: ({ image }) =>
+    z.object({
+      // El acento va entre asteriscos (*así*) y sale en cursiva, como en la portada de la lámina.
+      titulo: z.string(),
+      bajada: z.string(),
+      linea: z.enum(['al-aire', 'termometro', 'expediente', 'tecnologia-y-poder', 'nuevos-mundos', 'arte-y-memoria']),
+      // Solo Al Aire: de dónde es la noticia.
+      region: z.enum(['colombia', 'america-latina', 'mundo']).optional(),
+      lugar: z.string().optional(),
+      fecha: z.coerce.date(),
+      actualizado: z.coerce.date().optional(),
+      formato: z.enum(['carrusel', 'breve', 'video']).default('carrusel'),
+      serie: z.object({ nombre: z.string(), parte: z.number(), de: z.number() }).optional(),
+      portada: image(),
+      portadaCredito: z.string().optional(),
+      portadaAlt: z.string().optional(),
+      // object-position de la portada (p. ej. "50% 35%") para que el recorte no corte lo importante.
+      foco: z.string().default('50% 50%'),
+      laminas: z.array(image()).default([]),
+      pregunta: z.string().optional(),
+      firma: z.string().default('Redacción Dial'),
+      firmaEnlace: z.string().optional(),
+      coproduccion: z.string().optional(),
+      periodo: z.string().optional(),
+      numero: z.coerce.number().optional(),
+      fuentes: z.array(enlace).default([]),
+      creditos: z.array(enlace).default([]),
+      correcciones: z.array(correccion).default([]),
+      destacado: z.boolean().default(false),
+      borrador: z.boolean().default(false),
+    }),
+});
+
+/** Quienes firman en Dial: columnistas, invitados y la dirección. El retrato va en trama (scripts/recorte_trama.py). */
+const autores = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/autores' }),
+  schema: ({ image }) =>
+    z.object({
+      nombre: z.string(),
+      // Una línea: qué hace, desde dónde escribe.
+      rol: z.string(),
+      bio: z.string(),
+      retrato: image().optional(),
+      redes: z.array(z.object({ nombre: z.string(), url: z.string() })).default([]),
+      orden: z.number().default(100),
+    }),
+});
+
+/**
+ * Columnas de opinión. Un archivo por columna (o carpeta con index.md si lleva imágenes).
+ * Ver src/content/opinion/_plantilla.md. Los archivos que empiezan por _ no se publican.
+ */
+const opinion = defineCollection({
+  loader: glob({ pattern: ['**/[!_]*.md', '!**/_*/**'], base: './src/content/opinion' }),
+  schema: ({ image }) =>
+    z.object({
+      titulo: z.string(),
+      bajada: z.string(),
+      autor: reference('autores'),
+      fecha: z.coerce.date(),
+      tema: z.string().optional(),
+      imagen: image().optional(),
+      imagenCredito: z.string().optional(),
+      // Una frase de la columna para destacar en la portada y al compartir.
+      destacada: z.string().optional(),
+      correcciones: z.array(correccion).default([]),
+      borrador: z.boolean().default(false),
+    }),
+});
+
+/** Ensayos fotográficos. La sección aparece en el menú cuando hay al menos uno. */
+const fotografia = defineCollection({
+  loader: glob({ pattern: '*/index.md', base: './src/content/fotografia', generateId: ({ entry }) => entry.split('/')[0] }),
+  schema: ({ image }) =>
+    z.object({
+      titulo: z.string(),
+      bajada: z.string(),
+      autor: reference('autores').optional(),
+      fotografo: z.string().optional(),
+      lugar: z.string().optional(),
+      fecha: z.coerce.date(),
+      portada: image(),
+      fotos: z.array(z.object({ src: image(), pie: z.string().optional() })).default([]),
+      borrador: z.boolean().default(false),
+    }),
+});
+
+export const collections = { servicios, casos, medio, muestras, equipo, noticias, autores, opinion, fotografia };

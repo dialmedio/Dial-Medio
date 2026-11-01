@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import { fechaBreve, isoDia } from '../../lib/medio';
+
+const episodios = (await getCollection('medio', (m) => !m.data.borrador && m.data.formato === 'videopodcast' && !!m.data.video)).sort(
+  (a, b) => b.data.fecha.valueOf() - a.data.fecha.valueOf(),
+);
+const [ultimo] = episodios;
+const total = episodios.length;
+---
+
+<Base
+  titulo="Podcast · Lo que la gente quiere es vivir"
+  descripcion="Lo que la gente quiere es vivir: conversaciones a fondo con quienes construyen paz en barrios, veredas y plazas. Un podcast de la RED Quynza en coproducción con Dial."
+>
+  <section class="tema-carbon grano portada">
+    <div class="contenedor portada-grid">
+      <div class="portada-texto">
+        <p class="kicker vivo">Podcast · Con la RED Quynza</p>
+        <h1 class="titular">Lo que la gente quiere es <em>vivir</em></h1>
+        <p class="bajada">
+          Conversaciones largas, sin prisa, con quienes construyen paz donde nadie mira: economistas, profes, líderes de barrio,
+          músicos, gente de las veredas. Un podcast de la RED Quynza en coproducción con Dial.
+        </p>
+        <p class="datos"><span>{total} {total === 1 ? 'episodio' : 'episodios'}</span><span>En video y audio</span><a href="https://www.youtube.com/@Dialmedio" target="_blank" rel="noopener">YouTube ↗</a></p>
+      </div>
+      {
+        ultimo && (
+          <div class="portada-video">
+            <VideoLite video={ultimo.data.video!} titulo={ultimo.data.titulo} cargaInmediata />
+            <p class="rotulo">Último episodio</p>
+            <h2 class="titular t-2"><a href={`/podcast/${ultimo.id}`}>{ultimo.data.titulo}</a></h2>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor">
+      <header class="seccion-cabeza"><h2>Episodios</h2></header>
+      <ol class="episodios">
+        {
+          episodios.map((e, i) => (
+            <li>
+              <span class="ep-n">{String(total - i).padStart(2, '0')}</span>
+              <div class="ep-texto">
+                <h3 class="titular t-3"><a href={`/podcast/${e.id}`}>{e.data.titulo}</a></h3>
+                <p class="bajada">{e.data.resumen}</p>
+                <p class="datos"><time datetime={isoDia(e.data.fecha)}>{fechaBreve(e.data.fecha)}</time>{e.data.duracion && <span>{e.data.duracion}</span>}{e.data.lugar && <span>{e.data.lugar}</span>}</p>
+              </div>
+              <div class="ep-video"><VideoLite video={e.data.video!} titulo={e.data.titulo} /></div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-hueso">
+    <div class="contenedor red">
+      <div>
+        <p class="kicker">Coproducción</p>
+        <h2 class="display d-3">Con la RED Quynza</h2>
+      </div>
+      <div class="red-texto">
+        <p>
+          La RED Quynza reúne a profes, investigadores y gente de los territorios que trabajan por la paz en Colombia. El podcast nace
+          de esa red: ellos abren las puertas y las preguntas; Dial pone la cámara, el sonido y el montaje.
+        </p>
+        <a href="https://redquynza.org" class="enlace" target="_blank" rel="noopener">Conoce la RED Quynza <span>↗</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .portada { padding-block: clamp(48px, 7vw, 104px); position: relative; }
+  .portada-grid { display: grid; gap: 48px; align-items: center; }
+  @media (min-width: 1040px) { .portada-grid { grid-template-columns: 1fr 1.15fr; gap: 72px; } }
+  .portada-texto { display: grid; gap: 22px; justify-items: start; }
+  .portada-texto h1 { font-size: clamp(3rem, 1.4rem + 5vw, 6rem); line-height: .94; }
+  .portada-texto .bajada { color: var(--hueso-2); font-size: 1.15rem; max-width: 46ch; }
+  .datos a { color: inherit; }
+  .portada-video { display: grid; gap: 12px; }
+  .portada-video .rotulo { margin-top: 8px; }
+  .portada-video h2 a { text-decoration: none; }
+
+  .episodios { list-style: none; }
+  .episodios li { display: grid; gap: 20px; padding: 28px 0; border-bottom: 1px solid var(--linea); align-items: start; }
+  @media (min-width: 900px) { .episodios li { grid-template-columns: 4rem minmax(0, 1.3fr) minmax(0, 1fr); gap: 32px; } }
+  .ep-n { font-family: var(--f-display); font-size: 2.6rem; line-height: 1; color: var(--texto-2); }
+  .ep-texto { display: grid; gap: 10px; }
+  .ep-texto a { text-decoration: none; }
+
+  .red { display: grid; gap: 28px; }
+  @media (min-width: 900px) { .red { grid-template-columns: 1fr 1.3fr; gap: 72px; align-items: end; } }
+  .red-texto { display: grid; gap: 18px; justify-items: start; }
+  .red-texto p { margin: 0; max-width: 56ch; }
+</style>

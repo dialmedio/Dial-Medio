@@ -1,0 +1,39 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { series } from '../../lib/medio';
+
+const todas = await series();
+---
+
+<Base titulo="Especiales" descripcion="Series y especiales de Dial: temas grandes contados por partes, con calma y con fuentes.">
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Series por entregas</p>
+      <h1>Especiales</h1>
+      <p class="bajada">Los temas grandes no caben en una lámina. Los contamos por partes, con calma, para que se entiendan completos.</p>
+    </header>
+    <section class="contenedor lista">
+      {
+        todas.map((s) => (
+          <a href={`/especiales/${s.slug}`} class="especial">
+            <figure class="foto r-3-2"><Image src={s.piezas[0].data.portada} alt="" widths={[640, 960, 1280]} sizes="(min-width: 980px) 50vw, 100vw" style={`object-position:${s.piezas[0].data.foco}`} /></figure>
+            <div class="especial-texto">
+              <p class="rotulo">{s.piezas.length} de {s.de} entregas</p>
+              <h2 class="titular t-1">{s.nombre}</h2>
+              <p class="bajada">{s.presentacion}</p>
+            </div>
+          </a>
+        ))
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .lista { display: grid; gap: 56px; padding-bottom: clamp(64px, 8vw, 112px); }
+  .especial { display: grid; gap: 28px; text-decoration: none; border-top: 1px solid var(--carbon); padding-top: 28px; align-items: center; }
+  @media (min-width: 980px) { .especial { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+  .especial-texto { display: grid; gap: 16px; }
+  .especial:hover .titular { color: var(--terracota-ink); }
+</style>

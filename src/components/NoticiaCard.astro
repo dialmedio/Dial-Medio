@@ -1,0 +1,83 @@
+---
+/**
+ * Tarjeta de noticia en cuatro jerarquías:
+ *  principal  la apertura de la portada: foto grande, titular enorme y bajada
+ *  media      foto 3:2 arriba, titular y bajada
+ *  horizontal foto pequeña al lado, para listas largas
+ *  texto      solo titular y datos, para la columna de «Lo último»
+ */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { rutaNoticia, rotulo, conAcento, sinAcento, fechaBreve, isoDia } from '../lib/medio';
+
+interface Props {
+  n: CollectionEntry<'noticias'>;
+  variante?: 'principal' | 'media' | 'horizontal' | 'texto';
+  bajada?: boolean;
+  cargaInmediata?: boolean;
+}
+const { n, variante = 'media', bajada = variante !== 'texto' && variante !== 'horizontal', cargaInmediata = false } = Astro.props;
+const d = n.data;
+const href = rutaNoticia(n);
+const tam = { principal: 't-1', media: 't-3', horizontal: 't-4', texto: 't-4' }[variante];
+const anchos = variante === 'principal' ? [640, 960, 1280, 1800] : variante === 'horizontal' ? [240, 400] : [400, 640, 900];
+const sizes =
+  variante === 'principal'
+    ? '(min-width: 1100px) 62vw, 100vw'
+    : variante === 'horizontal'
+      ? '160px'
+      : '(min-width: 980px) 30vw, (min-width: 640px) 50vw, 100vw';
+const alt = d.portadaAlt ?? '';
+---
+
+<article class:list={['noticia', variante]} data-linea={d.linea} data-region={d.region}>
+  {
+    variante !== 'texto' && (
+      <a href={href} class="noticia-foto" tabindex="-1" aria-hidden="true">
+        <figure class:list={['foto', variante === 'principal' ? 'r-3-2' : variante === 'horizontal' ? 'r-1-1' : 'r-3-2']}>
+          <Image
+            src={d.portada}
+            alt={alt}
+            widths={anchos}
+            sizes={sizes}
+            quality={78}
+            loading={cargaInmediata ? 'eager' : 'lazy'}
+            fetchpriority={cargaInmediata ? 'high' : undefined}
+            style={`object-position:${d.foco}`}
+          />
+        </figure>
+      </a>
+    )
+  }
+  <div class="noticia-texto">
+    <p class="noticia-rotulo">
+      <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}</a>
+      {d.serie && <span class="rotulo serie">{d.serie.nombre} · {d.serie.parte}/{d.serie.de}</span>}
+    </p>
+    <h3 class:list={['titular', tam]}>
+      <a href={href} set:html={conAcento(d.titulo)} />
+    </h3>
+    {bajada && <p class="bajada">{d.bajada}</p>}
+    <p class="datos">
+      <time datetime={isoDia(d.fecha)}>{fechaBreve(d.fecha)}</time>
+      {d.lugar && d.region !== 'mundo' && <span>{d.lugar}</span>}
+      {d.coproduccion && <span>Con la {d.coproduccion}</span>}
+    </p>
+  </div>
+</article>
+
+<style>
+  .noticia { display: grid; gap: 14px; align-content: start; }
+  .noticia-texto { display: grid; gap: 10px; align-content: start; }
+  .noticia-rotulo { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+  .serie { color: var(--texto-2); }
+  .noticia-foto { display: block; }
+
+  .principal { gap: 22px; }
+  .principal .bajada { font-size: clamp(1.1rem, 1rem + .4vw, 1.3rem); max-width: 52ch; }
+
+  .horizontal { grid-template-columns: 1fr clamp(88px, 22vw, 128px); gap: 16px; align-items: start; }
+  .horizontal .noticia-foto { order: 2; }
+
+  .texto { gap: 8px; }
+</style>

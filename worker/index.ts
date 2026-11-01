@@ -92,9 +92,27 @@ async function contacto(request: Request, env: Env): Promise<Response> {
   return json({ ok: true });
 }
 
+/**
+ * Direcciones viejas (nov 2026): /medio se repartió en secciones. Los enlaces que ya circulan siguen funcionando.
+ * debate-* → /laboratorio, podcast-* → /podcast, el resto (documentales) → /documentales.
+ */
+function redireccion(ruta: string): string | null {
+  if (ruta === '/medio' || ruta === '/medio/') return '/';
+  const m = ruta.match(/^\/medio\/([^/]+)\/?$/);
+  if (!m) return null;
+  const id = m[1];
+  if (id.startsWith('debate-')) return `/laboratorio/${id}`;
+  if (id.startsWith('podcast-')) return `/podcast/${id}`;
+  if (id.startsWith('clip-')) return '/laboratorio';
+  return `/documentales/${id}`;
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
+
+    const nueva = redireccion(url.pathname);
+    if (nueva) return Response.redirect(new URL(nueva, url).toString(), 301);
 
     if (url.hostname.startsWith('www.')) {
       url.hostname = url.hostname.slice(4);

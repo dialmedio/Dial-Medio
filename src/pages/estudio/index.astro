@@ -1,0 +1,321 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Simbolo from '../../components/Simbolo.astro';
+import Sintonizador from '../../components/Sintonizador.astro';
+import EscalaMedicion from '../../components/EscalaMedicion.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import Onda from '../../components/Onda.astro';
+import sitio from '../../data/sitio.json';
+import { dos, formatos, anio, rutaCaso } from '../../lib/util';
+import { rutaVideo } from '../../lib/medio';
+import Logo from '../../components/Logo.astro';
+
+const impacto = (await getCollection('servicios', (s) => s.data.linea === 'impacto')).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+
+const medio = (await getCollection('medio', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+
+// Trabajo destacado: primero los casos por encargo, luego la obra propia en territorio.
+const casos = (await getCollection('casos', (c) => !c.data.borrador && c.data.vitrina === 'impacto' && c.data.destacado && !!c.data.video)).map(
+  (c) => ({
+    titulo: c.data.titulo,
+    video: c.data.video!,
+    href: rutaCaso('impacto', c.id),
+    kicker: c.data.organizacion ?? 'Dial Impacto',
+    meta: `${c.data.lugar} · ${c.data.anio}`,
+    resumen: c.data.resumen,
+  }),
+);
+const propios = medio
+  .filter((m) => m.data.mostrarEnImpacto && m.data.video)
+  .map((m) => ({
+    titulo: m.data.titulo,
+    video: m.data.video!,
+    href: rutaVideo(m),
+    kicker: `${formatos[m.data.formato]} · Dial`,
+    meta: `${m.data.lugar} · ${anio(m.data.fecha)}`,
+    resumen: m.data.resumen,
+  }));
+const [principal, secundario] = [...casos, ...propios];
+---
+
+<Base titulo="Dial Estudio · Productora audiovisual" descripcion="Dial Estudio: documental, cobertura y eventos para organizaciones, con la mirada del medio Dial. Contamos, y medimos, el encuentro humano.">
+  <!-- PORTADA: del ruido a la señal -->
+  <section class="heroe tema-carbon grano luz">
+    <div class="contenedor heroe-grid">
+      <div class="heroe-texto">
+        <p class="estudio-logo"><Logo tono="claro" linea="estudio" titulo="Dial Estudio" /></p>
+        <p class="kicker heroe-kicker">Productora audiovisual · {sitio.ciudad}</p>
+        <h1 class="display d-1 heroe-titulo voz">
+          <span class="l">Contamos,</span>
+          <span class="l"><em>y medimos,</em></span>
+          <span class="l">el encuentro</span>
+          <span class="l">humano.</span>
+        </h1>
+        <p class="lead heroe-bajada">
+          Historias reales de personas, comunidades y organizaciones, de la investigación al estreno.
+        </p>
+        <div class="acciones heroe-acciones">
+          <a href="/contacto" class="btn">Cotiza tu proyecto <span class="flecha">→</span></a>
+          <a href="#trabajo" class="btn linea">Ver trabajo</a>
+          <a href="/estudio/como-trabajamos" class="btn linea">Cómo trabajamos</a>
+        </div>
+      </div>
+    </div>
+    <div class="contenedor heroe-dial">
+      <Sintonizador />
+    </div>
+  </section>
+
+  <!-- QUIÉNES SOMOS, EN UNA FRASE -->
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor">
+      <Onda alto={56} class="manifiesto-onda" />
+      <p class="lead-xl manifiesto" data-revela>
+        Dial Estudio es la productora de Dial. Ponemos el oficio del medio al servicio de organizaciones: historias que <em>construyen puentes</em> y dignifican a quienes aparecen en ellas, con imagen, sonido y música original hechos en casa.
+      </p>
+    </div>
+  </section>
+
+  <!-- DIAL IMPACTO -->
+  <section class="seccion tema-hueso" id="impacto">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — <span class="acento">Dial Impacto</span></p>
+          <h2 class="display d-2">Historias para organizaciones que <em>transforman.</em></h2>
+        </div>
+        <p class="texto-2" data-revela style="--retraso:.1s">
+          Para ONG, fundaciones, cooperación internacional, universidades y marcas con propósito.
+        </p>
+      </header>
+
+      <ol class="servicios">
+        {
+          impacto.map((s, i) => (
+            <li data-revela style={`--retraso:${i * 0.06}s`}>
+              <a href={`/impacto#${s.id}`} class="servicio">
+                <span class="display d-4 servicio-titulo">{s.data.titulo}</span>
+                <span class="servicio-cuerpo">
+                  {s.data.gancho && <span class="servicio-gancho gancho">{s.data.gancho}</span>}
+                  <span class="servicio-resumen texto-2">{s.data.resumen}</span>
+                </span>
+                <span class="servicio-entrega meta">{s.data.entregables.join(' · ')}</span>
+                <span class="servicio-flecha" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="nota-cotiza texto-2" data-revela>Cada proyecto se cotiza a la medida.</p>
+    </div>
+  </section>
+
+  <!-- TRABAJO -->
+  {
+    principal && (
+      <section class="seccion tema-papel" id="trabajo">
+        <div class="contenedor">
+          <header class="cabeza doble">
+            <div data-revela>
+              <p class="kicker">{dos(2)} — Trabajo</p>
+              <h2 class="display d-2">De la ciudad al territorio.</h2>
+            </div>
+            <p class="texto-2" data-revela style="--retraso:.1s">
+              Rodamos donde suceden las historias: en un set, en la calle, en un evento o en el campo.
+            </p>
+          </header>
+
+          <div class="trabajo">
+            {[principal, secundario].filter(Boolean).map((p, i) => (
+              <article class:list={['obra', { 'obra-principal': i === 0 }]} data-revela style={`--retraso:${i * 0.1}s`}>
+                <VideoLite video={p!.video} titulo={p!.titulo} />
+                <div class="obra-texto">
+                  <p class="kicker sin-linea">{p!.kicker}</p>
+                  <h3 class:list={['sub', i === 0 ? 's-1' : 's-2']}>
+                    <a href={p!.href}>{p!.titulo}</a>
+                  </h3>
+                  {i === 0 && <p class="texto-2 obra-resumen">{p!.resumen}</p>}
+                  <p class="meta obra-meta">
+                    {p!.meta}
+                  </p>
+                  {i === 1 && (
+                    <a href="/impacto#portafolio" class="enlace obra-mas">
+                      Ver más trabajo <span>→</span>
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- MEDICIÓN -->
+  <section class="seccion tema-carbon grano luz-baja">
+    <div class="contenedor medicion-grid">
+      <div class="medicion-texto">
+        <p class="kicker" data-revela>{dos(3)} — <span class="acento">Pieza + medición</span></p>
+        <h2 class="display d-2" data-revela>Del ruido a la señal, con datos.</h2>
+        <p class="lead texto-2" data-revela>
+          Encuestamos a la audiencia antes y después de ver la pieza. Tu organización sabe qué cambió y lo puede reportar.
+        </p>
+        <a href="/impacto/medicion" class="enlace" data-revela>Cómo medimos <span>→</span></a>
+      </div>
+      <EscalaMedicion />
+    </div>
+  </section>
+
+  <!-- LAS OTRAS DOS LÍNEAS -->
+  <section class="lineas">
+    <a href="/encuentros" class="linea-caja tema-papel">
+      <div class="linea-interior">
+        <p class="kicker">{dos(4)} — <span class="acento">Dial Encuentros</span></p>
+        <h2 class="display d-3">Producimos el encuentro. Y lo dejamos contado.</h2>
+        <p class="texto-2">
+          Foros, festivales, lanzamientos y música en vivo: tarima, sonido, programación, videomapping y cobertura.
+        </p>
+        <span class="enlace">Ver Dial Encuentros <span>→</span></span>
+      </div>
+    </a>
+    <div class="linea-caja tema-carbon grano luz-baja">
+      <div class="linea-interior">
+        <p class="kicker">{dos(5)} — <span class="acento">El medio</span></p>
+        <h2 class="display d-3">Lo que hacemos por cuenta propia.</h2>
+        <p class="texto-2">Noticias con contexto, columnas, podcast, documentales y debates. Lo que el Estudio gana sostiene el medio, y el medio es nuestra mejor muestra de oficio.</p>
+        <a href="/" class="enlace">Ir a Dial <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <CTAFinal />
+</Base>
+
+<style>
+  /* ---------- Portada ---------- */
+  .estudio-logo { margin: 0; font-size: clamp(44px, 5vw, 64px); }
+  .heroe {
+    position: relative;
+    overflow: hidden;
+    padding-top: clamp(48px, 7vw, 96px);
+    min-height: calc(100svh - 72px);
+    display: grid;
+    grid-template-rows: 1fr auto;
+  }
+  .heroe-grid { display: grid; grid-template-columns: 1fr; align-items: center; gap: 24px; }
+  .heroe-texto { display: grid; gap: 28px; justify-items: start; position: relative; z-index: 1; }
+  /* Este titular no lleva tildes: puede ir más apretado que el resto. */
+  .heroe-titulo { font-size: clamp(3rem, 0.8rem + 5.4vw, 6.6rem); line-height: 0.94; }
+  .heroe-titulo .l { display: block; white-space: nowrap; }
+  .heroe-bajada { margin: 0; color: var(--hueso-2); }
+  .estreno { display: grid; gap: 16px; align-content: start; position: relative; z-index: 1; }
+  .estreno-cabeza { display: flex; align-items: center; gap: 12px; }
+  .estreno :global(.estreno-simbolo) { width: 34px; height: 34px; flex: none; }
+  .estreno :global(.video) { box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8); outline: 1px solid var(--linea-clara); }
+  .estreno-texto { display: grid; gap: 8px; }
+  .estreno-texto p { margin: 0; }
+  .estreno-texto .texto-2 { font-size: 1rem; max-width: 48ch; }
+  .estreno h2 a { text-decoration: none; }
+  .estreno h2 a:hover { color: var(--terracota); }
+  .heroe-dial { padding-block: 48px 36px; }
+
+  /* Entrada: un fundido rápido y suave, sin ruido. */
+  @media (prefers-reduced-motion: no-preference) {
+    .heroe-texto, .estreno { animation: aparece 0.9s var(--ease) both; }
+    .estreno { animation-delay: 0.15s; }
+    .heroe-dial { animation: aparece 1.2s ease 0.35s both; }
+  }
+  @keyframes aparece { from { opacity: 0; transform: translateY(8px); } }
+
+  @media (min-width: 900px) {
+    .heroe-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(40px, 5vw, 80px); }
+
+  }
+
+  /* ---------- Manifiesto ---------- */
+  .manifiesto { max-width: 34ch; margin: 0; }
+  :global(.manifiesto-onda) { margin-bottom: clamp(32px, 4vw, 48px); max-width: 560px; }
+  @media (min-width: 1000px) { :global(.manifiesto-onda) { margin-left: calc(100% / 4); } }
+  @media (min-width: 1000px) {
+    .manifiesto { font-size: clamp(2rem, 1rem + 1.6vw, 2.75rem); margin-left: calc(100% / 4); }
+  }
+
+  /* ---------- Servicios ---------- */
+  .servicios { list-style: none; border-top: 1px solid var(--borde); }
+  .servicios li { border-bottom: 1px solid var(--borde); }
+  .servicio {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px 16px;
+    padding-block: 28px;
+    text-decoration: none;
+    position: relative;
+  }
+  .servicio::before {
+    content: '';
+    position: absolute;
+    left: 0; top: -1px;
+    height: 2px; width: 100%;
+    background: var(--terracota);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.6s var(--ease);
+  }
+  .servicio:hover::before { transform: scaleX(1); }
+  .servicio-titulo { grid-column: 1; transition: color 0.3s; }
+  .servicio:hover .servicio-titulo { color: var(--terracota-ink); }
+  .servicio-cuerpo { grid-column: 1; display: grid; gap: 8px; max-width: 58ch; }
+  .servicio-gancho { font-size: clamp(1.35rem, 1.15rem + .6vw, 1.65rem); }
+  .servicio-resumen { font-size: 1.03rem; }
+  .servicio-entrega { grid-column: 1; }
+  .servicio-flecha { grid-column: 2; grid-row: 1; font-size: 1.6rem; transition: transform 0.4s var(--ease), color 0.3s; }
+  .servicio:hover .servicio-flecha { transform: translateX(6px); color: var(--terracota-ink); }
+  @media (min-width: 1000px) {
+    .servicio { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) 2rem; column-gap: 48px; align-items: baseline; padding-block: 36px; }
+    .servicio-cuerpo { grid-column: 2; grid-row: 1; }
+    .servicio-entrega { grid-column: 2; }
+    .servicio-flecha { grid-column: 3; justify-self: end; }
+  }
+  .nota-cotiza { margin: 28px 0 0; font-size: 1rem; }
+
+  /* ---------- Trabajo ---------- */
+  .trabajo { display: grid; gap: 48px 40px; align-items: start; }
+  .obra { display: grid; gap: 20px; align-content: start; }
+  .obra-texto { display: grid; gap: 10px; }
+  .obra-texto p { margin: 0; }
+  .obra h3 a { text-decoration: none; }
+  .obra h3 a:hover { color: var(--terracota-ink); }
+  .obra-resumen { max-width: 58ch; }
+  .obra-mas { justify-self: start; margin-top: 18px; }
+  .obra-meta { }
+  @media (min-width: 900px) {
+    .trabajo { grid-template-columns: 1.75fr 1fr; }
+  }
+
+  /* ---------- Medición ---------- */
+  .medicion-grid { display: grid; gap: 56px; align-items: center; }
+  .medicion-texto { display: grid; gap: 24px; justify-items: start; }
+  .medicion-texto p { margin: 0; }
+  @media (min-width: 980px) {
+    .medicion-grid { grid-template-columns: 1fr 1.05fr; gap: 88px; }
+  }
+
+  /* ---------- Otras líneas ---------- */
+  .lineas { display: grid; }
+  .linea-caja { position: relative; padding: var(--seccion) var(--gutter); text-decoration: none; display: grid; align-content: center; }
+  .linea-interior { display: grid; gap: 24px; justify-items: start; max-width: 560px; }
+  .linea-interior > p { margin: 0; }
+  a.linea-caja { transition: background 0.4s var(--ease); }
+  a.linea-caja:hover { background: var(--hueso); }
+  a.linea-caja:hover .enlace { color: var(--terracota-ink); gap: 0.9em; }
+  @media (min-width: 980px) {
+    .lineas { grid-template-columns: 1fr 1fr; }
+    .linea-caja:first-child .linea-interior { margin-left: auto; margin-right: 56px; }
+    .linea-caja:last-child .linea-interior { margin-left: 56px; }
+  }
+</style>

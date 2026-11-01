@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { fechaBreve, isoDia } from '../../lib/medio';
+
+// La sección entra al menú cuando hay un ensayo publicado (src/content/fotografia/<ensayo>/index.md).
+const ensayos = (await getCollection('fotografia', (f) => !f.data.borrador)).sort((a, b) => b.data.fecha.valueOf() - a.data.fecha.valueOf());
+---
+
+<Base titulo="Fotografía" descripcion="Ensayos fotográficos de Dial." noindex={ensayos.length === 0}>
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Ensayos</p>
+      <h1>Fotografía</h1>
+      <p class="bajada">Ensayos fotográficos: lo que se ve cuando se mira despacio.</p>
+    </header>
+    <section class="contenedor lista">
+      {
+        ensayos.length ? (
+          ensayos.map((e) => (
+            <a href={`/fotografia/${e.id}`} class="ensayo">
+              <figure class="foto r-3-2"><Image src={e.data.portada} alt="" widths={[800, 1400, 2000]} sizes="100vw" /></figure>
+              <h2 class="titular t-1">{e.data.titulo}</h2>
+              <p class="bajada">{e.data.bajada}</p>
+              <p class="datos">{e.data.lugar && <span>{e.data.lugar}</span>}<time datetime={isoDia(e.data.fecha)}>{fechaBreve(e.data.fecha)}</time></p>
+            </a>
+          ))
+        ) : (
+          <p class="bajada">El primer ensayo está en el cuarto oscuro.</p>
+        )
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .lista { display: grid; gap: 72px; padding-bottom: clamp(64px, 8vw, 112px); }
+  .ensayo { display: grid; gap: 16px; text-decoration: none; }
+</style>

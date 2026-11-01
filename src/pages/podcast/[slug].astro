@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import PiezaVideo from '../../components/PiezaVideo.astro';
+import { formatos } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const piezas = await getCollection('medio', (m) => !m.data.borrador && m.data.formato === 'videopodcast' && m.data.estado === 'publicado' && !!m.data.video);
+  return piezas.map((pieza) => ({ params: { slug: pieza.id }, props: { pieza } }));
+}
+const { pieza } = Astro.props;
+const d = pieza.data;
+const kicker = d.serie ?? formatos[d.formato];
+---
+
+<PiezaVideo pieza={pieza} seccion={{ nombre: 'Podcast', href: '/podcast' }} kicker={kicker} coproduccion="RED Quynza y Dial" />

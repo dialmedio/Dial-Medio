@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { columnasPublicadas, conAcento, fechaBreve, isoDia } from '../../lib/medio';
+
+export async function getStaticPaths() {
+  const autores = await getCollection('autores');
+  const columnas = await columnasPublicadas();
+  return autores.map((a) => ({ params: { slug: a.id }, props: { a, columnas: columnas.filter((c) => c.data.autor.id === a.id) } }));
+}
+const { a, columnas } = Astro.props;
+const d = a.data;
+const ld = { '@type': 'Person', name: d.nombre, description: d.bio, jobTitle: d.rol, worksFor: { '@id': new URL('/#dial', Astro.site).toString() }, sameAs: d.redes.map((r) => r.url) };
+---
+
+<Base titulo={d.nombre} descripcion={`${d.rol}. ${d.bio}`} ld={ld}>
+  <div class="tema-papel">
+    <header class="contenedor autor">
+      {d.retrato && <Image src={d.retrato} alt={`Retrato de ${d.nombre}`} widths={[320, 640]} sizes="280px" class="autor-retrato" loading="eager" />}
+      <div class="autor-texto">
+        <p class="kicker">{d.rol}</p>
+        <h1 class="titular">{d.nombre}</h1>
+        <p class="bajada">{d.bio}</p>
+        {d.redes.length > 0 && <p class="datos">{d.redes.map((r) => <a href={r.url} target="_blank" rel="noopener me">{r.nombre}</a>)}</p>}
+      </div>
+    </header>
+    <section class="contenedor obra">
+      <header class="seccion-cabeza"><h2>Columnas</h2></header>
+      {
+        columnas.length ? (
+          <ul class="rejilla r2">
+            {columnas.map((c) => (
+              <li>
+                <h3 class="titular t-2"><a href={`/opinion/${c.id}`} set:html={conAcento(c.data.titulo)} /></h3>
+                <p class="bajada">{c.data.bajada}</p>
+                <p class="datos"><time datetime={isoDia(c.data.fecha)}>{fechaBreve(c.data.fecha)}</time></p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="bajada">Su primera columna está en camino.</p>
+        )
+      }
+    </section>
+  </div>
+</Base>
+
+<style>
+  .autor { display: grid; gap: 32px; padding-block: clamp(40px, 6vw, 80px); align-items: end; }
+  @media (min-width: 800px) { .autor { grid-template-columns: 280px 1fr; gap: 56px; } }
+  :global(.autor-retrato) { width: 100%; max-width: 280px; height: auto; }
+  .autor-texto { display: grid; gap: 16px; }
+  .autor-texto h1 { font-size: clamp(2.8rem, 1.5rem + 4vw, 5.4rem); line-height: .95; }
+  .autor-texto .bajada { max-width: 56ch; font-size: 1.15rem; }
+  .datos a { color: inherit; }
+  .obra { padding-bottom: clamp(64px, 8vw, 112px); }
+  .obra ul { list-style: none; }
+  .obra li { display: grid; gap: 10px; }
+  .obra p { margin: 0; }
+</style>

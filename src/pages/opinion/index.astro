@@ -1,0 +1,143 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Boletin from '../../components/Boletin.astro';
+import sitio from '../../data/sitio.json';
+import { columnasPublicadas, conAcento, fechaBreve, isoDia } from '../../lib/medio';
+
+const columnas = await columnasPublicadas();
+const conAutor = await Promise.all(columnas.map(async (c) => ({ c, autor: (await getEntry(c.data.autor))! })));
+const [apertura, ...resto] = conAutor;
+const autores = (await getCollection('autores')).sort((a, b) => a.data.orden - b.data.orden);
+const firmas = autores.filter((a) => columnas.some((c) => c.data.autor.id === a.id) || a.id === 'martin-perea-tobon');
+---
+
+<Base
+  titulo="Opinión"
+  descripcion="Columnas de opinión con firma: ideas que se defienden con argumentos y datos. Escribe en Dial."
+>
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Columnas con firma</p>
+      <h1>Opinión</h1>
+      <p class="bajada">
+        Ideas que se defienden con argumentos, datos con fuente y nombre propio. Las columnas son la voz de quien las firma,
+        separada de las noticias.
+      </p>
+    </header>
+
+    {
+      apertura ? (
+        <section class="contenedor apertura">
+          <article class="columna-apertura">
+            <div class="ca-texto">
+              {apertura.c.data.tema && <p class="rotulo">{apertura.c.data.tema}</p>}
+              <h2 class="titular t-1"><a href={`/opinion/${apertura.c.id}`} set:html={conAcento(apertura.c.data.titulo)} /></h2>
+              <p class="bajada">{apertura.c.data.bajada}</p>
+              <p class="datos"><span>{apertura.autor.data.nombre}</span><time datetime={isoDia(apertura.c.data.fecha)}>{fechaBreve(apertura.c.data.fecha)}</time></p>
+            </div>
+            {apertura.autor.data.retrato && (
+              <a href={`/opinion/${apertura.c.id}`} class="ca-retrato" tabindex="-1" aria-hidden="true">
+                <Image src={apertura.autor.data.retrato} alt="" widths={[320, 640]} sizes="(min-width: 900px) 320px, 50vw" />
+              </a>
+            )}
+          </article>
+          {resto.length > 0 && (
+            <ul class="columnas-lista">
+              {resto.map(({ c, autor }) => (
+                <li>
+                  {autor.data.retrato && <Image src={autor.data.retrato} alt="" widths={[120, 240]} sizes="80px" class="cl-retrato" />}
+                  <div>
+                    <p class="rotulo gris">{autor.data.nombre}</p>
+                    <h3 class="titular t-3"><a href={`/opinion/${c.id}`} set:html={conAcento(c.data.titulo)} /></h3>
+                    <p class="datos"><time datetime={isoDia(c.data.fecha)}>{fechaBreve(c.data.fecha)}</time></p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : (
+        <section class="contenedor proxima">
+          <div class="proxima-texto">
+            <p class="rotulo">En la mesa de redacción</p>
+            <p class="titular t-2">La primera columna está por salir.</p>
+            <p class="bajada">
+              Estamos sumando voces: periodistas, profes, artistas, gente de los territorios. Suscríbete y te avisamos cuando se publique.
+            </p>
+            <Boletin id="boletin-opinion" origen="opinion" />
+          </div>
+          <div class="proxima-firmas">
+            {firmas.map((a) => (
+              <a href={`/autores/${a.id}`} class="firma-tarjeta">
+                {a.data.retrato && <Image src={a.data.retrato} alt="" widths={[240, 480]} sizes="200px" />}
+                <span class="titular t-4">{a.data.nombre}</span>
+                <span class="datos">{a.data.rol}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <section class="tema-carbon grano escribe" id="escribe" aria-labelledby="escribe-t">
+      <div class="contenedor escribe-grid">
+        <div>
+          <p class="kicker">Escribe en Dial</p>
+          <h2 class="display d-2" id="escribe-t">¿Tienes algo que <em>decir</em>, y con qué sostenerlo?</h2>
+        </div>
+        <div class="escribe-texto">
+          <p>
+            Buscamos columnas que piensen el país y la región desde un lugar propio: la política, la paz, el territorio, la economía,
+            la cultura, la ciencia. Nos interesa más el argumento que el grito.
+          </p>
+          <ul>
+            <li><b>Entre 700 y 1.200 palabras</b>, con una idea central clara.</li>
+            <li><b>Cada dato con su fuente</b>, enlazada o citada.</li>
+            <li><b>Crítica a las ideas</b>, nunca ataques a las personas.</li>
+            <li><b>Inédita</b>: que no se haya publicado en otro medio.</li>
+          </ul>
+          <p class="texto-2">
+            Las columnas que publicamos también pueden salir en papel, en la edición impresa de Dial.
+            Lee nuestros <a href="/principios">principios editoriales</a> antes de escribir.
+          </p>
+          <a class="btn" href={`mailto:${sitio.correo}?subject=${encodeURIComponent('Propuesta de columna para Dial')}`}>Proponer una columna <span class="flecha">→</span></a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .gris { color: var(--texto-2); }
+  .apertura { display: grid; gap: 48px; padding-bottom: clamp(56px, 7vw, 96px); }
+  .columna-apertura { display: grid; gap: 32px; border-top: 1px solid var(--carbon); padding-top: 28px; align-items: end; }
+  @media (min-width: 900px) { .columna-apertura { grid-template-columns: minmax(0, 1fr) 320px; gap: 56px; } }
+  .ca-texto { display: grid; gap: 16px; }
+  .ca-retrato img { width: 100%; height: auto; }
+  .columnas-lista { list-style: none; display: grid; gap: 0 40px; }
+  @media (min-width: 900px) { .columnas-lista { grid-template-columns: repeat(2, 1fr); } }
+  .columnas-lista li { display: grid; grid-template-columns: 80px 1fr; gap: 18px; padding: 22px 0; border-top: 1px solid var(--linea); align-items: start; }
+  .columnas-lista p { margin: 0 0 6px; }
+  :global(.cl-retrato) { width: 80px; height: auto; }
+
+  .proxima { display: grid; gap: 48px; border-top: 1px solid var(--carbon); padding-top: 32px; padding-bottom: clamp(56px, 7vw, 96px); }
+  @media (min-width: 900px) { .proxima { grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: start; } }
+  .proxima-texto { display: grid; gap: 16px; max-width: 54ch; }
+  .proxima-texto p { margin: 0; }
+  .proxima-firmas { display: flex; flex-wrap: wrap; gap: 24px; }
+  .firma-tarjeta { display: grid; gap: 6px; width: 200px; text-decoration: none; }
+  .firma-tarjeta img { width: 100%; height: auto; margin-bottom: 8px; }
+  .firma-tarjeta:hover .titular { color: var(--terracota-ink); }
+
+  .escribe { padding-block: clamp(64px, 8vw, 112px); position: relative; }
+  .escribe-grid { display: grid; gap: 40px; }
+  @media (min-width: 980px) { .escribe-grid { grid-template-columns: 1fr 1fr; gap: 80px; } }
+  .escribe-grid .kicker { margin-bottom: 18px; }
+  .escribe-texto { display: grid; gap: 18px; justify-items: start; }
+  .escribe-texto p { margin: 0; }
+  .escribe-texto ul { list-style: none; display: grid; gap: 10px; width: 100%; border-top: 1px solid var(--linea-clara); }
+  .escribe-texto li { padding: 10px 0; border-bottom: 1px solid var(--linea-clara); }
+  .escribe-texto a:not(.btn) { color: inherit; }
+</style>

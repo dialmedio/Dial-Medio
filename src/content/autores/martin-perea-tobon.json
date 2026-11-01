@@ -1,0 +1,8 @@
+{
+  "nombre": "Martín Perea Tobón",
+  "rol": "Director de Dial",
+  "bio": "Músico con énfasis en arreglos. Dirige Dial: entrevista, escribe, graba y edita. Viene de rodar documentales sobre la música del Pacífico, el jazz colombiano y el terremoto de Pereira, y de sentar a debatir a gente que piensa distinto.",
+  "retrato": "./martin-perea-tobon.png",
+  "redes": [{ "nombre": "Instagram", "url": "https://www.instagram.com/dialmedio/" }],
+  "orden": 1
+}

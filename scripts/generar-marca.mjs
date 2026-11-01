@@ -87,7 +87,7 @@ const palabra = (texto, tam) => {
 
 // El sitio dibuja las firmas con estos trazos (Logo.astro): el apellido va en la misma tinta que «dial»
 const TAM_LINEA = EM * 0.98, AIRE_LINEA = EM * 0.2;
-logo.lineas = Object.fromEntries(['medio', 'impacto', 'encuentros'].map((n) => {
+logo.lineas = Object.fromEntries(['medio', 'impacto', 'encuentros', 'estudio'].map((n) => {
   const p = palabra(n, TAM_LINEA);
   return [n, { d: p.d, ancho: +p.ancho.toFixed(1), x0: +p.caja.x0.toFixed(1), x1: +p.caja.x1.toFixed(1), y0: +p.caja.y0.toFixed(1), y1: +p.caja.y1.toFixed(1) }];
 }));
@@ -139,7 +139,7 @@ const firma = (color, conPalabra) => {
 for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]]) {
   let f = firma(c);
   guardar(`dial-firma-${n}`, f.w, f.h, f.cuerpo);
-  for (const linea of ['impacto', 'encuentros', 'medio']) {
+  for (const linea of ['impacto', 'encuentros', 'medio', 'estudio']) {
     f = firma(c, linea);
     guardar(`dial-${linea}-${n}`, f.w, f.h, f.cuerpo);
   }
@@ -171,7 +171,7 @@ const centrado = (color, linea, acento = color) => {
   return { w: ancho + pad * 2, h: bajo + pad, cuerpo };
 };
 for (const [n, c] of [['oscuro', COLOR.carbon], ['claro', COLOR.papel]])
-  for (const linea of ['impacto', 'encuentros', 'medio']) {
+  for (const linea of ['impacto', 'encuentros', 'medio', 'estudio']) {
     let f = letras(c, linea);
     guardar(`dial-${linea}-letras-${n}`, f.w, f.h, f.cuerpo);
     f = centrado(c, linea);
@@ -208,7 +208,7 @@ const perfil = async (nombre, fondo, { w, h, cuerpo }) => {
 for (const [n, fondo, c, acento] of [['carbon', COLOR.carbon, COLOR.papel, COLOR.papel], ['papel', COLOR.papel, COLOR.carbon, COLOR.carbon]]) {
   await perfil(`dial-perfil-simbolo-${n}`, fondo, { w: 200, h: 200, cuerpo: simbolo(c) });
   await perfil(`dial-perfil-dial-${n}`, fondo, { w: logo.ancho + pad * 2, h: logo.alto + pad * 2, cuerpo: logoSVG(c, pad, pad + asc + 4) });
-  for (const linea of ['impacto', 'encuentros', 'medio'])
+  for (const linea of ['impacto', 'encuentros', 'medio', 'estudio'])
     await perfil(`dial-perfil-${linea}-${n}`, fondo, centrado(c, linea, acento));
 }
 

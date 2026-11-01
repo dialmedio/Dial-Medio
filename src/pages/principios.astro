@@ -1,0 +1,95 @@
+---
+import Base from '../layouts/Base.astro';
+import sitio from '../data/sitio.json';
+
+const principios = [
+  {
+    id: 'contexto',
+    titulo: 'Análisis, no primicia',
+    texto: 'No competimos por contar primero. Contamos completo: qué pasó, por qué importa, qué se dijo antes y qué puede venir. Una noticia de Dial tiene que entenderse sin contexto previo: explicamos siglas, plazos y trámites.',
+  },
+  {
+    id: 'fuentes',
+    titulo: 'Cada dato, con su fuente',
+    texto: 'Verificamos los datos antes de publicar y mostramos de dónde salen: cada nota lleva su lista de fuentes enlazadas. Si dos fuentes no coinciden, lo decimos o no usamos el dato.',
+  },
+  {
+    id: 'partes',
+    titulo: 'Las partes, siempre',
+    texto: 'Cuando contamos una decisión del poder, incluimos la versión de quien la tomó, con sus palabras. Los calificativos van atribuidos a quien los dice; los hechos los contamos con hechos.',
+  },
+  {
+    id: 'opinion',
+    titulo: 'Opinión separada de la información',
+    texto: 'Las columnas van en su sección, con firma y retrato, y expresan la opinión de quien las escribe. Las noticias no llevan la opinión de Dial. Si una pieza es análisis, lo decimos.',
+  },
+  {
+    id: 'fotos',
+    titulo: 'Fotos honestas',
+    texto: 'Usamos fotos propias, de dominio público, con licencias libres (CC0, CC BY, CC BY-SA) o con permiso de su autor, nunca de agencias sin licencia. Cada foto lleva autor, licencia, lugar y fecha. Les damos nuestro revelado (color y grano), pero no alteramos lo que muestran, y una foto de archivo nunca se presenta como si fuera del hecho.',
+  },
+  {
+    id: 'independencia',
+    titulo: 'Independencia',
+    texto: 'Dial se sostiene con el trabajo de Dial Estudio y con convocatorias. Ningún cliente decide qué publicamos. No producimos propaganda electoral, piezas que maquillen daños ambientales ni historias que estigmaticen a las comunidades que aparecen en ellas.',
+  },
+  {
+    id: 'alianzas',
+    titulo: 'Alianzas a la vista',
+    texto: 'Cuando una pieza se hace con otra organización, como la RED Quynza, lo decimos en la pieza: quién la propone, quién la produce y quién la firma.',
+  },
+];
+---
+
+<Base titulo="Principios editoriales" descripcion="Cómo trabaja Dial: análisis, fuentes a la vista, las partes siempre, opinión separada, fotos honestas, independencia y correcciones.">
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">La casa</p>
+      <h1>Principios editoriales</h1>
+      <p class="bajada">Lo que puedes esperar de cada pieza de Dial, y lo que puedes exigirnos.</p>
+    </header>
+
+    <div class="contenedor cuerpo">
+      <nav class="indice" aria-label="En esta página">
+        <ol>
+          {principios.map((p) => <li><a href={`#${p.id}`}>{p.titulo}</a></li>)}
+          <li><a href="#correcciones">Correcciones</a></li>
+        </ol>
+      </nav>
+      <div class="lista">
+        {
+          principios.map((p, i) => (
+            <section id={p.id}>
+              <span class="n">{i + 1}</span>
+              <h2 class="titular t-2">{p.titulo}</h2>
+              <p>{p.texto}</p>
+            </section>
+          ))
+        }
+        <section id="correcciones" class="correcciones">
+          <span class="n">{principios.length + 1}</span>
+          <h2 class="titular t-2">Correcciones</h2>
+          <p>
+            Nos equivocamos, como todos. Cuando pasa, corregimos la pieza y lo decimos al final, con la fecha y lo que cambió.
+            No borramos errores en silencio. Si ves uno, escríbenos a <a href={`mailto:${sitio.correo}?subject=Corrección`}>{sitio.correo}</a>
+            con el enlace y la fuente que lo muestra.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .cuerpo { display: grid; gap: 40px; padding-bottom: clamp(64px, 8vw, 112px); border-top: 1px solid var(--carbon); padding-top: 32px; }
+  @media (min-width: 980px) { .cuerpo { grid-template-columns: 280px 1fr; gap: 80px; } .indice { position: sticky; top: 80px; align-self: start; } }
+  .indice ol { list-style: none; display: grid; gap: 10px; }
+  .indice a { text-decoration: none; font-size: .95rem; color: var(--tinta-2); }
+  .indice a:hover { color: var(--terracota-ink); }
+  .lista { display: grid; gap: 48px; max-width: 66ch; }
+  .lista section { display: grid; gap: 12px; scroll-margin-top: 80px; }
+  .lista p { margin: 0; font-size: 1.12rem; line-height: 1.65; }
+  .lista a { color: inherit; text-decoration-color: var(--luz); }
+  .n { font-family: var(--f-display); font-style: italic; font-size: 2.4rem; line-height: 1; color: var(--texto-2); }
+  .correcciones { border-top: 1px solid var(--linea); padding-top: 32px; }
+</style>

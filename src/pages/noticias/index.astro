@@ -1,0 +1,110 @@
+---
+import Base from '../../layouts/Base.astro';
+import NoticiaCard from '../../components/NoticiaCard.astro';
+import { noticiasPublicadas, lineas, regiones } from '../../lib/medio';
+
+const todas = await noticiasPublicadas();
+const [apertura, ...resto] = todas;
+const laterales = resto.slice(0, 4);
+const archivo = resto.slice(4);
+const conPiezas = Object.entries(lineas).filter(([k]) => todas.some((n) => n.data.linea === k));
+---
+
+<Base
+  titulo="Noticias"
+  descripcion="Noticias con contexto de Colombia, América Latina y el mundo: qué pasó, por qué importa y qué dicen las partes, con fuentes."
+>
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Análisis, no primicia</p>
+      <h1>Noticias</h1>
+      <p class="bajada">
+        No contamos primero: contamos completo. Qué pasó, por qué importa, qué dicen las partes y de dónde sale cada dato.
+      </p>
+      <nav class="filtros" aria-label="Filtrar noticias">
+        <button type="button" data-filtro="" aria-pressed="true">Todas</button>
+        {Object.entries(regiones).map(([k, r]) => <button type="button" data-filtro={`region:${k}`} aria-pressed="false">{r}</button>)}
+        {conPiezas.filter(([k]) => k !== 'al-aire').map(([k, l]) => <button type="button" data-filtro={`linea:${k}`} aria-pressed="false">{l.nombre}</button>)}
+      </nav>
+    </header>
+
+    <section class="contenedor apertura" data-filtrable>
+      <NoticiaCard n={apertura} variante="principal" cargaInmediata />
+      <div class="apertura-lado">
+        {laterales.map((n) => <NoticiaCard n={n} variante="horizontal" />)}
+      </div>
+    </section>
+
+    <section class="contenedor archivo">
+      <header class="seccion-cabeza"><h2>Archivo</h2><span class="ver">{todas.length} piezas</span></header>
+      <div class="rejilla r3 archivo-rejilla" data-filtrable>
+        {archivo.map((n) => <NoticiaCard n={n} />)}
+      </div>
+      <p class="vacio datos" hidden data-vacio>No hay piezas de esta línea todavía.</p>
+    </section>
+
+    <section class="contenedor lineas-sec" aria-labelledby="lineas-t">
+      <header class="seccion-cabeza"><h2 id="lineas-t">Nuestras líneas</h2></header>
+      <ul class="lineas">
+        {
+          Object.entries(lineas).map(([k, l]) => (
+            <li>
+              <a href={conPiezas.some(([c]) => c === k) ? `/noticias/${k}` : undefined} class="titular t-3">{l.nombre}</a>
+              <span class="rotulo">{l.cadencia}</span>
+              <p class="bajada">{l.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Filtro sin recargar: región (Colombia, América Latina, Mundo) o línea. Sin JavaScript se ve todo.
+  const botones = document.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+  const piezas = document.querySelectorAll<HTMLElement>('[data-filtrable] .noticia');
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+  botones.forEach((b) =>
+    b.addEventListener('click', () => {
+      botones.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      const [campo, valor] = (b.dataset.filtro || ':').split(':');
+      let visibles = 0;
+      piezas.forEach((p) => {
+        const ok = !valor || (campo === 'region' ? p.dataset.region === valor : p.dataset.linea === valor);
+        p.hidden = !ok;
+        if (ok) visibles++;
+      });
+      if (vacio) vacio.hidden = visibles > 0;
+    }),
+  );
+</script>
+
+<style>
+  .filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .filtros button {
+    min-height: 38px; padding: 0 1em; border: 1px solid var(--linea); background: none; cursor: pointer;
+    font-family: var(--f-rotulo); font-weight: 600; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--carbon);
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .filtros button:hover { border-color: var(--carbon); }
+  .filtros button[aria-pressed='true'] { background: var(--carbon); color: var(--papel); border-color: var(--carbon); }
+
+  .apertura { display: grid; gap: 36px; padding-top: 8px; padding-bottom: clamp(48px, 6vw, 80px); border-top: 1px solid var(--carbon); padding-block-start: 28px; }
+  @media (min-width: 1100px) { .apertura { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 40px; } }
+  .apertura-lado { display: grid; gap: 22px; align-content: start; }
+  .apertura-lado > :global(* + *) { border-top: 1px solid var(--linea); padding-top: 22px; }
+  @media (min-width: 1100px) { .apertura-lado { border-left: 1px solid var(--linea); padding-left: 32px; } }
+  .apertura :global(.noticia[hidden]) { display: none; }
+
+  .archivo { padding-bottom: clamp(56px, 7vw, 96px); }
+  .archivo-rejilla :global(.noticia[hidden]) { display: none; }
+
+  .lineas-sec { padding-bottom: clamp(64px, 8vw, 112px); }
+  .lineas { list-style: none; display: grid; gap: 0 40px; }
+  @media (min-width: 900px) { .lineas { grid-template-columns: repeat(3, 1fr); } }
+  .lineas li { display: grid; gap: 8px; align-content: start; padding: 22px 0; border-bottom: 1px solid var(--linea); }
+  .lineas a { text-decoration: none; }
+  .lineas a[href]:hover { color: var(--terracota-ink); }
+  .lineas .bajada { font-size: 1rem; }
+</style>

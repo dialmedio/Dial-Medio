@@ -1,0 +1,45 @@
+---
+/** Firma de una pieza: el retrato en trama de periódico, el nombre y el rol. Sin retrato, solo el nombre. */
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  autor?: CollectionEntry<'autores'>;
+  nombre?: string;
+  enlace?: string;
+  rol?: string;
+  grande?: boolean;
+}
+const { autor, grande = false } = Astro.props;
+const nombre = autor?.data.nombre ?? Astro.props.nombre ?? 'Redacción Dial';
+const rol = autor?.data.rol ?? Astro.props.rol;
+const enlace = autor ? `/autores/${autor.id}` : Astro.props.enlace;
+---
+
+<div class:list={['firma', { grande }]}>
+  {
+    autor?.data.retrato && (
+      <a href={enlace} class="firma-retrato" tabindex="-1" aria-hidden="true">
+        <Image src={autor.data.retrato} alt="" widths={[160, 320]} sizes={grande ? '160px' : '64px'} />
+      </a>
+    )
+  }
+  <p class="firma-texto">
+    <span class="firma-por">Por </span>
+    {enlace ? <a href={enlace} class="firma-nombre">{nombre}</a> : <span class="firma-nombre">{nombre}</span>}
+    {rol && <span class="firma-rol">{rol}</span>}
+  </p>
+</div>
+
+<style>
+  .firma { display: flex; align-items: center; gap: 14px; }
+  .firma-retrato { flex: none; width: 64px; aspect-ratio: 4 / 5; display: block; }
+  .grande .firma-retrato { width: clamp(96px, 12vw, 140px); }
+  .firma-retrato img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .firma-texto { margin: 0; display: grid; gap: 2px; line-height: 1.3; }
+  .firma-por { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .firma-nombre { font-weight: 650; text-decoration: none; }
+  a.firma-nombre:hover { color: var(--terracota-ink); }
+  .grande .firma-nombre { font-family: var(--f-display); font-weight: 400; font-size: 1.6rem; }
+  .firma-rol { font-size: .86rem; color: var(--texto-2); }
+</style>

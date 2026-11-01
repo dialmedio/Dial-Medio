@@ -1,0 +1,159 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import PiezaCard from '../../components/PiezaCard.astro';
+import sitio from '../../data/sitio.json';
+import { anio } from '../../lib/util';
+
+const medio = (await getCollection('medio', (m) => !m.data.borrador)).sort((a, b) => a.data.orden - b.data.orden);
+const debates = medio.filter((m) => m.data.formato === 'debate' && m.data.video);
+const [destacado, ...otros] = [...debates.filter((d) => d.data.destacado), ...debates.filter((d) => !d.data.destacado)];
+const clips = medio.filter((m) => m.data.formato === 'clip' && m.data.video);
+const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x), 0);
+
+const reglas = [
+  { n: '1', titulo: 'Una voz frente a muchas', texto: 'Una persona fija frente a quienes piensan distinto, que se turnan la silla.' },
+  { n: '2', titulo: 'Rondas y banderas', texto: 'Rondas cronometradas y banderas para pedir la palabra. Escuchar antes de responder.' },
+  { n: '3', titulo: 'Antes y después', texto: 'Encuestamos a la sala al entrar y al salir. La pregunta no es quién ganó, sino quién cambió.' },
+];
+---
+
+<Base
+  titulo="Laboratorio · Debates y experimentos de conversación"
+  descripcion="El laboratorio de Dial: debates entre quienes piensan distinto y experimentos sociales sobre cómo conversamos. La pregunta no es quién ganó, sino quién cambió."
+>
+  <section class="tema-carbon grano portada">
+    <div class="contenedor">
+      <p class="kicker">Debates y experimentos sociales</p>
+      <h1 class="titular">Laboratorio</h1>
+      <p class="bajada">
+        Probamos formas de conversar entre quienes piensan distinto y medimos qué pasa. La pregunta no es quién ganó,
+        sino <em>quién cambió.</em>
+      </p>
+      <ol class="reglas">
+        {reglas.map((r) => (
+          <li>
+            <span class="regla-n">{r.n}</span>
+            <h2 class="sub s-2">{r.titulo}</h2>
+            <p>{r.texto}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  {
+    destacado && (
+      <section class="seccion compacta tema-carbon debate">
+        <div class="contenedor debate-grid">
+          <div class="debate-video">
+            <VideoLite video={destacado.data.video!} titulo={destacado.data.titulo} />
+            <p class="rotulo">Debate · {destacado.data.lugar} · {anio(destacado.data.fecha)}</p>
+            <h2 class="titular t-2"><a href={`/laboratorio/${destacado.id}`}>{destacado.data.titulo}</a></h2>
+            <p class="bajada">{destacado.data.resumen}</p>
+          </div>
+          {destacado.data.capitulos.length > 0 && (
+            <aside class="capitulos">
+              <p class="rotulo">Tesis en debate</p>
+              <ol>
+                {destacado.data.capitulos.map((c) => (
+                  <li>
+                    <a href={`https://www.youtube.com/watch?v=${destacado.data.video!.id}&t=${aSegundos(c.tiempo)}s`} target="_blank" rel="noopener">
+                      <span class="tiempo">{c.tiempo}</span>
+                      <span>{c.titulo}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </aside>
+          )}
+        </div>
+      </section>
+    )
+  }
+
+  {
+    otros.length > 0 && (
+      <section class="seccion compacta tema-papel">
+        <div class="contenedor">
+          <header class="seccion-cabeza"><h2>Más debates</h2></header>
+          <div class="rejilla r2">
+            {otros.map((d) => (
+              <PiezaCard titulo={d.data.titulo} video={d.data.video} href={`/laboratorio/${d.id}`} kicker="Debate" resumen={d.data.resumen} meta={`${d.data.lugar ?? 'Bogotá'} · ${anio(d.data.fecha)}`} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    clips.length > 0 && (
+      <section class="seccion compacta tema-hueso clips-sec">
+        <div class="contenedor">
+          <header class="seccion-cabeza">
+            <h2>Clips</h2>
+            <a href={sitio.redes.find((r) => r.nombre === 'YouTube')?.url} class="ver" target="_blank" rel="noopener">Todos en YouTube ↗</a>
+          </header>
+        </div>
+        <div class="clips" role="list">
+          {clips.map((c) => (
+            <div class="clip" role="listitem">
+              <VideoLite video={c.data.video!} titulo={c.data.titulo} />
+              <p class="clip-titulo">{c.data.titulo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor llevar">
+      <h2 class="display d-3">¿Quieres hacer este experimento en tu organización?</h2>
+      <div>
+        <p class="bajada">Dial Estudio diseña conversaciones con medición para equipos, comunidades y audiencias que necesitan encontrarse.</p>
+        <a href="/estudio" class="enlace">Conoce Dial Estudio <span>→</span></a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .portada { padding-block: clamp(48px, 7vw, 104px) clamp(40px, 5vw, 72px); position: relative; }
+  .portada .contenedor { display: grid; gap: 22px; }
+  .portada h1 { font-size: clamp(3.4rem, 1.6rem + 6vw, 7.4rem); line-height: .92; }
+  .portada .bajada { color: var(--hueso-2); font-size: clamp(1.15rem, 1rem + .5vw, 1.4rem); max-width: 44ch; }
+  .portada .bajada em { color: var(--papel); }
+  .reglas { list-style: none; display: grid; gap: 28px; margin-top: clamp(32px, 4vw, 56px); border-top: 1px solid var(--linea-clara); padding-top: 28px; }
+  @media (min-width: 900px) { .reglas { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
+  .reglas li { display: grid; gap: 10px; align-content: start; }
+  .reglas p { margin: 0; color: var(--hueso-2); }
+  .regla-n { font-family: var(--f-display); font-style: italic; font-size: 3.4rem; line-height: 1; color: var(--hueso-2); }
+
+  .debate { border-top: 1px solid var(--linea-clara); }
+  .debate-grid { display: grid; gap: 40px; align-items: start; }
+  @media (min-width: 1040px) { .debate-grid { grid-template-columns: 1.6fr 1fr; gap: 48px; } }
+  .debate-video { display: grid; gap: 14px; }
+  .debate-video .rotulo { margin-top: 10px; }
+  .debate-video a { text-decoration: none; }
+  .debate-video .bajada { color: var(--hueso-2); }
+  .capitulos ol { list-style: none; margin-top: 14px; border-top: 1px solid var(--linea-clara); }
+  .capitulos li a { display: grid; grid-template-columns: 4.6em 1fr; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--linea-clara); text-decoration: none; font-size: 1rem; line-height: 1.45; color: var(--hueso-2); transition: color .2s; }
+  .capitulos li a:hover { color: var(--papel); }
+  .tiempo { color: var(--terracota-clara); font-variant-numeric: tabular-nums; }
+
+  .clips {
+    display: grid; grid-auto-flow: column; grid-auto-columns: min(62vw, 240px); gap: 16px;
+    overflow-x: auto; padding-inline: var(--gutter); padding-bottom: 12px;
+    scroll-snap-type: x mandatory; scroll-padding-inline: var(--gutter); scrollbar-width: thin;
+  }
+  @media (min-width: 1400px) { .clips { padding-inline: calc((100vw - var(--ancho)) / 2); } }
+  .clip { scroll-snap-align: start; display: grid; gap: 12px; align-content: start; }
+  .clip-titulo { margin: 0; font-size: 1rem; line-height: 1.4; }
+
+  .llevar { display: grid; gap: 24px; align-items: end; border-top: 1px solid var(--carbon); padding-top: 28px; }
+  @media (min-width: 900px) { .llevar { grid-template-columns: 1.2fr 1fr; gap: 72px; } }
+  .llevar > div { display: grid; gap: 16px; justify-items: start; }
+</style>

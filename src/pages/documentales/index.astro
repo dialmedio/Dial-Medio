@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import VideoLite from '../../components/VideoLite.astro';
+import PiezaCard from '../../components/PiezaCard.astro';
+import { anio, estados } from '../../lib/util';
+
+const todos = (await getCollection('medio', (m) => !m.data.borrador && m.data.formato === 'documental')).sort((a, b) => a.data.orden - b.data.orden);
+const publicados = todos.filter((d) => d.data.estado === 'publicado' && d.data.video);
+const [apertura, ...resto] = [...publicados.filter((d) => d.data.destacado), ...publicados.filter((d) => !d.data.destacado)];
+const enCamino = todos.filter((d) => d.data.estado !== 'publicado');
+---
+
+<Base titulo="Documentales" descripcion="Documentales de Dial: música, territorio y memoria. Historias que piden tiempo, contadas desde los lugares que las sostienen.">
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Música, territorio y memoria</p>
+      <h1>Documentales</h1>
+      <p class="bajada">Historias que piden tiempo. Las contamos desde los lugares que las sostienen, con la gente que las vive.</p>
+    </header>
+  </div>
+
+  {
+    apertura && (
+      <section class="tema-carbon grano apertura">
+        <div class="contenedor apertura-grid">
+          <VideoLite video={apertura.data.video!} titulo={apertura.data.titulo} cargaInmediata />
+          <div class="apertura-texto">
+            <p class="rotulo">{apertura.data.serie ? `Serie ${apertura.data.serie}` : 'Documental'}</p>
+            <h2 class="titular t-2"><a href={`/documentales/${apertura.id}`}>{apertura.data.titulo}</a></h2>
+            <p class="bajada">{apertura.data.resumen}</p>
+            <p class="datos"><span>{apertura.data.lugar}</span><span>{anio(apertura.data.fecha)}</span>{apertura.data.duracion && <span>{apertura.data.duracion}</span>}</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor">
+      {
+        resto.length > 0 && (
+          <div class="rejilla r2">
+            {resto.map((d) => (
+              <PiezaCard titulo={d.data.titulo} video={d.data.video} href={`/documentales/${d.id}`} kicker={d.data.serie ? `Serie ${d.data.serie}` : 'Documental'} resumen={d.data.resumen} meta={`${d.data.lugar} · ${anio(d.data.fecha)}`} />
+            ))}
+          </div>
+        )
+      }
+
+      {
+        enCamino.length > 0 && (
+          <div class="camino">
+            <header class="seccion-cabeza"><h2>En camino</h2></header>
+            <ul>
+              {enCamino.map((d) => (
+                <li>
+                  <span class="titular t-3">{d.data.titulo}</span>
+                  <span class="bajada">{d.data.resumen}</span>
+                  <span class="rotulo">{estados[d.data.estado]}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .apertura { padding-block: clamp(40px, 5vw, 72px); position: relative; }
+  .apertura-grid { display: grid; gap: 32px; align-items: center; }
+  @media (min-width: 1040px) { .apertura-grid { grid-template-columns: 1.6fr 1fr; gap: 56px; } }
+  .apertura-texto { display: grid; gap: 14px; }
+  .apertura-texto a { text-decoration: none; }
+  .apertura-texto .bajada { color: var(--hueso-2); }
+  .camino { margin-top: clamp(56px, 7vw, 96px); }
+  .camino ul { list-style: none; }
+  .camino li { display: grid; gap: 6px 32px; padding: 20px 0; border-bottom: 1px solid var(--linea); align-items: baseline; }
+  @media (min-width: 900px) { .camino li { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) 11rem; } .camino .rotulo { text-align: right; } }
+</style>

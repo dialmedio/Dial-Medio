@@ -1,0 +1,29 @@
+---
+titulo: "De París a Bogotá: *la misma semana* en la calle. ¿Casualidad?"
+bajada: "Sin convocatoria común, pero con causas compartidas: el costo de vivir, la vivienda y los recortes a lo público."
+linea: "al-aire"
+region: "mundo"
+fecha: 2026-10-18
+formato: "carrusel"
+portada: "./portada.jpg"
+portadaCredito: "Jorge Jaramillo · CC BY-SA 4.0 · París, 17 oct"
+foco: "50% 50%"
+laminas: ["./laminas/01.jpg", "./laminas/02.jpg", "./laminas/03.jpg", "./laminas/04.jpg", "./laminas/05.jpg", "./laminas/06.jpg", "./laminas/07.jpg", "./laminas/08.jpg", "./laminas/09.jpg", "./laminas/10.jpg", "./laminas/11.jpg"]
+fuentes: [{"texto": "Al Jazeera, 17 oct: protestas \"separadas y sin coordinación\" en Bélgica, Francia, Italia y Portugal; 550.000 en Francia (Interior), 1.200 detenidos (primer ministro Lecornu); unos 50 detenidos en Italia (LaPresse); Lisboa: vivienda más del doble desde 2017; citas de Alemanno, Macron, Meloni y Carlos Abreu Amorim", "url": "https://www.aljazeera.com/news/2026/10/17/cost-of-living-protests-hit-belgium-italy-portugal-and-france"}, {"texto": "TBS News: diez países; Bélgica (matrículas, cañones de agua en Bruselas y Lieja), España (alquileres duplicados en una década), Albania (matrículas, becas, desempleo juvenil)", "url": "https://www.tbsnews.net/world/price-survival-rising-living-costs-drive-protests-across-nine-countries-1576326"}, {"texto": "France 24, 13 oct: protestas estudiantiles en Francia", "url": "https://www.france24.com/es/europa/20261013-decenas-de-miles-de-personas-se-manifiestan-en-francia-cobran-fuerza-las-protestas-de-los-estudiantes"}, {"texto": "Il Post, 16 oct: \"No Meloni Day\" estudiantil", "url": "https://www.ilpost.it/2026/10/16/studenti-manifestazioni-italia-16-ottobre/"}, {"texto": "Euronews, 17 oct: Portugal, vivienda y costo de vida", "url": "https://pt.euronews.com/2026/10/17/portugueses-voltam-as-ruas-para-mais-protestos-pela-habitacao-e-contra-o-aumento-do-custo-"}, {"texto": "Infobae (EFE), 18 oct: Chile, 18-O y recortes de Kast", "url": "https://www.infobae.com/america/agencias/2026/10/18/miles-marchan-en-chile-para-conmemorar-el-estallido-y-protestar-contra-recortes-de-kast/"}, {"texto": "El Clarín de Chile, 18 oct: gases y carros lanzaaguas", "url": "https://www.elclarin.cl/2026/10/18/siete-anos-despues-las-demandas-siguen-en-la-calle-miles-marchan-por-el-18-o-entre-gases-y-carros-lanzaaguas/"}, {"texto": "Infobae (EFE), 9 oct: Ecuador, marchas en tres ciudades", "url": "https://www.infobae.com/america/america-latina/2026/10/09/marchas-en-tres-ciudades-de-ecuador-exigieron-mejoras-en-salud-educacion-y-seguridad-al-gobierno-de-noboa/"}, {"texto": "Primicias: activos del IESS", "url": "https://www.primicias.ec/politica/paro-frente-unitario-trabajadores-une-fut-organizaciones-sociales-movilizaciones-octubre-133512/"}, {"texto": "Colombia: ver `2026-10-17 Planton Museo Nacional/planton-museo-descripcion.md`", "url": null}]
+creditos: [{"texto": "Protesters carrying a banner · Jorge Jaramillo · CC BY-SA 4.0 · París, 17 oct 2026", "url": "https://commons.wikimedia.org/wiki/File:Paris_riots,_17_October_2026_-_Protesters_carrying_a_banner_-_JJxFile_0002.jpg"}, {"texto": "Protesters with placards beside burning bin · Jorge Jaramillo · CC BY-SA 4.0 · París, 17 oct 2026", "url": "https://commons.wikimedia.org/wiki/File:Paris_riots,_17_October_2026_-_Protesters_with_placards_beside_burning_bin_-_JJxFile_0011.jpg"}, {"texto": "Acampada en la Puerta del Sol · Zarateman · CC0 · Madrid, 30 sep 2026", "url": "https://commons.wikimedia.org/wiki/File:Madrid_-_Acampada_en_la_Puerta_del_Sol_contra_los_desahucios_y_por_el_derecho_a_la_vivienda_(30_septiembre_2026)_19.jpg"}, {"texto": "Street protest in Tirana · Vyolltsa · CC0 · Tirana, oct 2026", "url": "https://commons.wikimedia.org/wiki/File:Street_protest_in_Tirana,_Albania,_2026..jpg"}, {"texto": "Laura Mlynarz dirige la manifestación con megáfono · Matías Villacura · CC BY-SA 4.0 · Santiago, 1 oct 2026", "url": "https://commons.wikimedia.org/wiki/File:Laura_Mlynarz_dirige_la_manifestación_con_megáfono.jpg"}, {"texto": "Plantón en el Museo Nacional · Martín Perea / Dial Medio · propia · Bogotá, 17 oct 2026", "url": null}, {"texto": "Carabineros durante manifestación en Santiago · Matías Villacura · CC BY 4.0 · Santiago, 1 oct 2026", "url": "https://commons.wikimedia.org/wiki/File:Carabineros_de_Chile_durante_manifestación_en_Santiago_(octubre_2026).jpg"}]
+---
+De París a Bogotá, la misma semana en la calle. ¿Casualidad?
+
+Entre el 8 y el 18 de octubre hubo protestas en Francia, Bélgica, Italia, España, Portugal, Albania, Chile, Ecuador y Colombia. No hubo una convocatoria común: Al Jazeera las describe como movilizaciones separadas y sin coordinación. Pero tampoco es casualidad.
+
+### Lo que las une
+
+El costo de vivir y la vivienda (en Lisboa, los precios se duplicaron desde 2017), los recortes en educación y cultura, y jóvenes al frente. En Francia, el epicentro, todo empezó con estudiantes contra recortes escolares; el 17 de octubre marcharon 550.000 personas, según el Gobierno. Para Alberto Alemanno, profesor de HEC París, no es un solo movimiento, sino protestas simultáneas con reclamos compartidos que se extienden desde Francia.
+
+### Desde Colombia
+
+Aquí el detonante no fue el bolsillo, sino la memoria: al menos 500 personas rechazaron frente al Museo Nacional el retiro de unas 30 piezas ordenado por el Gobierno. El patrón se parece: decisiones sobre lo público y jóvenes en la calle. La respuesta también: agua a presión en Bruselas, Santiago y Bogotá.
+
+### La versión de los gobiernos
+
+Macron dijo que los responsables de los disturbios serán "procesados y castigados". Meloni: "Manifestarse es un derecho. Prender fuego a nuestras ciudades no lo es". El Gobierno de Portugal dijo que no cederá "a los gritos de la calle". En Colombia, la ministra de Cultura sostiene que el museo no debe ser "instrumento de adoctrinamiento político".

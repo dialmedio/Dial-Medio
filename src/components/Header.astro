@@ -1,26 +1,62 @@
 ---
+/**
+ * Cabecera del medio (nov 2026). Arriba, la franja con la fecha y los accesos de la casa; luego la mancheta
+ * con el logotipo (grande en la portada, compacto en el resto) y la fila de secciones, que se queda fija al
+ * bajar y muestra el logotipo pequeño. En el celular las secciones se deslizan de lado, como en un diario.
+ */
 import Logo from './Logo.astro';
 import sitio from '../data/sitio.json';
+import { secciones, fechaDeHoy } from '../lib/medio';
 import { whatsapp } from '../lib/util';
 
+interface Props {
+  portada?: boolean;
+}
+const { portada = false } = Astro.props;
 const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
-const nav = [
-  { texto: 'Inicio', href: '/', nota: 'Portada' },
-  { texto: 'Impacto', href: '/impacto', nota: 'Documental y cobertura' },
-  { texto: 'Encuentros', href: '/encuentros', nota: 'Eventos' },
-  { texto: 'Medio', href: '/medio', nota: 'Obra propia' },
-  { texto: 'Nosotros', href: '/nosotros', nota: 'La casa' },
+const nav = await secciones();
+const activo = (href: string) => ruta === href || ruta.startsWith(href + '/');
+const casa = [
+  { texto: 'Nosotros', href: '/nosotros' },
+  { texto: 'Principios editoriales', href: '/principios' },
+  { texto: 'Dial Estudio', href: '/estudio' },
+  { texto: 'Contacto', href: '/contacto' },
 ];
-const activo = (href: string) => (href === '/' ? ruta === '/' : ruta === href || ruta.startsWith(href + '/'));
 ---
 
-<header class="cabecera" data-cabecera>
-  <div class="contenedor cabecera-fila">
-    <a href="/" class="cabecera-logo" aria-label="Dial, inicio">
-      <Logo tono="claro" />
-    </a>
+<header class:list={['cabecera', { 'en-portada': portada }]} data-cabecera>
+  <div class="franja tema-carbon">
+    <div class="contenedor franja-fila">
+      <p class="franja-fecha"><time data-hoy>{fechaDeHoy()}</time><span class="franja-ciudad"> · Bogotá</span></p>
+      <ul class="franja-enlaces">
+        <li><a href="/estudio">Dial Estudio</a></li>
+        <li><a href="/nosotros">Nosotros</a></li>
+        <li><a href="#boletin">Boletín</a></li>
+      </ul>
+    </div>
+  </div>
 
-    <nav class="nav" aria-label="Principal">
+  <div class="contenedor mancheta" data-mancheta>
+    <button class="icono menu-boton" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
+      <span class="sr-only">Abrir menú</span>
+      <span class="menu-lineas" aria-hidden="true"><span></span><span></span><span></span></span>
+    </button>
+    <a href="/" class="mancheta-logo" aria-label="Dial, inicio">
+      <Logo tono="oscuro" />
+    </a>
+    {portada && <p class="mancheta-lema">Análisis, opinión, documental y conversación. <em>Del ruido a la señal.</em></p>}
+    <a href="/buscar" class="icono buscar-boton" aria-label="Buscar en Dial">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+    </a>
+  </div>
+
+  <nav class="secciones" aria-label="Secciones" data-secciones>
+    <div class="contenedor secciones-fila">
+      <button class="icono secciones-menu" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
+        <span class="sr-only">Abrir menú</span>
+        <span class="menu-lineas" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <a href="/" class="secciones-logo" aria-label="Dial, inicio" tabindex="-1"><Logo tono="oscuro" /></a>
       <ul>
         {
           nav.map((n) => (
@@ -32,135 +68,194 @@ const activo = (href: string) => (href === '/' ? ruta === '/' : ruta === href ||
           ))
         }
       </ul>
-    </nav>
+      <a href="/buscar" class="secciones-buscar" aria-label="Buscar">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+      </a>
+    </div>
+  </nav>
 
-    <a href="/contacto" class="btn cabecera-cta">Cotizar</a>
-
-    <button class="menu-boton" type="button" aria-expanded="false" aria-controls="menu-movil" data-menu-boton>
-      <span class="sr-only">Abrir menú</span>
-      <span class="menu-lineas" aria-hidden="true"><span></span><span></span></span>
-    </button>
-  </div>
-
-  <div class="menu-movil grano" id="menu-movil" data-menu hidden>
-    <nav aria-label="Menú móvil" class="contenedor">
+  <div class="menu-movil tema-papel" id="menu-movil" data-menu hidden>
+    <div class="contenedor menu-tope">
+      <a href="/" aria-label="Dial, inicio" class="menu-logo"><Logo tono="oscuro" /></a>
+      <button class="icono" type="button" data-menu-cerrar><span class="sr-only">Cerrar menú</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" /></svg>
+      </button>
+    </div>
+    <nav aria-label="Menú" class="contenedor">
       <ol>
         {
           nav.map((n, i) => (
             <li style={`--i:${i}`}>
               <a href={n.href} aria-current={activo(n.href) ? 'page' : undefined}>
-                <span class="mono">0{i + 1}</span>
                 <span class="display">{n.texto}</span>
-                <span class="mono nota">{n.nota}</span>
               </a>
             </li>
           ))
         }
       </ol>
+      <ul class="menu-casa">
+        {casa.map((c) => <li><a href={c.href}>{c.texto}</a></li>)}
+      </ul>
       <div class="menu-pie">
-        <a href="/contacto" class="btn">Cotizar un proyecto <span class="flecha">→</span></a>
-        <a href={whatsapp()} class="btn linea" target="_blank" rel="noopener">WhatsApp</a>
-        <p class="mono">{sitio.correo}</p>
+        <a href="/buscar" class="btn linea">Buscar en Dial</a>
+        <a href={whatsapp('Hola, Dial. Les escribo desde la página.')} class="btn linea" target="_blank" rel="noopener">WhatsApp</a>
+        <p class="meta">{sitio.correo}</p>
       </div>
     </nav>
   </div>
 </header>
 
+<script>
+  // La fecha de hoy en Bogotá (la página es estática: la del servidor sería la del día en que se publicó).
+  const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const b = new Date(Date.now() - 5 * 3600 * 1000);
+  const d = dias[b.getUTCDay()];
+  document.querySelectorAll('[data-hoy]').forEach((t) => {
+    t.textContent = `${d[0].toUpperCase()}${d.slice(1)} ${b.getUTCDate()} de ${meses[b.getUTCMonth()]} de ${b.getUTCFullYear()}`;
+  });
+  // Cuando la mancheta sale de la pantalla, la fila de secciones muestra el logotipo pequeño.
+  const mancheta = document.querySelector('[data-mancheta]');
+  const filas = document.querySelector('[data-secciones]');
+  if (mancheta && filas) {
+    new IntersectionObserver(([e]) => filas.classList.toggle('fija', !e.isIntersecting), { threshold: 0 }).observe(mancheta);
+  }
+  // En el celular, la sección activa queda a la vista dentro de la fila que se desliza.
+  document.querySelector('.secciones [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+</script>
+
 <style>
-  .cabecera {
+  .cabecera { display: contents; }
+
+  /* Franja de arriba: fecha y accesos de la casa */
+  .franja { font-family: var(--f-rotulo); font-size: .72rem; letter-spacing: .08em; }
+  .franja-fila { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 36px; }
+  .franja-fecha { margin: 0; color: var(--hueso-2); }
+  .franja-enlaces { list-style: none; display: flex; gap: 22px; }
+  .franja-enlaces a { color: var(--hueso-2); text-decoration: none; transition: color .2s; }
+  .franja-enlaces a:hover { color: var(--papel); }
+  @media (max-width: 640px) {
+    .franja-ciudad, .franja-enlaces li:not(:first-child) { display: none; }
+  }
+
+  /* Mancheta */
+  .mancheta {
+    display: grid;
+    grid-template-columns: 44px 1fr 44px;
+    align-items: center;
+    gap: 12px;
+    padding-block: clamp(18px, 2.4vw, 26px) clamp(14px, 2vw, 22px);
+    background: var(--papel);
+  }
+  .mancheta-logo { grid-column: 2; justify-self: center; text-decoration: none; color: var(--carbon); font-size: clamp(40px, 5vw, 58px); display: inline-flex; }
+  .en-portada .mancheta { padding-block: clamp(26px, 4vw, 52px) clamp(18px, 2.6vw, 30px); }
+  .en-portada .mancheta-logo { font-size: clamp(64px, 10vw, 128px); }
+  .mancheta-lema {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin: clamp(10px, 1.4vw, 16px) 0 0;
+    text-align: center;
+    font-size: clamp(.95rem, .9rem + .2vw, 1.05rem);
+    color: var(--tinta-2);
+  }
+  .mancheta-lema em { color: var(--carbon); }
+  .icono {
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    color: var(--carbon);
+  }
+  .icono svg { width: 22px; height: 22px; }
+  .buscar-boton { grid-column: 3; grid-row: 1; }
+  .menu-boton { grid-row: 1; }
+  .menu-lineas { display: grid; gap: 5px; width: 20px; }
+  .menu-lineas span { height: 1.5px; background: currentColor; transition: transform .3s var(--ease), opacity .2s; }
+  [aria-expanded='true'] .menu-lineas span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  [aria-expanded='true'] .menu-lineas span:nth-child(2) { opacity: 0; }
+  [aria-expanded='true'] .menu-lineas span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* Secciones: fila fija con doble filete, como el pie de una mancheta impresa */
+  .secciones {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(26, 22, 19, 0.94);
-    backdrop-filter: blur(10px) saturate(1.2);
-    -webkit-backdrop-filter: blur(10px) saturate(1.2);
-    color: var(--hueso);
-    border-bottom: 1px solid transparent;
-    transition: border-color 0.3s, background 0.3s;
+    background: var(--papel);
+    border-top: 1px solid var(--carbon);
+    border-bottom: 1px solid var(--linea);
+    box-shadow: 0 -3px 0 -2px var(--carbon);
+    transition: box-shadow .3s;
   }
-  .cabecera.con-scroll { border-bottom-color: var(--linea-clara); background: rgba(26, 22, 19, 0.97); }
-  .cabecera-fila {
+  .secciones.fija { box-shadow: 0 -3px 0 -2px var(--carbon), 0 10px 24px -18px rgba(31, 28, 25, .5); }
+  .secciones-fila { display: flex; align-items: center; gap: 20px; min-height: 50px; }
+  .secciones-logo, .secciones-buscar {
+    flex: none; display: inline-flex; text-decoration: none; color: var(--carbon);
+    opacity: 0; pointer-events: none; transition: opacity .25s, transform .3s var(--ease);
+  }
+  .secciones-logo { font-size: 26px; transform: translateY(4px); }
+  .secciones-buscar svg { width: 20px; height: 20px; }
+  .fija .secciones-logo, .fija .secciones-buscar { opacity: 1; pointer-events: auto; transform: none; }
+  .secciones ul {
+    list-style: none;
     display: flex;
-    align-items: center;
-    gap: 24px;
-    height: 72px;
+    flex: 1;
+    justify-content: center;
+    gap: clamp(18px, 2.6vw, 40px);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-  .cabecera-logo { text-decoration: none; font-size: 30px; margin-right: auto; display: inline-flex; }
-
-  .nav ul { display: flex; gap: clamp(20px, 2.6vw, 40px); list-style: none; }
-  .nav a {
-    font-family: var(--f-sub);
-    font-weight: 500;
-    font-size: 0.98rem;
-    letter-spacing: -0.005em;
+  .secciones ul::-webkit-scrollbar { display: none; }
+  .secciones li { flex: none; }
+  .secciones ul a {
+    display: block;
+    padding-block: 14px 13px;
+    font-family: var(--f-rotulo);
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
     text-decoration: none;
-    color: var(--hueso-2);
-    padding-block: 8px;
+    color: var(--carbon);
     position: relative;
-    transition: color 0.2s;
+    transition: color .2s;
   }
-  .nav a::after {
-    content: '';
-    position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 2px;
-    background: var(--terracota);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.35s var(--ease);
+  .secciones ul a::after {
+    content: ''; position: absolute; left: 50%; bottom: 5px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--luz);
+    transform: translateX(-50%) scale(0);
+    transition: transform .3s var(--ease);
   }
-  .nav a:hover, .nav a[aria-current='page'] { color: var(--hueso); }
-  .nav a:hover::after, .nav a[aria-current='page']::after { transform: scaleX(1); }
-  .cabecera-cta { min-height: 42px; padding-inline: 1.2em; font-size: 0.95rem; }
+  .secciones ul a:hover { color: var(--terracota-ink); }
+  .secciones ul a[aria-current='page']::after { transform: translateX(-50%) scale(1); }
 
-  .menu-boton {
-    display: none;
-    width: 44px; height: 44px;
-    background: none;
-    border: 1px solid var(--linea-clara);
-    border-radius: var(--radio);
-    cursor: pointer;
-    place-items: center;
+  .secciones-menu { display: none; flex: none; width: 40px; margin-left: calc(var(--gutter) - 10px); }
+  @media (max-width: 860px) {
+    .secciones-logo, .secciones-buscar { display: none; }
+    .fija .secciones-menu { display: grid; }
+    .fija .secciones ul, .secciones.fija ul { padding-left: 4px; }
+    .secciones-fila { padding-inline: 0; }
+    .secciones ul { justify-content: flex-start; padding-inline: var(--gutter); gap: 22px; mask-image: linear-gradient(90deg, #000 85%, transparent); }
   }
-  .menu-lineas { display: grid; gap: 6px; width: 18px; }
-  .menu-lineas span { height: 1.5px; background: var(--hueso); transition: transform 0.3s var(--ease); }
-  [aria-expanded='true'] .menu-lineas span:first-child { transform: translateY(3.75px) rotate(45deg); }
-  [aria-expanded='true'] .menu-lineas span:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  @media (min-width: 861px) {
+    .menu-boton { visibility: hidden; }
+  }
 
-  .menu-movil {
-    position: fixed;
-    inset: 72px 0 0 0;
-    background: var(--carbon);
-    overflow-y: auto;
-    padding-block: 24px 40px;
-  }
-  .menu-movil ol { list-style: none; border-top: 1px solid var(--linea-clara); }
-  .menu-movil li { border-bottom: 1px solid var(--linea-clara); }
-  .menu-movil li a {
-    display: grid;
-    grid-template-columns: 2.4em 1fr;
-    align-items: baseline;
-    gap: 2px 8px;
-    padding-block: 18px;
-    text-decoration: none;
-  }
-  .menu-movil .display { font-size: clamp(2.6rem, 12vw, 3.6rem); }
-  .menu-movil .mono { color: var(--hueso-2); }
-  .menu-movil .nota { grid-column: 2; font-size: var(--t-meta); }
-  .menu-movil a[aria-current='page'] .display { color: var(--terracota); }
+  /* Menú del celular */
+  .menu-movil { position: fixed; inset: 0; z-index: 60; overflow-y: auto; padding-bottom: 40px; }
+  .menu-tope { display: flex; justify-content: space-between; align-items: center; min-height: 64px; margin-bottom: 16px; }
+  .menu-logo { font-size: 36px; color: var(--carbon); text-decoration: none; display: inline-flex; }
+  .menu-movil ol { list-style: none; border-top: 1px solid var(--carbon); }
+  .menu-movil li { border-bottom: 1px solid var(--linea); }
+  .menu-movil li a { display: block; padding-block: 14px; text-decoration: none; }
+  .menu-movil .display { font-size: clamp(2.2rem, 10vw, 3rem); }
+  .menu-movil a[aria-current='page'] .display { font-style: italic; }
+  .menu-casa { list-style: none; display: grid; gap: 12px; margin-top: 28px; }
+  .menu-casa a { text-decoration: none; font-weight: 500; }
   .menu-pie { display: grid; gap: 12px; margin-top: 32px; }
   .menu-pie .btn { justify-content: center; }
-  .menu-pie p { color: var(--hueso-2); text-align: center; margin: 8px 0 0; }
-
+  .menu-pie p { text-align: center; margin: 8px 0 0; }
   @media (prefers-reduced-motion: no-preference) {
-    .menu-movil:not([hidden]) li { animation: entra 0.6s var(--ease) both; animation-delay: calc(var(--i) * 0.06s); }
+    .menu-movil:not([hidden]) li { animation: entra .5s var(--ease) both; animation-delay: calc(var(--i) * .05s); }
   }
-  @keyframes entra { from { opacity: 0; transform: translateY(14px); } }
-
-  @media (max-width: 960px) {
-    .nav, .cabecera-cta { display: none; }
-    .menu-boton { display: grid; }
-    .cabecera-fila { height: 64px; }
-    .menu-movil { inset: 64px 0 0 0; }
-  }
+  @keyframes entra { from { opacity: 0; transform: translateY(12px); } }
 </style>

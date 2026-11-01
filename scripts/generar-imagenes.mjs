@@ -16,14 +16,20 @@ const C = { carbon: '#1f1c19', papel: '#f4eee5', hueso: '#f4eee5', ceniza: '#b5a
 
 // Cada página: rótulo, título (admite <em>) y bajada.
 const paginas = {
-  inicio: { kicker: 'Productora audiovisual · Bogotá', titulo: 'Contamos, <em>y medimos,</em><br>el encuentro humano.', sub: 'Documental, cobertura, eventos y un medio propio: debates, noticias con contexto y documentales.' },
-  impacto: { kicker: 'Dial Impacto', titulo: 'Historias para organizaciones que <em>transforman.</em>', sub: 'Documental · Cobertura · Pieza + medición · Marca con propósito' },
-  medicion: { kicker: 'Dial Impacto · Pieza + medición', titulo: 'Medimos lo que una historia <em>mueve.</em>', sub: 'Evaluación antes y después de ver la pieza, lista para reportar.' },
-  encuentros: { kicker: 'Dial Encuentros', titulo: 'Producimos el encuentro. Y lo dejamos <em>contado.</em>', sub: 'Foros · Festivales · Lanzamientos · Música en vivo' },
+  inicio: { kicker: 'Medio independiente · Bogotá', titulo: 'Análisis, no <em>primicia.</em>', sub: 'Noticias con contexto, opinión, podcast, documentales y debates.' },
+  noticias: { kicker: 'Noticias', titulo: 'No contamos primero: contamos <em>completo.</em>', sub: 'Colombia, América Latina y el mundo, con fuentes.' },
+  opinion: { kicker: 'Opinión', titulo: 'Ideas con argumentos, <em>y con nombre propio.</em>', sub: 'Columnas con firma. Escribe en Dial.' },
+  podcast: { kicker: 'Podcast · Con la RED Quynza', titulo: 'Lo que la gente quiere es <em>vivir.</em>', sub: 'Conversaciones largas con quienes construyen paz.' },
+  documentales: { kicker: 'Documentales', titulo: 'Historias que piden <em>tiempo.</em>', sub: 'Música, territorio y memoria.' },
+  laboratorio: { kicker: 'Laboratorio', titulo: 'No quién ganó, sino <em>quién cambió.</em>', sub: 'Debates y experimentos de conversación.' },
+  principios: { kicker: 'Principios editoriales', titulo: 'Lo que puedes <em>exigirnos.</em>', sub: 'Fuentes a la vista, las partes siempre, correcciones visibles.' },
+  nosotros: { kicker: 'Nosotros', titulo: 'Un lugar para <em>entender.</em>', sub: 'Medio independiente hecho en Bogotá.' },
+  estudio: { kicker: 'Productora audiovisual · Bogotá', titulo: '', sub: 'Documental, cobertura y eventos para organizaciones. Contamos, y medimos, el encuentro humano.', linea: 'estudio' },
+  impacto: { kicker: 'Dial Estudio · Impacto', titulo: 'Historias para organizaciones que <em>transforman.</em>', sub: 'Documental · Cobertura · Pieza + medición · Marca con propósito' },
+  medicion: { kicker: 'Dial Estudio · Pieza + medición', titulo: 'Medimos lo que una historia <em>mueve.</em>', sub: 'Evaluación antes y después de ver la pieza, lista para reportar.' },
+  encuentros: { kicker: 'Dial Estudio · Encuentros', titulo: 'Producimos el encuentro. Y lo dejamos <em>contado.</em>', sub: 'Foros · Festivales · Lanzamientos · Música en vivo' },
   celebraciones: { kicker: 'Dial Encuentros · Celebraciones', titulo: 'Lo que se celebra una vez, <em>se queda contado.</em>', sub: 'Bodas · Aniversarios · Serenatas', serif: true },
-  medio: { kicker: 'Sintonizar es conversar', titulo: '', sub: 'Debates, noticias con contexto, documentales y podcast.', linea: 'medio' },
-  nosotros: { kicker: 'Nosotros', titulo: 'Un solo equipo, de la idea al <em>estreno.</em>', sub: 'Dirección, imagen, sonido y música original, en casa.' },
-  contacto: { kicker: 'Cotizaciones a la medida', titulo: 'Cuéntanos qué quieres <em>contar.</em>', sub: 'dialmediocol@gmail.com · WhatsApp +57 310 481 3624' },
+  contacto: { kicker: 'Escríbenos', titulo: 'Cuéntanos qué quieres <em>contar.</em>', sub: 'dialmediocol@gmail.com · WhatsApp +57 310 481 3624' },
 };
 
 // El símbolo es el aro de pluma (marca v5); geometría en src/lib/aro.mjs

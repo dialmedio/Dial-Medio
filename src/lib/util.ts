@@ -11,7 +11,8 @@ export const lineas = {
   impacto: { nombre: 'Dial Impacto', ruta: '/impacto' },
   encuentros: { nombre: 'Dial Encuentros', ruta: '/encuentros' },
   celebraciones: { nombre: 'Celebraciones', ruta: '/encuentros/celebraciones' },
-  medio: { nombre: 'Dial Medio', ruta: '/medio' },
+  medio: { nombre: 'Dial', ruta: '/' },
+  estudio: { nombre: 'Dial Estudio', ruta: '/estudio' },
 } as const;
 
 /** Ruta de un caso según su vitrina. */

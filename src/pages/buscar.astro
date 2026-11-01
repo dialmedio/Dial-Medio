@@ -1,0 +1,79 @@
+---
+/**
+ * Buscador de todo Dial con Pagefind: el índice se arma al compilar (`npm run build` corre `pagefind --site dist`)
+ * y busca en el navegador, sin servidor. En `astro dev` no hay índice: hay que compilar para probarlo.
+ */
+import Base from '../layouts/Base.astro';
+---
+
+<Base titulo="Buscar" descripcion="Busca en las noticias, columnas, podcast y documentales de Dial." noindex>
+  <div class="tema-papel">
+    <header class="contenedor pagina-cabeza">
+      <p class="kicker">Archivo de Dial</p>
+      <h1>Buscar</h1>
+    </header>
+    <section class="contenedor buscador">
+      <form role="search" class="caja" data-buscar>
+        <label for="q" class="sr-only">Buscar en Dial</label>
+        <input id="q" name="q" type="search" placeholder="Reforma tributaria, Amazonía, Brasil…" autocomplete="off" autofocus />
+        <button type="submit" class="btn">Buscar</button>
+      </form>
+      <p class="datos" data-estado aria-live="polite"></p>
+      <ol class="resultados" data-resultados></ol>
+    </section>
+  </div>
+</Base>
+
+<script is:inline type="module">
+  const form = document.querySelector('[data-buscar]');
+  const input = form.querySelector('input');
+  const estado = document.querySelector('[data-estado]');
+  const lista = document.querySelector('[data-resultados]');
+  let pf;
+  const cargar = async () => {
+    if (pf) return pf;
+    try {
+      pf = await import('/pagefind/pagefind.js');
+      await pf.options({ excerptLength: 26 });
+    } catch {
+      estado.textContent = 'El buscador se activa en la versión publicada del sitio.';
+    }
+    return pf;
+  };
+  const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  let turno = 0;
+  const buscar = async (q) => {
+    const yo = ++turno;
+    history.replaceState(null, '', q ? `?q=${encodeURIComponent(q)}` : location.pathname);
+    if (!q.trim()) { lista.innerHTML = ''; estado.textContent = ''; return; }
+    const p = await cargar();
+    if (!p) return;
+    const r = await p.debouncedSearch(q, {}, 200);
+    if (!r || yo !== turno) return;
+    const datos = await Promise.all(r.results.slice(0, 20).map((x) => x.data()));
+    estado.textContent = r.results.length ? `${r.results.length} resultado${r.results.length === 1 ? '' : 's'}` : 'Nada por aquí. Prueba con otras palabras.';
+    lista.innerHTML = datos
+      .map((d) => `<li><a href="${d.url.replace(/(\/index)?\.html$|\/$/, '') || '/'}" class="titular t-3">${esc(d.meta.title || '')}</a><p>${d.excerpt}</p></li>`)
+      .join('');
+  };
+  form.addEventListener('submit', (e) => { e.preventDefault(); buscar(input.value); });
+  input.addEventListener('input', () => buscar(input.value));
+  const q = new URLSearchParams(location.search).get('q');
+  if (q) { input.value = q; buscar(q); }
+</script>
+
+<style>
+  .buscador { padding-bottom: clamp(64px, 8vw, 112px); display: grid; gap: 20px; max-width: calc(860px + 2 * var(--gutter)); margin-inline: 0; }
+  .caja { display: flex; gap: 8px; border-top: 1px solid var(--carbon); padding-top: 24px; }
+  .caja input {
+    flex: 1; min-width: 0; min-height: 56px; padding: 0 16px; border: 1px solid var(--carbon); background: var(--papel);
+    font: inherit; font-size: 1.15rem; color: var(--carbon); border-radius: 0;
+  }
+  .caja input:focus { outline: 2px solid var(--luz); outline-offset: 2px; }
+  .caja .btn { min-height: 56px; }
+  .resultados { list-style: none; }
+  .resultados :global(li) { padding: 22px 0; border-bottom: 1px solid var(--linea); display: grid; gap: 8px; }
+  .resultados :global(a) { text-decoration: none; }
+  .resultados :global(p) { margin: 0; color: var(--tinta-2); }
+  .resultados :global(mark) { background: none; color: var(--carbon); font-weight: 650; box-shadow: inset 0 -.35em rgba(212, 81, 46, .25); }
+</style>

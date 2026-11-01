@@ -1,0 +1,117 @@
+---
+/** Ficha de una pieza en video (podcast, documental, debate): el reproductor, la ficha técnica y el texto. */
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import VideoLite from './VideoLite.astro';
+import Compartir from './Compartir.astro';
+import { anio, miniatura, urlVideo } from '../lib/util';
+import { fechaLarga, isoDia } from '../lib/medio';
+
+interface Props {
+  pieza: CollectionEntry<'medio'>;
+  seccion: { nombre: string; href: string };
+  kicker: string;
+  coproduccion?: string;
+}
+const { pieza, seccion, kicker, coproduccion } = Astro.props;
+const d = pieza.data;
+const { Content } = await render(pieza);
+const aSegundos = (t: string) => t.split(':').reduce((s, x) => s * 60 + Number(x), 0);
+const url = new URL(Astro.url.pathname, Astro.site).toString();
+const iso = (t?: string) => {
+  if (!t) return undefined;
+  const s = aSegundos(t);
+  return `PT${Math.floor(s / 3600) ? Math.floor(s / 3600) + 'H' : ''}${Math.floor((s % 3600) / 60)}M${s % 60}S`;
+};
+const ld = d.video
+  ? {
+      '@type': 'VideoObject',
+      name: d.titulo,
+      description: d.resumen,
+      thumbnailUrl: [miniatura(d.video)],
+      uploadDate: d.fecha.toISOString(),
+      duration: iso(d.duracion),
+      embedUrl: `https://www.youtube-nocookie.com/embed/${d.video.id}`,
+      contentUrl: urlVideo(d.video),
+      publisher: { '@id': new URL('/#dial', Astro.site).toString() },
+    }
+  : undefined;
+---
+
+<Base titulo={d.titulo} descripcion={d.resumen} imagen={d.video ? miniatura(d.video) : undefined} tipo="video.other" ld={ld}>
+  <section class="tema-carbon grano pieza-portada" data-pagefind-body>
+    <div class="contenedor">
+      <p class="pieza-rotulos"><a href={seccion.href} class="rotulo">{seccion.nombre}</a><span class="rotulo gris">{kicker}</span></p>
+      <h1 class="titular pieza-titulo" data-pagefind-meta="title">{d.titulo}</h1>
+      {d.video && <div class="pieza-video"><VideoLite video={d.video} titulo={d.titulo} cargaInmediata /></div>}
+      <dl class="ficha">
+        <div><dt>Estreno</dt><dd><time datetime={isoDia(d.fecha)}>{fechaLarga(d.fecha)}</time></dd></div>
+        {d.duracion && <div><dt>Duración</dt><dd>{d.duracion}</dd></div>}
+        {d.lugar && <div><dt>Lugar</dt><dd>{d.lugar}</dd></div>}
+        <div><dt>Producción</dt><dd>{coproduccion ?? 'Dial'}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor cuerpo">
+      <div class="principal">
+        <p class="lead-xl">{d.resumen}</p>
+        <div class="prosa"><Content /></div>
+        <Compartir titulo={d.titulo} url={url} />
+      </div>
+      <aside class="lado">
+        {
+          d.capitulos.length > 0 && (
+            <div>
+              <p class="rotulo">Capítulos</p>
+              <ol class="caps">
+                {d.capitulos.map((c) => (
+                  <li>
+                    <a href={`https://www.youtube.com/watch?v=${d.video!.id}&t=${aSegundos(c.tiempo)}s`} target="_blank" rel="noopener">
+                      <span class="tiempo">{c.tiempo}</span> {c.titulo}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+        {
+          d.participantes.map((g) => (
+            <div>
+              <p class="rotulo">{g.grupo}</p>
+              <ul class="nombres">{g.nombres.map((n) => <li>{n}</li>)}</ul>
+            </div>
+          ))
+        }
+        <slot name="lado" />
+      </aside>
+    </div>
+  </section>
+  <slot />
+</Base>
+
+<style>
+  .pieza-portada { padding-block: clamp(40px, 6vw, 80px); position: relative; }
+  .pieza-portada .contenedor { display: grid; gap: 20px; max-width: calc(1180px + 2 * var(--gutter)); }
+  .pieza-rotulos { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+  .pieza-rotulos a { text-decoration: none; }
+  .gris { color: var(--hueso-2); }
+  .pieza-titulo { font-size: clamp(2.3rem, 1.2rem + 3.6vw, 4.6rem); line-height: 1; max-width: 22ch; }
+  .pieza-video { margin-top: 10px; }
+  .ficha { display: flex; flex-wrap: wrap; gap: 12px 48px; margin: 6px 0 0; }
+  .ficha dt { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .14em; text-transform: uppercase; color: var(--hueso-2); }
+  .ficha dd { margin: 4px 0 0; }
+
+  .cuerpo { display: grid; gap: 56px; max-width: calc(1180px + 2 * var(--gutter)); }
+  @media (min-width: 980px) { .cuerpo { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 80px; } }
+  .principal { display: grid; gap: 28px; align-content: start; }
+  .principal .lead-xl { margin: 0; }
+  .lado { display: grid; gap: 40px; align-content: start; }
+  .caps, .nombres { list-style: none; margin-top: 14px; border-top: 1px solid var(--carbon); }
+  .caps li, .nombres li { border-bottom: 1px solid var(--linea); padding: 10px 0; font-size: 1rem; line-height: 1.45; }
+  .caps a { text-decoration: none; display: grid; grid-template-columns: 4.4em 1fr; gap: 8px; }
+  .caps a:hover { color: var(--terracota-ink); }
+  .tiempo { color: var(--terracota-ink); font-variant-numeric: tabular-nums; }
+</style>

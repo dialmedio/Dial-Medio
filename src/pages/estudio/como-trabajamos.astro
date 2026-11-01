@@ -1,0 +1,200 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PortadaPagina from '../../components/PortadaPagina.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import cap from '../../data/capacidades.json';
+import { dos } from '../../lib/util';
+
+const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.data.orden);
+
+const recorrido = [
+  'Debates entre sectores enfrentados',
+  'Documental en el Pacífico colombiano',
+  'Rodajes en tres países de Asia',
+  'Barranquilla, Cali y Popayán',
+  'Pereira, documental en preparación',
+  'Periodismo de datos',
+];
+---
+
+<Base
+  titulo="Cómo trabajamos · Dial Estudio"
+  descripcion="Dial Estudio: un solo equipo de la investigación al estreno. Imagen, posproducción, música original, sonido y espacios."
+>
+  <PortadaPagina
+    kicker="Dial Estudio · Cómo trabajamos"
+    titulo="Un solo equipo, de la idea al <em>estreno.</em>"
+    bajada="La productora de Dial. Contamos, y medimos, el encuentro humano."
+    indice={[{ texto: 'Cómo trabajamos', href: '#proceso' }, { texto: 'Equipo', href: '#equipo' }, { texto: 'Capacidades', href: '#capacidades' }, { texto: 'Lo que no hacemos', href: '#criterios' }]}
+  />
+
+  <section class="seccion tema-papel">
+    <div class="contenedor intro">
+      <p class="lead-xl intro-frase" data-revela>
+        Trabajamos <em>despacio</em> donde hay que escuchar y con <em>precisión</em> donde hay que entregar.
+      </p>
+      <div class="recorrido" data-revela style="--retraso:.1s">
+        <p class="kicker sin-linea">Hemos filmado</p>
+        <ul>{recorrido.map((r) => <li>{r}</li>)}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-hueso" id="proceso">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} — Cómo trabajamos</p>
+          <h2 class="display d-2">De la idea al estreno.</h2>
+        </div>
+        <p class="texto-2" data-revela>Hablas con una sola persona durante todo el proyecto. La historia no cambia de manos.</p>
+      </header>
+      <ol class="proceso">
+        {
+          cap.proceso.map((p, i) => (
+            <li data-revela style={`--retraso:${i * 0.05}s`}>
+              <span class="display proc-n">{dos(i + 1)}</span>
+              <div>
+                <h3 class="sub s-1">{p.titulo}</h3>
+                <p class="texto-2">{p.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-papel" id="equipo">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(2)} — Equipo</p>
+          <h2 class="display d-2">Quién está detrás.</h2>
+        </div>
+      </header>
+      <div class="equipo">
+        {
+          equipo.map((p) => (
+            <article class:list={['persona', { 'con-foto': !!p.data.foto }]} data-revela>
+              {p.data.foto && (
+                <Image src={p.data.foto} alt={p.data.nombre} widths={[480, 800]} sizes="(min-width: 900px) 30vw, 100vw" />
+              )}
+              <div class="persona-texto">
+                <p class="kicker sin-linea">{p.data.rol}</p>
+                <h3 class="display d-3">{p.data.nombre}</h3>
+                <p class="texto-2">{p.data.bio}</p>
+              </div>
+            </article>
+          ))
+        }
+        <article class="persona red tema-carbon grano" data-revela style="--retraso:.1s">
+          <div class="persona-texto">
+            <p class="kicker sin-linea">Imagen · Sonido · Montaje · Música</p>
+            <h3 class="display d-3">Red de realizadores</h3>
+            <p class="texto-2">
+              Fotógrafos, sonidistas, editores y músicos que se suman según cada proyecto, bajo una misma dirección y un mismo
+              estándar.
+            </p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano" id="capacidades">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} — <span class="acento">Capacidades</span></p>
+          <h2 class="display d-2">Con qué trabajamos.</h2>
+        </div>
+        <p class="texto-2" data-revela>Equipos propios y espacios aliados en Bogotá.</p>
+      </header>
+      <div class="capacidades">
+        {
+          cap.grupos.map((g, i) => (
+            <div data-revela style={`--retraso:${i * 0.06}s`}>
+              <h3 class="sub s-2">{g.titulo}</h3>
+              <ul>{g.items.map((it) => <li>{it}</li>)}</ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="sueltos" data-revela>
+        <p class="kicker sin-linea">También por día o por pieza</p>
+        <ul class="etiquetas">{cap.sueltos.map((s) => <li class="etiqueta">{s}</li>)}</ul>
+        <a href="/contacto?linea=suelto" class="enlace">Cotizar un servicio suelto <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-papel" id="criterios">
+    <div class="contenedor criterios">
+      <div data-revela>
+        <p class="kicker">{dos(4)} — Criterios de la casa</p>
+        <h2 class="display d-3">Lo que no hacemos.</h2>
+      </div>
+      <ul>
+        {
+          cap.criterios.map((c, i) => (
+            <li data-revela style={`--retraso:${i * 0.08}s`}>
+              <h3 class="sub s-2">{c.titulo}</h3>
+              <p class="texto-2">{c.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CTAFinal />
+</Base>
+
+<style>
+  .intro { display: grid; gap: 48px; align-items: end; }
+  .intro-frase { margin: 0; max-width: 22ch; font-size: clamp(1.8rem, 1rem + 2.4vw, 3.2rem); line-height: 1.2; }
+  .recorrido ul { list-style: none; margin-top: 14px; border-top: 1px solid var(--borde); }
+  .recorrido li { padding: 13px 0; border-bottom: 1px solid var(--borde); font-size: 1.1rem; }
+  @media (min-width: 980px) { .intro { grid-template-columns: 1.5fr 1fr; gap: 88px; } }
+
+  .proceso { list-style: none; display: grid; border-top: 1px solid var(--borde); }
+  .proceso li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 16px; padding: 28px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
+  .proceso p { margin: 8px 0 0; }
+  .proc-n { font-size: 2.6rem; color: var(--terracota); line-height: 1; }
+  @media (min-width: 900px) { .proceso { grid-template-columns: 1fr 1fr; column-gap: 56px; } }
+
+  .equipo { display: grid; gap: 24px; }
+  @media (min-width: 900px) { .equipo { grid-template-columns: 2fr 1fr; } }
+  .persona { display: grid; gap: 24px; align-content: start; padding: clamp(28px, 4vw, 48px); border: 1px solid var(--borde); position: relative; }
+  .persona.con-foto { padding: 0; border: 0; gap: 28px; align-items: end; }
+  @media (min-width: 700px) { .persona.con-foto { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: 36px; } }
+  .persona :global(img) { aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; width: 100%; border-radius: 0; }
+  .con-foto .persona-texto { padding-bottom: 8px; }
+  .red { align-content: end; }
+  .persona-texto { display: grid; gap: 14px; align-content: start; }
+  .persona-texto p { margin: 0; max-width: 52ch; }
+  .red { border-color: transparent; }
+
+  .capacidades { display: grid; gap: 40px 32px; }
+  .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 14px; align-content: start; }
+  .capacidades ul { list-style: none; display: grid; gap: 8px; }
+  .capacidades li { color: var(--hueso-2); font-size: 1rem; line-height: 1.5; }
+  @media (min-width: 760px) { .capacidades { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .capacidades { grid-template-columns: repeat(4, 1fr); } }
+  .sueltos { margin-top: clamp(56px, 7vw, 96px); display: grid; gap: 20px; justify-items: start; }
+  .sueltos .etiqueta { color: var(--hueso); }
+
+  .criterios { display: grid; gap: 40px; }
+  .criterios h2 { margin-top: 18px; }
+  .criterios ul { list-style: none; display: grid; gap: 28px; }
+  .criterios li { border-top: 1px solid var(--borde); padding-top: 18px; display: grid; gap: 8px; }
+  .criterios li p { margin: 0; }
+  @media (min-width: 900px) {
+    .criterios { grid-template-columns: 1fr 2fr; }
+    .criterios ul { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>

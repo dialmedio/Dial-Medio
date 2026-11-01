@@ -1,0 +1,256 @@
+---
+import { render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import Firma from '../../../components/Firma.astro';
+import Compartir from '../../../components/Compartir.astro';
+import Laminas from '../../../components/Laminas.astro';
+import NoticiaCard from '../../../components/NoticiaCard.astro';
+import sitio from '../../../data/sitio.json';
+import {
+  noticiasPublicadas, lineas, rotulo, conAcento, sinAcento, fechaLarga, isoDia, lectura, partirFuente, rutaNoticia, slugSerie,
+} from '../../../lib/medio';
+
+export async function getStaticPaths() {
+  const todas = await noticiasPublicadas();
+  return todas.map((n) => ({ params: { linea: n.data.linea, slug: n.id }, props: { n, todas } }));
+}
+
+const { n, todas } = Astro.props;
+const d = n.data;
+const { Content } = await render(n);
+const linea = lineas[d.linea];
+const url = new URL(rutaNoticia(n), Astro.site).toString();
+const vertical = d.portada.height > d.portada.width * 1.05;
+const og = await getImage({ src: d.portada, width: 1200, format: 'jpg', quality: 80 });
+
+const serie = d.serie ? todas.filter((x) => x.data.serie?.nombre === d.serie!.nombre).sort((a, b) => a.data.serie!.parte - b.data.serie!.parte) : [];
+const mas = todas.filter((x) => x.id !== n.id && x.data.linea === d.linea && !serie.includes(x)).slice(0, 3);
+const otras = mas.length < 3 ? todas.filter((x) => x.id !== n.id && x.data.linea !== d.linea).slice(0, 3 - mas.length) : [];
+const minutos = lectura(n.body);
+
+const ld = {
+  '@type': 'NewsArticle',
+  headline: sinAcento(d.titulo),
+  description: d.bajada,
+  image: [new URL(og.src, Astro.site).toString()],
+  datePublished: d.fecha.toISOString(),
+  dateModified: (d.actualizado ?? d.fecha).toISOString(),
+  author: [{ '@type': d.firma === 'Redacción Dial' ? 'Organization' : 'Person', name: d.firma }],
+  publisher: { '@id': new URL('/#dial', Astro.site).toString() },
+  articleSection: linea.nombre,
+  mainEntityOfPage: url,
+  isAccessibleForFree: true,
+  inLanguage: 'es-CO',
+};
+---
+
+<Base
+  titulo={sinAcento(d.titulo)}
+  descripcion={d.bajada}
+  imagen={og.src}
+  imagenAlt={d.portadaAlt ?? sinAcento(d.titulo)}
+  tipo="article"
+  articulo={{ publicado: d.fecha, modificado: d.actualizado, autor: d.firma, seccion: linea.nombre }}
+  ld={ld}
+>
+  <article class="nota tema-papel" data-pagefind-body>
+    <header class="contenedor nota-cabeza">
+      <p class="nota-rotulos">
+        <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}</a>
+        {d.serie && <a href={`/especiales/${slugSerie(d.serie.nombre)}`} class="rotulo gris">{d.serie.nombre} · Parte {d.serie.parte} de {d.serie.de}</a>}
+        {d.numero && <span class="rotulo gris">N.º {d.numero}</span>}
+      </p>
+      <h1 class="titular nota-titulo" set:html={conAcento(d.titulo)} data-pagefind-meta="title" />
+      <p class="nota-bajada">{d.bajada}</p>
+      <div class="nota-firma">
+        <Firma nombre={d.firma} enlace={d.firmaEnlace ?? (d.firma === 'Redacción Dial' ? '/nosotros' : undefined)} rol={d.linea === 'expediente' ? 'Publica la RED Quynza · diseño y diagramación de Dial' : d.coproduccion ? `En coproducción con la ${d.coproduccion}` : undefined} />
+        <p class="datos">
+          <time datetime={isoDia(d.fecha)}>{fechaLarga(d.fecha)}</time>
+          {d.lugar && <span>{d.lugar}</span>}
+          <span>{minutos} min de lectura</span>
+        </p>
+      </div>
+    </header>
+
+    <figure class:list={['contenedor', 'nota-foto', { vertical }]}>
+      <div class="foto">
+        <Image
+          src={d.portada}
+          alt={d.portadaAlt ?? ''}
+          widths={vertical ? [480, 720, 1080, 1440] : [640, 960, 1320, 1800, 2400]}
+          sizes={vertical ? '(min-width: 900px) 640px, 100vw' : '(min-width: 1400px) 1320px, 100vw'}
+          quality={82}
+          loading="eager"
+          fetchpriority="high"
+          style={`object-position:${d.foco}`}
+          data-pagefind-meta="image[src]"
+        />
+      </div>
+      {d.portadaCredito && <figcaption class="pie-foto">Foto: {d.portadaCredito}</figcaption>}
+    </figure>
+
+    <div class="contenedor nota-cuerpo">
+      <div class="nota-principal">
+        {d.periodo && <p class="rotulo gris periodo">{d.periodo}</p>}
+        <div class="prosa">
+          <Content />
+        </div>
+
+        {
+          d.pregunta && (
+            <aside class="pregunta">
+              <p class="rotulo">La pregunta</p>
+              <p class="pregunta-texto">{d.pregunta}</p>
+              <p class="nota-chica">Respóndenos en <a href={sitio.redes[0].url} target="_blank" rel="noopener">Instagram</a> o escríbenos a <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a>.</p>
+            </aside>
+          )
+        }
+
+        {d.laminas.length > 0 && <div class="nota-laminas"><Laminas laminas={d.laminas} titulo={sinAcento(d.titulo)} /></div>}
+
+        {
+          d.fuentes.length > 0 && (
+            <section class="fuentes" aria-labelledby="fuentes-t">
+              <h2 class="rotulo" id="fuentes-t">Fuentes</h2>
+              <ol>
+                {d.fuentes.map((f) => {
+                  const { medio, nota } = partirFuente(f.texto);
+                  return (
+                    <li>
+                      {f.url ? <a href={f.url} target="_blank" rel="noopener nofollow">{medio}</a> : <span>{medio}</span>}
+                      {nota && <span class="nota-fuente">{nota}</span>}
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          )
+        }
+        {
+          d.creditos.length > 0 && (
+            <section class="fuentes creditos" aria-labelledby="creditos-t">
+              <h2 class="rotulo" id="creditos-t">Fotos</h2>
+              <ul>
+                {d.creditos.map((c) => (
+                  <li>{c.url ? <a href={c.url} target="_blank" rel="noopener nofollow">{c.texto}</a> : c.texto}</li>
+                ))}
+              </ul>
+              <p class="nota-chica">Las fotos llevan el revelado de Dial (color y grano de película).</p>
+            </section>
+          )
+        }
+
+        {
+          d.correcciones.length > 0 && (
+            <aside class="erratas" id="correcciones">
+              <p class="rotulo">Correcciones</p>
+              {d.correcciones.map((c) => <p><time datetime={isoDia(c.fecha)}>{fechaLarga(c.fecha)}</time>: {c.texto}</p>)}
+            </aside>
+          )
+        }
+        <div class="nota-pie">
+          <Compartir titulo={sinAcento(d.titulo)} url={url} />
+          <p class="nota-chica aviso">¿Ves un error? <a href={`mailto:${sitio.correo}?subject=${encodeURIComponent('Corrección: ' + sinAcento(d.titulo))}`}>Escríbenos</a> y lo corregimos a la vista. <a href="/principios#correcciones">Cómo corregimos</a>.</p>
+        </div>
+      </div>
+
+      <aside class="nota-lado">
+        {
+          serie.length > 0 && (
+            <nav class="lado-bloque" aria-label={d.serie!.nombre}>
+              <p class="rotulo">Especial</p>
+              <p class="titular t-3"><a href={`/especiales/${slugSerie(d.serie!.nombre)}`}>{d.serie!.nombre}</a></p>
+              <ol class="serie-lista">
+                {Array.from({ length: d.serie!.de }, (_, i) => {
+                  const p = serie.find((x) => x.data.serie!.parte === i + 1);
+                  return (
+                    <li class:list={{ actual: p?.id === n.id, falta: !p }}>
+                      <span class="serie-n">{i + 1}</span>
+                      {p ? (p.id === n.id ? <span set:html={conAcento(p.data.titulo)} /> : <a href={rutaNoticia(p)} set:html={conAcento(p.data.titulo)} />) : <span>Próximamente</span>}
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+          )
+        }
+        <div class="lado-bloque">
+          <p class="rotulo">{linea.nombre} · {linea.cadencia}</p>
+          <p class="lado-texto">{linea.texto}</p>
+          <a href={`/noticias/${d.linea}`} class="enlace">Todo {linea.nombre} <span>→</span></a>
+        </div>
+      </aside>
+    </div>
+  </article>
+
+  {
+    mas.length + otras.length > 0 && (
+      <section class="seccion compacta tema-hueso">
+        <div class="contenedor">
+          <header class="seccion-cabeza"><h2>Sigue leyendo</h2><a href="/noticias" class="ver">Todas las noticias →</a></header>
+          <div class="rejilla r3 con-filetes">
+            {[...mas, ...otras].map((x) => <NoticiaCard n={x} />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .nota { padding-bottom: clamp(56px, 7vw, 96px); }
+  .nota-cabeza { padding-top: clamp(32px, 5vw, 64px); display: grid; gap: 18px; justify-items: start; max-width: calc(1180px + 2 * var(--gutter)); }
+  .nota-rotulos { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+  .gris { color: var(--texto-2); }
+  .nota-titulo { font-size: clamp(2.5rem, 1.2rem + 4.4vw, 5.2rem); line-height: .98; max-width: 18ch; }
+  .nota-bajada { font-size: clamp(1.18rem, 1.05rem + .55vw, 1.5rem); line-height: 1.42; margin: 0; max-width: 46ch; color: var(--tinta-2); }
+  .nota-firma { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 28px; padding-top: 18px; margin-top: 4px; border-top: 1px solid var(--linea); width: 100%; }
+
+  .nota-foto { margin-block: clamp(28px, 4vw, 48px); max-width: calc(1180px + 2 * var(--gutter)); }
+  .nota-foto .foto { aspect-ratio: 3 / 2; }
+  .nota-foto.vertical { max-width: calc(760px + 2 * var(--gutter)); margin-inline: 0; }
+  .nota-foto.vertical .foto { aspect-ratio: auto; max-height: none; }
+  .nota-foto:hover img { transform: none; }
+
+  .nota-cuerpo { display: grid; gap: 56px; max-width: calc(1180px + 2 * var(--gutter)); }
+  @media (min-width: 1040px) { .nota-cuerpo { grid-template-columns: minmax(0, 1fr) 300px; gap: 72px; } }
+  .nota-principal { display: grid; gap: clamp(40px, 5vw, 56px); align-content: start; min-width: 0; }
+  .periodo { margin: 0 0 -24px; }
+
+  .pregunta { border-top: 1px solid var(--carbon); box-shadow: 0 -4px 0 -3px var(--carbon); padding-top: 18px; display: grid; gap: 10px; max-width: 60ch; }
+  .pregunta p { margin: 0; }
+  .pregunta-texto { font-family: var(--f-display); font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1.12; }
+
+  .fuentes { display: grid; gap: 12px; max-width: 70ch; }
+  .fuentes h2 { color: var(--carbon); }
+  .fuentes ol, .fuentes ul { padding-left: 1.4em; display: grid; gap: 8px; font-size: .92rem; line-height: 1.45; }
+  .fuentes ol li::marker { font-variant-numeric: tabular-nums; color: var(--texto-2); }
+  .fuentes ul { list-style: none; padding: 0; }
+  .fuentes a { text-decoration-color: var(--linea); }
+  .fuentes a:hover { text-decoration-color: currentColor; }
+  .nota-fuente { display: block; color: var(--texto-2); font-size: .86rem; }
+  .nota-chica { margin: 0; font-size: .86rem; color: var(--texto-2); }
+  .nota-chica a { color: inherit; }
+
+  .erratas { display: grid; gap: 8px; padding: 16px 18px; border-left: 2px solid var(--luz); background: var(--fibra); max-width: 66ch; }
+  .erratas p { margin: 0; font-size: .95rem; }
+  .nota-pie { display: grid; gap: 14px; padding-top: 20px; border-top: 1px solid var(--linea); }
+  .aviso a { color: inherit; }
+
+  .nota-lado { display: grid; gap: 40px; align-content: start; }
+  @media (min-width: 1040px) { .nota-lado { position: sticky; top: 80px; } }
+  .lado-bloque { display: grid; gap: 12px; padding-top: 14px; border-top: 1px solid var(--carbon); justify-items: start; }
+  .lado-bloque p { margin: 0; }
+  .lado-texto { font-size: .95rem; color: var(--texto-2); }
+  .serie-lista { list-style: none; width: 100%; counter-reset: s; }
+  .serie-lista li { display: grid; grid-template-columns: 1.6em 1fr; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--linea); font-size: .95rem; line-height: 1.3; }
+  .serie-lista a { text-decoration: none; }
+  .serie-lista a:hover { color: var(--terracota-ink); }
+  .serie-lista :global(em) { font-family: inherit; font-size: 1em; font-style: normal; }
+  .serie-n { font-family: var(--f-display); font-size: 1.15rem; line-height: 1; color: var(--texto-2); }
+  .serie-lista .actual { font-weight: 650; }
+  .serie-lista .actual .serie-n { color: var(--luz); }
+  .serie-lista .falta { color: var(--texto-2); }
+  .serie-lista .actual :global(em) { font-weight: inherit; }
+</style>

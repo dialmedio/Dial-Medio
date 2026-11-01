@@ -1,13 +1,13 @@
 # Dial — sitio web
 
-Sitio comercial de Dial (productora audiovisual). Astro estático, pensado para Cloudflare Pages.
+Sitio de Dial, medio independiente (noticias, opinión, podcast, documentales, laboratorio), y de Dial Estudio, su productora. Astro estático en Cloudflare (Workers).
 
 ## Trabajar en local
 
 ```bash
 npm install
 npm run dev        # http://localhost:4321
-npm run build      # genera dist/
+npm run build      # genera dist/ y el índice del buscador (Pagefind)
 ```
 
 ## Editar contenido (sin tocar componentes)
@@ -18,13 +18,38 @@ npm run build      # genera dist/
 | Capacidades, servicios sueltos, criterios, proceso | `src/data/capacidades.json` |
 | Paquetes de servicio | `src/content/servicios/*.md` |
 | Casos por encargo (Impacto, Encuentros, Celebraciones) | `src/content/casos/<nombre-del-caso>/index.md` |
-| Obra propia (debates, documentales, clips) | `src/content/medio/*.md` |
+| Noticias (Al Aire, Termómetro, Expediente, Arte y memoria…) | `src/content/noticias/<pieza>/index.md` + `portada.jpg` + `laminas/` |
+| Columnas de opinión | `src/content/opinion/*.md` (copiar `_plantilla.md`) |
+| Autores (columnistas, invitados) | `src/content/autores/*.json` + retrato en trama `.png` |
+| Ensayos fotográficos | `src/content/fotografia/<ensayo>/index.md` (la sección sale en el menú con el primero) |
+| Presentación de cada especial (serie) | `presentaciones` en `src/lib/medio.ts` |
+| Videos: debates y clips (Laboratorio), podcast, documentales | `src/content/medio/*.md` (`formato` decide la sección) |
 | Muestras de música y sonido | `src/content/muestras/*.md` |
 | Equipo | `src/content/equipo/*.json` (la foto va junto al archivo) |
 
 **Nuevo caso:** copia `src/content/casos/_plantilla-impacto/`, cambia el nombre de la carpeta (será la URL),
 llena los datos, pon las fotos en la misma carpeta y cambia `borrador: true` a `false`.
 El campo `vitrina` decide en qué portafolio aparece.
+
+**Noticias:** las piezas ya producidas se importan con su texto, fuentes, créditos, láminas y la foto de portada
+revelada con la película de las láminas:
+
+```bash
+python -X utf8 scripts/importar_noticias.py              # importa lo que falte, hasta hoy
+python -X utf8 scripts/importar_noticias.py --forzar <slug>   # rehace una (pisa los cambios a mano)
+```
+
+Después se puede corregir el `index.md` a mano (`destacado: true` la pone de apertura en la portada,
+`borrador: true` la esconde, `correcciones:` agrega la fe de erratas al final).
+
+**Nueva columna:** copia `src/content/opinion/_plantilla.md` con un nombre corto, llena los datos y quita `borrador`.
+El acento del titular va entre asteriscos. En `npm run dev`, reinicia el servidor la primera vez (la colección estaba vacía).
+
+**Nuevo autor:** un `.json` en `src/content/autores/` y su retrato en trama de periódico, sin fondo:
+
+```bash
+python -X utf8 scripts/recorte_trama.py <foto.jpg> src/content/autores/<nombre>.png --foco 0.5 0.3 --zoom 1.7
+```
 
 **Videos:** solo el ID de YouTube (lo que va después de `v=`). Para Vimeo: `plataforma: vimeo` y una `miniatura`.
 
