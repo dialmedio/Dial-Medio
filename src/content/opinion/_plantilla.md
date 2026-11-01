@@ -18,6 +18,8 @@ Aquí va el texto. Párrafos separados por una línea en blanco.
 
 > Una cita larga va así.
 
+<p class="verso"><em>Una frase o un verso que va aparte, en grande.</em></p>
+
 Las notas al pie se escriben así[^1].
 
 [^1]: Y aquí va la nota, con su fuente.

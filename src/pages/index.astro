@@ -73,7 +73,26 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
     <section class="contenedor opinion-sec" aria-labelledby="opinion-t">
       <header class="seccion-cabeza"><h2 id="opinion-t"><a href="/opinion">Opinión</a></h2><a href="/opinion" class="ver">Columnas con firma →</a></header>
       {
-        conAutor.length ? (
+        conAutor.length > 0 && conAutor.length < 3 ? (
+          <div class="opinion-destacada">
+            {conAutor.map(({ c, autor }, i) => (
+              <article class:list={['columna-grande', { segunda: i > 0 }]}>
+                {autor.data.retrato && (
+                  <a href={`/opinion/${c.id}`} class="cg-retrato" tabindex="-1" aria-hidden="true">
+                    <Image src={autor.data.retrato} alt="" widths={[300, 600]} sizes="(min-width: 800px) 240px, 50vw" />
+                  </a>
+                )}
+                <div class="cg-texto">
+                  <p class="rotulo">{c.data.tema ? `${c.data.tema} · ` : ''}{autor.data.nombre}</p>
+                  <h3 class="titular t-1"><a href={`/opinion/${c.id}`} set:html={conAcento(c.data.titulo)} /></h3>
+                  <p class="bajada">{c.data.bajada}</p>
+                  {c.data.destacada && <p class="columna-frase">«{c.data.destacada}»</p>}
+                  <a href={`/opinion/${c.id}`} class="enlace">Leer la columna <span>→</span></a>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : conAutor.length ? (
           <div class="rejilla r4 con-filetes">
             {conAutor.map(({ c, autor }) => (
               <article class="columna">
@@ -238,6 +257,14 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
   .opinion-texto { display: grid; gap: 18px; max-width: 64ch; }
   .opinion-texto p { margin: 0; }
   .columna { display: grid; gap: 10px; align-content: start; }
+  .opinion-destacada { display: grid; gap: 40px; }
+  .columna-grande { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 800px) { .columna-grande { grid-template-columns: 240px 1fr; gap: 48px; } }
+  .columna-grande.segunda { border-top: 1px solid var(--linea); padding-top: 40px; }
+  .cg-retrato img { width: 100%; height: auto; display: block; }
+  .cg-texto { display: grid; gap: 14px; justify-items: start; max-width: 62ch; }
+  .cg-texto p { margin: 0; }
+  .cg-texto .columna-frase { font-size: 1.35rem; }
   :global(.columna-retrato) { width: 96px; height: auto; }
   .columna p { margin: 0; }
   .columna-frase { font-family: var(--f-serif); font-style: italic; font-size: 1.1rem; color: var(--texto-2); }

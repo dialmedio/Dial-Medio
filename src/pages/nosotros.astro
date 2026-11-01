@@ -53,10 +53,11 @@ const hacemos = [
       <header class="seccion-cabeza"><h2 id="equipo-t">Quiénes hacemos Dial</h2></header>
       <div class="equipo">
         {autores.map((a) => (
-          <a href={`/autores/${a.id}`} class="persona">
+          <a href={`/autores/${a.id}`} class:list={['persona', { texto: !a.data.retrato }]}>
             {a.data.retrato && <Image src={a.data.retrato} alt={`Retrato de ${a.data.nombre}`} widths={[300, 600]} sizes="240px" />}
             <span class="titular t-3">{a.data.nombre}</span>
             <span class="datos">{a.data.rol}</span>
+            {!a.data.retrato && <p class="bajada">{a.data.bio}</p>}
           </a>
         ))}
         <div class="persona texto">

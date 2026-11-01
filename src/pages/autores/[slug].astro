@@ -25,10 +25,10 @@ const ld = { '@type': 'Person', name: d.nombre, description: d.bio, jobTitle: d.
         {d.redes.length > 0 && <p class="datos">{d.redes.map((r) => <a href={r.url} target="_blank" rel="noopener me">{r.nombre}</a>)}</p>}
       </div>
     </header>
-    <section class="contenedor obra">
-      <header class="seccion-cabeza"><h2>Columnas</h2></header>
-      {
-        columnas.length ? (
+    {
+      columnas.length > 0 && (
+        <section class="contenedor obra">
+          <header class="seccion-cabeza"><h2>Columnas</h2></header>
           <ul class="rejilla r2">
             {columnas.map((c) => (
               <li>
@@ -38,16 +38,15 @@ const ld = { '@type': 'Person', name: d.nombre, description: d.bio, jobTitle: d.
               </li>
             ))}
           </ul>
-        ) : (
-          <p class="bajada">Su primera columna está en camino.</p>
-        )
-      }
-    </section>
+        </section>
+      )
+    }
   </div>
 </Base>
 
 <style>
   .autor { display: grid; gap: 32px; padding-block: clamp(40px, 6vw, 80px); align-items: end; }
+  .autor:only-child, .autor:last-child { padding-bottom: clamp(64px, 8vw, 112px); }
   @media (min-width: 800px) { .autor { grid-template-columns: 280px 1fr; gap: 56px; } }
   :global(.autor-retrato) { width: 100%; max-width: 280px; height: auto; }
   .autor-texto { display: grid; gap: 16px; }

@@ -1,4 +1,5 @@
 ---
+import { existsSync } from 'node:fs';
 import { render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../../layouts/Base.astro';
@@ -23,6 +24,8 @@ const linea = lineas[d.linea];
 const url = new URL(rutaNoticia(n), Astro.site).toString();
 const vertical = d.portada.height > d.portada.width * 1.05;
 const og = await getImage({ src: d.portada, width: 1200, format: 'jpg', quality: 80 });
+// Tarjeta para compartir con titular y logotipo (scripts/generar-imagenes.mjs); si no está, la foto sola.
+const tarjeta = existsSync(`public/og/piezas/${n.id}.jpg`) ? `/og/piezas/${n.id}.jpg` : og.src;
 
 const serie = d.serie ? todas.filter((x) => x.data.serie?.nombre === d.serie!.nombre).sort((a, b) => a.data.serie!.parte - b.data.serie!.parte) : [];
 const mas = todas.filter((x) => x.id !== n.id && x.data.linea === d.linea && !serie.includes(x)).slice(0, 3);
@@ -48,7 +51,7 @@ const ld = {
 <Base
   titulo={sinAcento(d.titulo)}
   descripcion={d.bajada}
-  imagen={og.src}
+  imagen={tarjeta}
   imagenAlt={d.portadaAlt ?? sinAcento(d.titulo)}
   tipo="article"
   articulo={{ publicado: d.fecha, modificado: d.actualizado, autor: d.firma, seccion: linea.nombre }}

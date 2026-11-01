@@ -1,4 +1,5 @@
 ---
+import { existsSync } from 'node:fs';
 import { getEntry, render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
@@ -38,7 +39,7 @@ const ld = {
 <Base
   titulo={sinAcento(d.titulo)}
   descripcion={d.bajada}
-  imagen={og?.src}
+  imagen={existsSync(`public/og/opinion/${c.id}.jpg`) ? `/og/opinion/${c.id}.jpg` : og?.src}
   tipo="article"
   articulo={{ publicado: d.fecha, autor: autor.data.nombre, seccion: 'Opinión', tipo: 'OpinionNewsArticle' }}
   ld={ld}
