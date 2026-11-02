@@ -7,7 +7,8 @@ lugar: "Bogotá"
 fecha: 2026-10-20
 formato: "carrusel"
 portada: "./portada.jpg"
-portadaCredito: "Martín Perea / Dial Medio"
+portadaCredito: "Cedida a Dial"
+creditos: [{"texto": "Portada: foto cedida a Dial"}, {"texto": "Baiji · CC BY 4.0 · Salón Elíptico, Capitolio Nacional · 2024", "url": "https://commons.wikimedia.org/wiki/File:Salon_Eliptico_Bogota.jpg"}, {"texto": "Racso · CC BY-SA 3.0 · Capitolio Nacional, vía Wikimedia Commons"}]
 foco: "49% 50%"
 laminas: ["./laminas/01.jpg", "./laminas/02.jpg", "./laminas/03.jpg", "./laminas/04.jpg", "./laminas/05.jpg", "./laminas/06.jpg", "./laminas/07.jpg", "./laminas/08.jpg"]
 ---
@@ -28,5 +29,3 @@ Seis de cada diez pesos son para que el Estado funcione y casi uno de cada cuatr
 ### Qué dicen las partes
 
 El ministro de Hacienda, Miguel Gómez, dijo que es "el presupuesto que podemos permitirnos". Desde el Pacto Histórico, el representante Alfredo Mondragón criticó que los forzaran a aprobarlo "solo con un día para la discusión", y el senador David Racero dijo sobre la posibilidad de mover plata al fondo del terremoto: "Esto nos quita derechos y no es transparente". ¿Se puede aprobar a contrarreloj el presupuesto de todo un país? Te leemos en los comentarios.
-
-Foto de portada: Martín Perea / Dial Medio. Otras fotos: Racso (CC BY-SA 3.0) y Baiji (CC BY 4.0), en Wikimedia Commons. La lámina 5 se comparte bajo CC BY-SA.

@@ -81,7 +81,7 @@ def cuerpo_instagram(ig):
         lineas = [l.strip() for l in bloque.split("\n") if l.strip()]
         salida = []
         for l in lineas:
-            if l.startswith("#") or re.match(r"^(Fotos?|Seguimiento|Próxima edición|Video)\s*:", l):
+            if l.startswith("#") or re.match(r"^(Fotos?( de portada)?|Seguimiento|Próxima edición|Video)\s*:", l):
                 continue
             if l.startswith("📍"):
                 salida.append("\n### " + l.lstrip("📍 ").strip() + "\n")
