@@ -2,5 +2,6 @@
   "nombre": "Sebastián",
   "rol": "Director creativo, editor y colorista",
   "bio": "Director creativo, editor y colorista con 4 años de experiencia en la realización de cortometrajes, proyectos documentales y musicales. Cofundador de colectivos con enfoque en gestión cultural. Destaca por el cuidado estético de los detalles, las formas y las pausas, ya sea en formatos análogos o contemporáneos.",
-  "orden": 2
+  "orden": 2,
+  "retrato": "./sebastian.png"
 }

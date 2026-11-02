@@ -16,12 +16,13 @@ import cap from '../../data/capacidades.json';
 import { dos, anio, rutaCaso } from '../../lib/util';
 import { rutaVideo } from '../../lib/medio';
 
-import currulao from '../../assets/estudio/currulao.jpg';
 import palenque from '../../assets/estudio/palenque.jpg';
 import congreso from '../../assets/estudio/congreso.jpg';
 import liveSession from '../../assets/estudio/live-session.jpg';
 import feoPalante from '../../assets/estudio/feo-palante.jpg';
-import dosFiguras from '../../assets/estudio/dos-figuras.jpg';
+import dragon from '../../assets/estudio/shadow-of-the-dragon.jpg';
+import disco from '../../assets/estudio/in-vitro-disco.jpg';
+import Simbolo from '../../components/Simbolo.astro';
 
 const servicios = (await getCollection('servicios')).sort((a, b) =>
   a.data.linea === b.data.linea ? a.data.orden - b.data.orden : a.data.linea === 'impacto' ? -1 : 1,
@@ -35,13 +36,17 @@ const casos = (await getCollection('casos', (c) => !c.data.borrador && !!c.data.
   rotulo: c.data.organizacion ?? 'Por encargo',
   meta: `${c.data.lugar} · ${c.data.anio}`,
 }));
-const propios = (await getCollection('medio', (m) => !m.data.borrador && m.data.mostrarEnImpacto && !!m.data.video))
+// Currulao se queda en Documentales pero no aquí: su miniatura es una foto que no es de Dial (Martín, 1 nov 2026).
+const propios = (await getCollection('medio', (m) => !m.data.borrador && m.data.mostrarEnImpacto && !!m.data.video && m.id !== 'currulao-musicas-del-pacifico-sur'))
   .sort((a, b) => a.data.orden - b.data.orden)
   .map((m) => ({ titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo: 'Documental · Dial', meta: `${m.data.lugar} · ${anio(m.data.fecha)}` }));
 const muestras = (await getCollection('muestras', (m) => !m.data.borrador))
   .sort((a, b) => a.data.orden - b.data.orden)
   .map((m) => ({ titulo: m.data.titulo, video: m.data.video, href: undefined, rotulo: m.data.disciplinas.join(' · '), meta: `${m.data.rol.replace(/\.$/, '')} · ${m.data.anio}` }));
-const trabajo = [...casos, ...propios, ...muestras].slice(0, 6);
+// La sesión en vivo de In-Vitro va primero: sonido e imagen hechos en casa.
+const sesion = { titulo: 'In-Vitro Live Sessions', video: { plataforma: 'youtube' as const, id: 'tt3X0UynmCk' }, href: 'https://youtu.be/tt3X0UynmCk', rotulo: 'Sesión en vivo · Sonido e imagen', meta: 'Bogotá' };
+const trabajo = [sesion, ...casos, ...propios, ...muestras].slice(0, 6);
+const DISCO = 'https://www.youtube.com/playlist?list=PLtGEMPLbnH8X4YTzesInC5vgKMwdJm9LD';
 
 const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', 'Pereira', 'Barranquilla', 'Cali', 'Popayán', 'Tres países de Asia'];
 ---
@@ -66,10 +71,9 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
           <a href="#trabajo" class="btn linea">Ver trabajo</a>
         </div>
       </div>
-      <figure class="heroe-foto">
-        <Image src={currulao} alt="Cantadora del Pacífico frente al micrófono, en Currulao y músicas del Pacífico Sur" widths={[640, 960, 1280]} sizes="(min-width: 1000px) 52vw, 100vw" loading="eager" fetchpriority="high" />
-        <figcaption>Currulao y músicas del Pacífico Sur · Serie Sámara</figcaption>
-      </figure>
+      <div class="heroe-marca" aria-hidden="true">
+        <Simbolo tono="claro" anima class="heroe-simbolo" />
+      </div>
     </div>
     <div class="lugares">
       <p class="rotulo">Hemos filmado en</p>
@@ -87,10 +91,10 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
       </header>
       <div class="mosaico">
         <figure class="m-a"><Image src={palenque} alt="Calle de San Basilio de Palenque, con casas de colores" widths={[640, 1000, 1600]} sizes="(min-width: 980px) 58vw, 100vw" /><figcaption>San Basilio de Palenque, Bolívar · Foto: Martín Perea</figcaption></figure>
-        <figure class="m-b"><Image src={liveSession} alt="Saxofonista y guitarrista tocando en una sesión en vivo" widths={[480, 800, 1280]} sizes="(min-width: 980px) 38vw, 100vw" /><figcaption>Sesiones en vivo · Sonido e imagen en casa</figcaption></figure>
-        <figure class="m-c"><Image src={congreso} alt="Plenaria en el Capitolio Nacional vista desde el balcón" widths={[480, 800, 1280]} sizes="(min-width: 980px) 30vw, 100vw" /><figcaption>Capitolio Nacional, Bogotá · Foto: Martín Perea</figcaption></figure>
+        <a href="https://youtu.be/tt3X0UynmCk" target="_blank" rel="noopener" class="m-b"><figure><Image src={liveSession} alt="Saxofonista y guitarrista tocando en una sesión en vivo" widths={[480, 800, 1280]} sizes="(min-width: 980px) 38vw, 100vw" /><figcaption>In-Vitro Live Sessions · Ver la sesión ↗</figcaption></figure></a>
+        <figure class="m-c"><Image src={congreso} alt="Plenaria en el Capitolio Nacional vista desde el balcón" widths={[480, 800, 1280]} sizes="(min-width: 980px) 30vw, 100vw" /><figcaption>Capitolio Nacional, Bogotá · Generación de noticias</figcaption></figure>
         <figure class="m-d"><Image src={feoPalante} alt="Retrato en blanco y negro de un cantante con gafas oscuras" widths={[480, 800, 1280]} sizes="(min-width: 980px) 30vw, 100vw" /><figcaption>Delayn Núñez, «Feo Palante» · Videoclip</figcaption></figure>
-        <figure class="m-e"><Image src={dosFiguras} alt="Dos figuras animadas en un bosque" widths={[480, 800, 1280]} sizes="(min-width: 980px) 30vw, 100vw" /><figcaption>Dos figuras · Diseño sonoro y música original</figcaption></figure>
+        <a href="https://youtu.be/6DZmq3vevQ4" target="_blank" rel="noopener" class="m-e"><figure><Image src={dragon} alt="Un dragón animado sobre las rocas, junto al mar" widths={[480, 800, 1280]} sizes="(min-width: 980px) 30vw, 100vw" /><figcaption>Shadow Of The Dragon · Diseño sonoro y música ↗</figcaption></figure></a>
       </div>
     </div>
   </section>
@@ -145,7 +149,7 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
   <section class="seccion tema-papel" id="trabajo">
     <div class="contenedor">
       <header class="seccion-cabeza"><h2>Trabajo</h2><a href="/impacto#portafolio" class="ver">Portafolio completo →</a></header>
-      <div class:list={['trabajo', { impar: trabajo.length % 3 === 2 }]}>
+      <div class:list={['trabajo', { impar: trabajo.length % 3 === 2, cuatro: trabajo.length === 4 }]}>
         {
           trabajo.map((t, i) => (
             <article class:list={['obra', { grande: i === 0 }]}>
@@ -181,8 +185,30 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
     <div class="contenedor"><Sintonizador /></div>
   </section>
 
+  <!-- MÚSICA ORIGINAL -->
+  <section class="seccion compacta tema-hueso musica">
+    <div class="contenedor musica-grid">
+      <a href={DISCO} target="_blank" rel="noopener" class="musica-portada">
+        <Image src={disco} alt="Arte del disco In-Vitro" widths={[480, 800, 1280]} sizes="(min-width: 980px) 50vw, 100vw" />
+        <span class="musica-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span>
+      </a>
+      <div class="musica-texto">
+        <p class="kicker">Música original</p>
+        <h2 class="display d-2">La música la <em>componemos</em> en casa.</h2>
+        <p class="lead texto-2">
+          No la sacamos de un banco: la escribimos para cada historia. <em>In-Vitro</em> es el disco de Martín Perea Tobón, director de Dial,
+          y sus sesiones en vivo se grabaron y filmaron en nuestro propio espacio.
+        </p>
+        <div class="acciones">
+          <a href={DISCO} class="btn" target="_blank" rel="noopener">Escuchar el disco <span class="flecha">↗</span></a>
+          <a href="https://youtu.be/tt3X0UynmCk" class="btn linea" target="_blank" rel="noopener">Ver las sesiones en vivo</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- PROCESO -->
-  <section class="seccion compacta tema-hueso">
+  <section class="seccion compacta tema-papel">
     <div class="contenedor">
       <header class="seccion-cabeza"><h2>Cómo trabajamos</h2><a href="/estudio/como-trabajamos" class="ver">Equipo y capacidades →</a></header>
       <ol class="proceso">
@@ -212,19 +238,15 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
   .heroe-logo { margin: 0; font-size: clamp(40px, 4.4vw, 60px); }
   .heroe-titulo { font-size: clamp(2.8rem, 1.2rem + 4.4vw, 5.6rem); line-height: .96; max-width: 11ch; }
   .heroe-bajada { margin: 0; color: var(--hueso-2); max-width: 44ch; }
-  .heroe-foto { margin: 0; position: relative; min-height: 56vw; }
-  .heroe-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 30% 40%; }
-  .heroe-foto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--carbon) 0%, rgba(31, 28, 25, 0) 22%); pointer-events: none; }
-  .heroe-foto figcaption { position: absolute; right: 16px; bottom: 14px; z-index: 1; font-size: .78rem; color: rgba(244, 238, 229, .82); text-shadow: 0 1px 6px rgba(0, 0, 0, .6); }
+  .heroe-marca { display: grid; place-items: center; padding: 0 var(--gutter) clamp(40px, 6vw, 64px); }
+  .heroe :global(.heroe-simbolo) { width: min(64vw, 440px); height: auto; }
   @media (min-width: 1000px) {
-    .heroe-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); min-height: min(86vh, 860px); }
+    .heroe-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); min-height: min(78vh, 760px); }
     .contenedor-izq { padding-left: max(var(--gutter), calc((100vw - var(--ancho)) / 2)); padding-right: 48px; }
-    .heroe-foto { min-height: 0; }
+    .heroe-marca { padding: 0 max(var(--gutter), calc((100vw - var(--ancho)) / 2)) 0 0; justify-items: center; }
   }
-  @media (max-width: 999px) { .heroe-foto::after { background: linear-gradient(0deg, var(--carbon) 0%, rgba(31, 28, 25, 0) 30%); } }
   @media (prefers-reduced-motion: no-preference) {
     .heroe-texto { animation: aparece .9s var(--ease) both; }
-    .heroe-foto img { animation: revela 1.6s var(--ease) both; }
   }
   @keyframes aparece { from { opacity: 0; transform: translateY(10px); } }
   @keyframes revela { from { opacity: 0; transform: scale(1.04); } }
@@ -240,17 +262,18 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
   .mosaico-cabeza { display: grid; gap: 16px; max-width: 60ch; margin-bottom: clamp(32px, 4vw, 56px); }
   .mosaico-cabeza p { margin: 0; }
   .mosaico { display: grid; gap: 12px; }
-  .mosaico figure { margin: 0; position: relative; overflow: hidden; background: var(--carbon-2); }
+  .mosaico figure { margin: 0; position: relative; overflow: hidden; background: var(--carbon-2); height: 100%; }
+  .mosaico > a { display: block; text-decoration: none; color: inherit; }
   .mosaico img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s var(--ease); }
   .mosaico figure:hover img { transform: scale(1.03); }
   .mosaico figcaption {
     position: absolute; left: 0; right: 0; bottom: 0; padding: 28px 14px 10px;
     font-size: .78rem; color: var(--papel); background: linear-gradient(0deg, rgba(20, 17, 15, .72), transparent);
   }
-  .mosaico figure { aspect-ratio: 3 / 2; }
+  .mosaico > figure, .mosaico > a { aspect-ratio: 3 / 2; }
   @media (min-width: 980px) {
     .mosaico { grid-template-columns: repeat(12, 1fr); grid-auto-rows: clamp(150px, 15vw, 210px); }
-    .mosaico figure { aspect-ratio: auto; }
+    .mosaico > figure, .mosaico > a { aspect-ratio: auto; }
     .m-a { grid-column: 1 / span 7; grid-row: span 2; }
     .m-b { grid-column: 8 / span 5; grid-row: span 2; }
     .m-c, .m-d, .m-e { grid-column: span 4; grid-row: span 2; }
@@ -284,7 +307,10 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
   .trabajo { display: grid; gap: 40px 28px; }
   @media (min-width: 760px) { .trabajo { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .trabajo { grid-template-columns: repeat(3, 1fr); } .obra.grande { grid-column: span 2; grid-row: span 2; }
-    .trabajo.impar .obra.grande { grid-row: auto; } }
+    .trabajo.impar .obra.grande { grid-row: auto; }
+    .trabajo.cuatro { grid-template-columns: repeat(2, 1fr); }
+    .trabajo.cuatro .obra.grande { grid-column: auto; grid-row: auto; }
+    .trabajo.cuatro .obra h3 { font-size: clamp(1.7rem, 1.2rem + 1.4vw, 2.35rem); } }
   .obra { display: grid; gap: 10px; align-content: start; }
   .obra .rotulo { margin-top: 6px; }
   .obra h3 a { text-decoration: none; }
@@ -297,6 +323,18 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
   .proceso p { margin: 0; color: var(--tinta-2); font-size: .98rem; }
   .proc-n { font-family: var(--f-display); font-size: 2.4rem; line-height: 1; color: var(--luz); }
   .una-persona { margin: 40px 0 0; font-family: var(--f-serif); font-style: italic; font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); line-height: 1.2; max-width: 30ch; }
+
+  /* ---------- Música original ---------- */
+  .musica { position: relative; }
+  .musica-grid { display: grid; gap: 40px; align-items: center; }
+  @media (min-width: 980px) { .musica-grid { grid-template-columns: 1.1fr 1fr; gap: 72px; } }
+  .musica-portada { position: relative; display: block; overflow: hidden; aspect-ratio: 16 / 9; }
+  .musica-portada img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .musica-portada:hover img { transform: scale(1.03); }
+  .musica-play { position: absolute; left: 50%; top: 50%; width: 72px; height: 72px; margin: -36px 0 0 -36px; border-radius: 50%; background: var(--luz); color: var(--papel); display: grid; place-items: center; }
+  .musica-play svg { width: 28px; height: 28px; margin-left: 3px; }
+  .musica-texto { display: grid; gap: 20px; justify-items: start; }
+  .musica-texto p { margin: 0; }
 
   /* ---------- Sintonía ---------- */
   .sintonia { position: relative; }
