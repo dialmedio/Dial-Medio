@@ -1,6 +1,6 @@
 ---
 import { existsSync } from 'node:fs';
-import { render } from 'astro:content';
+import { render, getEntry } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../../layouts/Base.astro';
 import Firma from '../../../components/Firma.astro';
@@ -31,6 +31,8 @@ const serie = d.serie ? todas.filter((x) => x.data.serie?.nombre === d.serie!.no
 const mas = todas.filter((x) => x.id !== n.id && x.data.linea === d.linea && !serie.includes(x)).slice(0, 3);
 const otras = mas.length < 3 ? todas.filter((x) => x.id !== n.id && x.data.linea !== d.linea).slice(0, 3 - mas.length) : [];
 const minutos = lectura(n.body);
+// Si la firma es de alguien de la casa (/autores/…), la firma lleva su retrato.
+const autorFirma = d.firmaEnlace?.startsWith('/autores/') ? await getEntry('autores', d.firmaEnlace.slice(9)) : undefined;
 
 const ld = {
   '@type': 'NewsArticle',
@@ -67,7 +69,7 @@ const ld = {
       <h1 class="titular nota-titulo" set:html={conAcento(d.titulo)} data-pagefind-meta="title" />
       <p class="nota-bajada">{d.bajada}</p>
       <div class="nota-firma">
-        <Firma nombre={d.firma} enlace={d.firmaEnlace ?? (d.firma === 'Redacción Dial' ? '/nosotros' : undefined)} rol={d.linea === 'expediente' ? 'Publica la RED Quynza · diseño y diagramación de Dial' : d.coproduccion ? `En coproducción con la ${d.coproduccion}` : undefined} />
+        <Firma autor={autorFirma} nombre={d.firma} enlace={d.firmaEnlace ?? (d.firma === 'Redacción Dial' ? '/nosotros' : undefined)} rol={d.linea === 'expediente' ? 'Publica la RED Quynza · diseño y diagramación de Dial' : d.coproduccion ? `En coproducción con la ${d.coproduccion}` : undefined} />
         <p class="datos">
           <time datetime={isoDia(d.fecha)}>{fechaLarga(d.fecha)}</time>
           {d.lugar && <span>{d.lugar}</span>}

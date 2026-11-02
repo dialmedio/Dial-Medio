@@ -9,8 +9,8 @@ numero: "19"
 portada: "./portada.jpg"
 portadaCredito: "Seguimiento de @andrstafurv con fuente y fecha"
 laminas: ["./laminas/01.jpg", "./laminas/02.jpg", "./laminas/03.jpg", "./laminas/04.jpg", "./laminas/05.jpg", "./laminas/06.jpg", "./laminas/07.jpg", "./laminas/08.jpg", "./laminas/09.jpg", "./laminas/10.jpg", "./laminas/11.jpg", "./laminas/12.jpg", "./laminas/13.jpg", "./laminas/14.jpg"]
-firma: "Andrés (@andrstafurv)"
-firmaEnlace: "https://www.instagram.com/andrstafurv/"
+firma: "Andrés Tafur Villarreal"
+firmaEnlace: "/autores/andres-tafur-villarreal"
 coproduccion: "RED Quynza"
 ---
 En tres días el gobierno perdió su presupuesto en el Congreso y lo expidió por decreto. Expediente De la Espriella N.º 19

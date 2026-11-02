@@ -316,8 +316,8 @@ def importar_expediente(n, hasta, forzar):
         "portadaCredito": credito,
         "foco": f"{round(foco[0] * 100)}% {round(foco[1] * 100)}%" if foco else None,
         "laminas": laminas,
-        "firma": "Andrés (@andrstafurv)",
-        "firmaEnlace": "https://www.instagram.com/andrstafurv/",
+        "firma": "Andrés Tafur Villarreal",
+        "firmaEnlace": "/autores/andres-tafur-villarreal",
         "coproduccion": "RED Quynza",
         "pregunta": pregunta,
     }

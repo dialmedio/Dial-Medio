@@ -12,7 +12,7 @@ interface Props {
 }
 const { autor, grande = false } = Astro.props;
 const nombre = autor?.data.nombre ?? Astro.props.nombre ?? 'Redacción Dial';
-const rol = autor?.data.rol ?? Astro.props.rol;
+const rol = Astro.props.rol ?? autor?.data.rol;
 const enlace = autor ? `/autores/${autor.id}` : Astro.props.enlace;
 ---
 
