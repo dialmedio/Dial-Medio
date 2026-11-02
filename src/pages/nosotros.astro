@@ -19,7 +19,7 @@ const hacemos = [
   titulo="Nosotros"
   descripcion="Dial es un medio independiente hecho en Bogotá: noticias con contexto, opinión, podcast, documentales y experimentos de conversación."
 >
-  <div class="tema-papel">
+  <div class="tema-papel nosotros">
     <header class="contenedor pagina-cabeza">
       <p class="kicker">Nosotros</p>
       <h1>Un lugar para <em>entender.</em></h1>
@@ -70,8 +70,7 @@ const hacemos = [
       <header class="seccion-cabeza"><h2 id="red-t">Con la RED Quynza</h2></header>
       <div class="dos-texto">
         <p>
-          La RED Quynza reúne a profesores, investigadores y personas de distintas regiones que trabajan por la paz. Con ella hacemos el podcast
-          <a href="/podcast"><em>Lo que la gente quiere es vivir</em></a>, y diseñamos el <a href="/noticias/expediente">Expediente</a> que ella
+          La RED Quynza reúne a profesores, investigadores y personas de distintas regiones que trabajan por la paz. Con ella hacemos el podcast <a href="/podcast"><em>Lo que la gente quiere es vivir</em></a>, y diseñamos el <a href="/noticias/expediente">Expediente</a> que ella
           publica, con el seguimiento de <a href="/autores/andres-tafur-villarreal">Andrés Tafur Villarreal</a>. Cada pieza dice de quién es la iniciativa y quién la produce.
         </p>
         <p>
@@ -130,5 +129,17 @@ const hacemos = [
   .dos-texto p { margin: 0; }
   .dos-texto a:not(.enlace) { color: inherit; text-decoration-color: var(--luz); }
   .contacto { display: grid; gap: 10px; border-top: 1px solid var(--carbon); padding-top: 28px; }
-  .contacto .datos a + a::before { content: ' · '; }
+  .redes-fila a + a::before { content: ' · '; }
+
+  /* Página centrada (Martín, 1 nov 2026) */
+  .nosotros { text-align: center; }
+  .nosotros .pagina-cabeza { display: grid; justify-items: center; }
+  .nosotros .pagina-cabeza .bajada { margin-inline: auto; }
+  .nosotros .kicker { justify-self: center; }
+  .manifiesto .lead-xl { margin-inline: auto; }
+  .nosotros .seccion-cabeza { justify-content: center; }
+  .hacemos li, .persona { justify-items: center; }
+  .persona img { margin-inline: auto; }
+  .dos-texto { margin-inline: auto; justify-items: center; }
+  .contacto { justify-items: center; }
 </style>
