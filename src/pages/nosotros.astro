@@ -114,8 +114,9 @@ const hacemos = [
   .hacemos a:hover { color: var(--terracota-ink); }
   .hacemos .bajada { font-size: 1rem; }
 
-  .equipo { display: grid; gap: 32px; }
-  @media (min-width: 700px) { .equipo { grid-template-columns: repeat(3, 1fr); } }
+  .equipo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 20px; }
+  .equipo .persona.texto { grid-column: 1 / -1; }
+  @media (min-width: 700px) { .equipo { grid-template-columns: repeat(3, 1fr); gap: 32px; } .equipo .persona.texto { grid-column: auto; } }
   .persona { display: grid; gap: 6px; align-content: start; text-decoration: none; }
   .persona img { width: 100%; max-width: 240px; height: auto; margin-bottom: 10px; }
   a.persona:hover .titular { color: var(--terracota-ink); }
@@ -130,16 +131,4 @@ const hacemos = [
   .dos-texto a:not(.enlace) { color: inherit; text-decoration-color: var(--luz); }
   .contacto { display: grid; gap: 10px; border-top: 1px solid var(--carbon); padding-top: 28px; }
   .redes-fila a + a::before { content: ' · '; }
-
-  /* Página centrada (Martín, 1 nov 2026) */
-  .nosotros { text-align: center; }
-  .nosotros .pagina-cabeza { display: grid; justify-items: center; }
-  .nosotros .pagina-cabeza .bajada { margin-inline: auto; }
-  .nosotros .kicker { justify-self: center; }
-  .manifiesto .lead-xl { margin-inline: auto; }
-  .nosotros .seccion-cabeza { justify-content: center; }
-  .hacemos li, .persona { justify-items: center; }
-  .persona img { margin-inline: auto; }
-  .dos-texto { margin-inline: auto; justify-items: center; }
-  .contacto { justify-items: center; }
 </style>
