@@ -1,7 +1,7 @@
 {
   "nombre": "Sebastián",
-  "rol": "Dirección creativa, edición y color",
-  "bio": "Director creativo, editor y colorista con 4 años de experiencia en la realización de cortometrajes, proyectos documentales y musicales. Cofundador de colectivos con enfoque en gestión cultural. Destaca por el cuidado estético de los detalles, las formas y las pausas, ya sea en formatos análogos o contemporáneos.",
-  "orden": 2,
+  "rol": "Cámara",
+  "bio": "Camarógrafo con 4 años de experiencia en la realización de cortometrajes, proyectos documentales y musicales. Cofundador de colectivos con enfoque en gestión cultural. Destaca por el cuidado estético de los detalles, las formas y las pausas, ya sea en formatos análogos o contemporáneos.",
+  "orden": 3,
   "foto": "./sebastian.jpg"
 }
