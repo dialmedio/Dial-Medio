@@ -13,7 +13,7 @@ const ensayos = (await getCollection('fotografia', (f) => !f.data.borrador)).sor
     <header class="contenedor pagina-cabeza">
       <p class="kicker">Ensayos</p>
       <h1>Fotografía</h1>
-      <p class="bajada">Ensayos fotográficos: lo que se ve cuando se mira despacio.</p>
+      <p class="bajada">Ensayos fotográficos de Dial.</p>
     </header>
     <section class="contenedor lista">
       {
@@ -27,7 +27,7 @@ const ensayos = (await getCollection('fotografia', (f) => !f.data.borrador)).sor
             </a>
           ))
         ) : (
-          <p class="bajada">El primer ensayo está en el cuarto oscuro.</p>
+          <p class="bajada">Pronto publicaremos el primer ensayo.</p>
         )
       }
     </section>

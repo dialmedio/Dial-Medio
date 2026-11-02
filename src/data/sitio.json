@@ -2,7 +2,7 @@
   "nombre": "Dial",
   "tagline": "Del ruido a la señal",
   "promesa": "Contamos, y medimos, el encuentro humano.",
-  "descripcion": "Medio independiente desde Bogotá: noticias con contexto, columnas de opinión, podcast, documentales y experimentos de conversación. Análisis, no primicia.",
+  "descripcion": "Medio independiente hecho en Bogotá. Publica noticias explicadas, columnas de opinión, podcast, documentales y debates.",
   "ciudad": "Bogotá, Colombia",
   "correo": "dialmediocol@gmail.com",
   "whatsapp": {
@@ -32,7 +32,7 @@
   "boletin": {
     "usuario": "dial",
     "frecuencia": "Una vez por trimestre",
-    "descripcion": "Lo mejor de Dial: las columnas, los análisis, los documentales y lo que estamos preparando. Sin ruido."
+    "descripcion": "Una selección de lo que publicamos: columnas, noticias explicadas, documentales y lo que viene."
   },
   "descripcionEstudio": "Dial Estudio produce documental, cobertura y eventos para organizaciones, con la misma mirada del medio."
 }

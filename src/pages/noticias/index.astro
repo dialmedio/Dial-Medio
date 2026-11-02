@@ -12,16 +12,36 @@ const conPiezas = Object.entries(lineas).filter(([k]) => todas.some((n) => n.dat
 
 <Base
   titulo="Noticias"
-  descripcion="Noticias con contexto de Colombia, América Latina y el mundo: qué pasó, por qué importa y qué dicen las partes, con fuentes."
+  descripcion="Noticias de Colombia, América Latina y el mundo explicadas con contexto, la versión de cada parte y las fuentes."
 >
   <div class="tema-papel">
     <header class="contenedor pagina-cabeza">
-      <p class="kicker">Análisis, no primicia</p>
+      <p class="kicker">Actualidad explicada</p>
       <h1>Noticias</h1>
       <p class="bajada">
-        No contamos primero: contamos completo. Qué pasó, por qué importa, qué dicen las partes y de dónde sale cada dato.
+        No publicamos al minuto. Tomamos lo que pasó en la semana, lo explicamos con contexto, incluimos la versión de cada parte
+        y ponemos las fuentes al final de cada nota.
       </p>
+      <section class="guia" aria-labelledby="guia-t">
+        <h2 class="rotulo" id="guia-t">Cómo se organizan</h2>
+        <ul>
+          {Object.entries(lineas).map(([k, l]) => {
+            const hay = conPiezas.some(([c]) => c === k);
+            return (
+              <li class:list={{ pronto: !hay }}>
+                <p class="guia-cabeza">
+                  {hay ? <a href={`/noticias/${k}`} class="titular t-4">{l.nombre}</a> : <span class="titular t-4">{l.nombre}</span>}
+                  <span class="rotulo">{l.tema}</span>
+                </p>
+                <p class="guia-texto">{l.texto}</p>
+                <p class="datos"><span>{l.cadencia}</span>{!hay && <span>Pronto</span>}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
       <nav class="filtros" aria-label="Filtrar noticias">
+        <span class="filtros-t">Ver:</span>
         <button type="button" data-filtro="" aria-pressed="true">Todas</button>
         {Object.entries(regiones).map(([k, r]) => <button type="button" data-filtro={`region:${k}`} aria-pressed="false">{r}</button>)}
         {conPiezas.filter(([k]) => k !== 'al-aire').map(([k, l]) => <button type="button" data-filtro={`linea:${k}`} aria-pressed="false">{l.nombre}</button>)}
@@ -43,20 +63,6 @@ const conPiezas = Object.entries(lineas).filter(([k]) => todas.some((n) => n.dat
       <p class="vacio datos" hidden data-vacio>No hay piezas de esta línea todavía.</p>
     </section>
 
-    <section class="contenedor lineas-sec" aria-labelledby="lineas-t">
-      <header class="seccion-cabeza"><h2 id="lineas-t">Nuestras líneas</h2></header>
-      <ul class="lineas">
-        {
-          Object.entries(lineas).map(([k, l]) => (
-            <li>
-              <a href={conPiezas.some(([c]) => c === k) ? `/noticias/${k}` : undefined} class="titular t-3">{l.nombre}</a>
-              <span class="rotulo">{l.cadencia}</span>
-              <p class="bajada">{l.texto}</p>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
   </div>
 </Base>
 
@@ -100,11 +106,17 @@ const conPiezas = Object.entries(lineas).filter(([k]) => todas.some((n) => n.dat
   .archivo { padding-bottom: clamp(56px, 7vw, 96px); }
   .archivo-rejilla :global(.noticia[hidden]) { display: none; }
 
-  .lineas-sec { padding-bottom: clamp(64px, 8vw, 112px); }
-  .lineas { list-style: none; display: grid; gap: 0 40px; }
-  @media (min-width: 900px) { .lineas { grid-template-columns: repeat(3, 1fr); } }
-  .lineas li { display: grid; gap: 8px; align-content: start; padding: 22px 0; border-bottom: 1px solid var(--linea); }
-  .lineas a { text-decoration: none; }
-  .lineas a[href]:hover { color: var(--terracota-ink); }
-  .lineas .bajada { font-size: 1rem; }
+  .guia { margin-top: clamp(28px, 4vw, 44px); border-top: 1px solid var(--carbon); padding-top: 16px; }
+  .guia > .rotulo { color: var(--carbon); }
+  .guia ul { list-style: none; display: grid; gap: 0 32px; margin-top: 8px; }
+  @media (min-width: 700px) { .guia ul { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .guia ul { grid-template-columns: repeat(3, 1fr); } }
+  .guia li { display: grid; gap: 6px; align-content: start; padding: 16px 0; border-bottom: 1px solid var(--linea); }
+  .guia p { margin: 0; }
+  .guia-cabeza { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+  .guia-cabeza a { text-decoration: none; }
+  .guia-cabeza a:hover { color: var(--terracota-ink); }
+  .guia-texto { font-size: .95rem; line-height: 1.5; color: var(--tinta-2); }
+  .guia .pronto .titular, .guia .pronto .guia-texto { color: var(--texto-2); }
+  .filtros-t { align-self: center; font-size: .86rem; color: var(--texto-2); margin-right: 4px; }
 </style>

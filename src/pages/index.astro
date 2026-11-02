@@ -9,7 +9,7 @@ import Base from '../layouts/Base.astro';
 import NoticiaCard from '../components/NoticiaCard.astro';
 import VideoLite from '../components/VideoLite.astro';
 import {
-  noticiasPublicadas, columnasPublicadas, lineas, conAcento, fechaBreve, isoDia, rutaNoticia, rotulo,
+  noticiasPublicadas, columnasPublicadas, lineas, conAcento, fechaBreve, isoDia, rutaNoticia, rotulo, temaDe,
 } from '../lib/medio';
 import { anio, estados } from '../lib/util';
 
@@ -24,10 +24,10 @@ const tomar = (f: (n: (typeof noticias)[number]) => boolean, k: number) => {
 const segundas = tomar(() => true, 2);
 const ultimo = tomar(() => true, 6);
 const bloques = [
-  { titulo: 'América Latina y el mundo', href: '/noticias', piezas: tomar((n) => n.data.linea === 'al-aire' && n.data.region !== 'colombia', 3) },
-  { titulo: lineas.termometro.nombre, href: '/noticias/termometro', piezas: tomar((n) => n.data.linea === 'termometro', 3) },
-  { titulo: lineas.expediente.nombre, href: '/noticias/expediente', nota: 'Con la RED Quynza', piezas: tomar((n) => n.data.linea === 'expediente', 3) },
-  { titulo: lineas['arte-y-memoria'].nombre, href: '/noticias/arte-y-memoria', piezas: tomar((n) => n.data.linea === 'arte-y-memoria', 3) },
+  { titulo: 'América Latina y el mundo', href: '/noticias', nota: 'Al Aire', piezas: tomar((n) => n.data.linea === 'al-aire' && n.data.region !== 'colombia', 3) },
+  { titulo: lineas.termometro.nombre, href: '/noticias/termometro', nota: lineas.termometro.tema, piezas: tomar((n) => n.data.linea === 'termometro', 3) },
+  { titulo: lineas.expediente.nombre, href: '/noticias/expediente', nota: lineas.expediente.tema, piezas: tomar((n) => n.data.linea === 'expediente', 3) },
+  { titulo: lineas['arte-y-memoria'].nombre, href: '/noticias/arte-y-memoria', nota: lineas['arte-y-memoria'].tema, piezas: tomar((n) => n.data.linea === 'arte-y-memoria', 3) },
 ].filter((b) => b.piezas.length);
 const colombia = tomar((n) => n.data.region === 'colombia', 4);
 
@@ -59,7 +59,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
           {
             ultimo.map((n) => (
               <li>
-                <p class="ultimo-meta"><a href={`/noticias/${n.data.linea}`} class="rotulo">{rotulo(n)}</a><time datetime={isoDia(n.data.fecha)} class="datos">{fechaBreve(n.data.fecha)}</time></p>
+                <p class="ultimo-meta"><a href={`/noticias/${n.data.linea}`} class="rotulo">{rotulo(n)}<span class="gris"> · {temaDe(n)}</span></a><time datetime={isoDia(n.data.fecha)} class="datos">{fechaBreve(n.data.fecha)}</time></p>
                 <h3 class="titular t-4"><a href={rutaNoticia(n)} set:html={conAcento(n.data.titulo)} /></h3>
               </li>
             ))
@@ -107,10 +107,9 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
           <div class="opinion-vacia">
             {martin?.data.retrato && <Image src={martin.data.retrato} alt="" widths={[240, 480]} sizes="200px" class="opinion-retrato" />}
             <div class="opinion-texto">
-              <p class="titular t-2">Ideas que se defienden con argumentos, <em>y con nombre propio.</em></p>
+              <p class="titular t-2">Columnas <em>firmadas</em> por quienes escriben en Dial.</p>
               <p class="bajada">
-                Las primeras columnas están por salir. Estamos sumando voces de periodistas, profes, artistas y gente de los territorios,
-                y lo mejor saldrá también en papel.
+                Las primeras columnas están por salir. Estamos invitando a periodistas, profesores, artistas y personas de distintas regiones a escribir; algunas columnas saldrán también en una edición impresa.
               </p>
               <div class="acciones">
                 <a href="/opinion#escribe" class="btn">Escribe en Dial <span class="flecha">→</span></a>
@@ -126,7 +125,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
     {
       colombia.length > 0 && (
         <section class="contenedor bloque-sec" aria-labelledby="colombia-t">
-          <header class="seccion-cabeza"><h2 id="colombia-t"><a href="/noticias/al-aire">Colombia</a></h2><a href="/noticias/al-aire" class="ver">Al Aire →</a></header>
+          <header class="seccion-cabeza"><h2 id="colombia-t"><a href="/noticias/al-aire">Colombia</a></h2><a href="/noticias/al-aire" class="ver">Al Aire · Actualidad →</a></header>
           <div class="rejilla r4 con-filetes">
             {colombia.map((n) => <NoticiaCard n={n} />)}
           </div>
@@ -154,7 +153,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
           <article class="escuchar-pieza">
             <header class="seccion-cabeza"><h2><a href="/laboratorio">Laboratorio</a></h2><span class="ver">Debates y experimentos</span></header>
             <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
-            <p class="rotulo">Debate · La pregunta no es quién ganó, sino quién cambió</p>
+            <p class="rotulo">Debate con encuesta a la sala antes y después</p>
             <h3 class="titular t-2"><a href={`/laboratorio/${debate.id}`}>{debate.data.titulo}</a></h3>
             <p class="bajada">{debate.data.resumen}</p>
           </article>
@@ -216,7 +215,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
     <section class="contenedor estudio-sec">
       <a href="/estudio" class="estudio">
         <p class="rotulo">Dial Estudio</p>
-        <p class="titular t-3">Producimos documental, cobertura y eventos para organizaciones, con la misma mirada del medio.</p>
+        <p class="titular t-3">Producimos documentales, coberturas y eventos para organizaciones, con el mismo equipo que hace el medio.</p>
         <span class="enlace">Conoce el estudio <span>→</span></span>
       </a>
     </section>

@@ -7,11 +7,11 @@ import sitio from '../data/sitio.json';
 const autores = (await getCollection('autores')).sort((a, b) => a.data.orden - b.data.orden);
 
 const hacemos = [
-  { titulo: 'Noticias', href: '/noticias', texto: 'Lo que pasa en Colombia, América Latina y el mundo, con contexto y con fuentes. Análisis, no primicia.' },
-  { titulo: 'Opinión', href: '/opinion', texto: 'Columnas con firma, separadas de las noticias. Ideas que se defienden con argumentos.' },
-  { titulo: 'Podcast', href: '/podcast', texto: 'Conversaciones largas con quienes construyen paz, en coproducción con la RED Quynza.' },
-  { titulo: 'Documentales', href: '/documentales', texto: 'Música, territorio y memoria: historias que piden tiempo.' },
-  { titulo: 'Laboratorio', href: '/laboratorio', texto: 'Debates entre quienes piensan distinto y experimentos sobre cómo conversamos.' },
+  { titulo: 'Noticias', href: '/noticias', texto: 'Noticias de Colombia, América Latina y el mundo, explicadas y con las fuentes a la vista.' },
+  { titulo: 'Opinión', href: '/opinion', texto: 'Columnas firmadas, separadas de las noticias.' },
+  { titulo: 'Podcast', href: '/podcast', texto: 'Entrevistas largas con personas que trabajan por la paz, hechas con la RED Quynza.' },
+  { titulo: 'Documentales', href: '/documentales', texto: 'Documentales sobre música, territorio y memoria.' },
+  { titulo: 'Laboratorio', href: '/laboratorio', texto: 'Debates entre personas que piensan distinto, con encuesta a la sala antes y después.' },
 ];
 ---
 
@@ -24,16 +24,13 @@ const hacemos = [
       <p class="kicker">Nosotros</p>
       <h1>Un lugar para <em>entender.</em></h1>
       <p class="bajada">
-        Dial es un medio independiente hecho en Bogotá. Ordenamos y traducimos la información para pasar del ruido a la señal:
-        menos prisa, más contexto, y la gente que lo vive en el centro.
+        Dial es un medio independiente hecho en Bogotá. Publicamos noticias explicadas, columnas, podcast y documentales, y organizamos debates entre personas que piensan distinto.
       </p>
     </header>
 
     <section class="contenedor manifiesto">
       <p class="lead-xl">
-        Las redes premian el grito y el titular inflado. Nosotros apostamos por lo contrario: contar <em>completo</em>, mostrar de
-        dónde sale cada dato, escuchar a las partes y abrir espacio a lo que también pasa y casi nadie cuenta: lo que nos une,
-        lo que funciona, el arte, la memoria.
+        Queremos que quien nos lea entienda una noticia sin tener que buscar en otro lado. Por eso explicamos los antecedentes, citamos a cada parte y mostramos de dónde sale cada dato. También contamos historias de arte, de memoria y de proyectos que <em>están funcionando</em> en el país.
       </p>
     </section>
 
@@ -73,12 +70,12 @@ const hacemos = [
       <header class="seccion-cabeza"><h2 id="red-t">Con la RED Quynza</h2></header>
       <div class="dos-texto">
         <p>
-          La RED Quynza reúne a profes, investigadores y gente de los territorios que trabajan por la paz. Con ella hacemos el podcast
+          La RED Quynza reúne a profesores, investigadores y personas de distintas regiones que trabajan por la paz. Con ella hacemos el podcast
           <a href="/podcast"><em>Lo que la gente quiere es vivir</em></a>, y diseñamos el <a href="/noticias/expediente">Expediente</a> que ella
           publica, con el seguimiento de <a href="/autores/andres-tafur-villarreal">Andrés Tafur Villarreal</a>. Cada pieza dice de quién es la iniciativa y quién la produce.
         </p>
         <p>
-          La RED tiene su propia voz académica y Dial su propio análisis político; los mantenemos separados para que una no hable por la otra.
+          La RED publica su trabajo académico y Dial su análisis político por separado: ninguna habla en nombre de la otra.
         </p>
         <a href="https://redquynza.org" class="enlace" target="_blank" rel="noopener">redquynza.org <span>↗</span></a>
       </div>
@@ -93,8 +90,7 @@ const hacemos = [
           y cooperación.
         </p>
         <p>
-          No dependemos de las vistas ni del algoritmo para existir. Nuestros clientes no deciden qué publicamos, y no producimos
-          propaganda electoral. Cuando una pieza tenga apoyo de alguien, lo diremos en la pieza.
+          Así no dependemos de las vistas en redes para sostenernos. Los clientes del Estudio no deciden qué publicamos, y no producimos propaganda electoral. Si una pieza recibe apoyo de alguien, lo decimos en la pieza.
         </p>
         <a href="/principios" class="enlace">Principios editoriales <span>→</span></a>
       </div>

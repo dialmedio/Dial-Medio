@@ -8,7 +8,7 @@
  */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { rutaNoticia, rotulo, conAcento, sinAcento, fechaBreve, isoDia } from '../lib/medio';
+import { rutaNoticia, rotulo, temaDe, conAcento, sinAcento, fechaBreve, isoDia, lineas } from '../lib/medio';
 
 interface Props {
   n: CollectionEntry<'noticias'>;
@@ -51,7 +51,7 @@ const alt = d.portadaAlt ?? '';
   }
   <div class="noticia-texto">
     <p class="noticia-rotulo">
-      <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}</a>
+      <a href={`/noticias/${d.linea}`} class="rotulo" title={lineas[d.linea].texto}>{rotulo(n)}<span class="tema"> · {temaDe(n)}</span></a>
       {d.serie && <span class="rotulo serie">{d.serie.nombre} · {d.serie.parte}/{d.serie.de}</span>}
     </p>
     <h3 class:list={['titular', tam]}>
@@ -70,7 +70,7 @@ const alt = d.portadaAlt ?? '';
   .noticia { display: grid; gap: 14px; align-content: start; }
   .noticia-texto { display: grid; gap: 10px; align-content: start; }
   .noticia-rotulo { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; }
-  .serie { color: var(--texto-2); }
+  .serie, .tema { color: var(--texto-2); }
   .noticia-foto { display: block; }
 
   .principal { gap: 22px; }

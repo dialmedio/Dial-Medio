@@ -25,7 +25,7 @@ export async function GET(context: APIContext) {
   );
   return rss({
     title: 'Dial',
-    description: 'Noticias con contexto, opinión, podcast y documentales desde Bogotá. Análisis, no primicia.',
+    description: 'Noticias explicadas, columnas de opinión, podcast y documentales desde Bogotá.',
     site: context.site!,
     items: [...noticias, ...columnas].sort((a, b) => b.pubDate.valueOf() - a.pubDate.valueOf()).slice(0, 60),
     customData: '<language>es-co</language>',

@@ -9,7 +9,7 @@ import Laminas from '../../../components/Laminas.astro';
 import NoticiaCard from '../../../components/NoticiaCard.astro';
 import sitio from '../../../data/sitio.json';
 import {
-  noticiasPublicadas, lineas, rotulo, conAcento, sinAcento, fechaLarga, isoDia, lectura, partirFuente, rutaNoticia,
+  noticiasPublicadas, lineas, rotulo, temaDe, conAcento, sinAcento, fechaLarga, isoDia, lectura, partirFuente, rutaNoticia,
 } from '../../../lib/medio';
 
 export async function getStaticPaths() {
@@ -62,7 +62,7 @@ const ld = {
   <article class="nota tema-papel" data-pagefind-body>
     <header class="contenedor nota-cabeza">
       <p class="nota-rotulos">
-        <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}</a>
+        <a href={`/noticias/${d.linea}`} class="rotulo">{rotulo(n)}<span class="gris"> · {temaDe(n)}</span></a>
         {d.serie && <span class="rotulo gris">{d.serie.nombre} · Parte {d.serie.parte} de {d.serie.de}</span>}
         {d.numero && <span class="rotulo gris">N.º {d.numero}</span>}
       </p>

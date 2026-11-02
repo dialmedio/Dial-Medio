@@ -51,7 +51,7 @@ import Base from '../layouts/Base.astro';
     const r = await p.debouncedSearch(q, {}, 200);
     if (!r || yo !== turno) return;
     const datos = await Promise.all(r.results.slice(0, 20).map((x) => x.data()));
-    estado.textContent = r.results.length ? `${r.results.length} resultado${r.results.length === 1 ? '' : 's'}` : 'Nada por aquí. Prueba con otras palabras.';
+    estado.textContent = r.results.length ? `${r.results.length} resultado${r.results.length === 1 ? '' : 's'}` : 'No encontramos resultados. Prueba con otras palabras.';
     lista.innerHTML = datos
       .map((d) => `<li><a href="${d.url.replace(/(\/index)?\.html$|\/$/, '') || '/'}" class="titular t-3">${esc(d.meta.title || '')}</a><p>${d.excerpt}</p></li>`)
       .join('');

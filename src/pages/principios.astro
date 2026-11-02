@@ -5,8 +5,8 @@ import sitio from '../data/sitio.json';
 const principios = [
   {
     id: 'contexto',
-    titulo: 'Análisis, no primicia',
-    texto: 'No competimos por contar primero. Contamos completo: qué pasó, por qué importa, qué se dijo antes y qué puede venir. Una noticia de Dial tiene que entenderse sin contexto previo: explicamos siglas, plazos y trámites.',
+    titulo: 'Contexto antes que rapidez',
+    texto: 'No buscamos ser los primeros en publicar. Cada nota explica qué pasó, qué antecedentes tiene y qué puede venir, y tiene que entenderse sin haber leído nada antes: por eso explicamos siglas, plazos y trámites.',
   },
   {
     id: 'fuentes',
@@ -16,7 +16,7 @@ const principios = [
   {
     id: 'partes',
     titulo: 'Las partes, siempre',
-    texto: 'Cuando contamos una decisión del poder, incluimos la versión de quien la tomó, con sus palabras. Los calificativos van atribuidos a quien los dice; los hechos los contamos con hechos.',
+    texto: 'Cuando contamos una decisión del poder, incluimos la versión de quien la tomó, con sus palabras. Los calificativos van atribuidos a quien los dice; los hechos van sin adjetivos.',
   },
   {
     id: 'opinion',
@@ -25,7 +25,7 @@ const principios = [
   },
   {
     id: 'fotos',
-    titulo: 'Fotos honestas',
+    titulo: 'Uso de fotos',
     texto: 'Usamos fotos propias, de dominio público, con licencias libres (CC0, CC BY, CC BY-SA) o con permiso de su autor, nunca de agencias sin licencia. Cada foto lleva autor, licencia, lugar y fecha. Les damos nuestro revelado (color y grano), pero no alteramos lo que muestran, y una foto de archivo nunca se presenta como si fuera del hecho.',
   },
   {
@@ -41,12 +41,12 @@ const principios = [
 ];
 ---
 
-<Base titulo="Principios editoriales" descripcion="Cómo trabaja Dial: análisis, fuentes a la vista, las partes siempre, opinión separada, fotos honestas, independencia y correcciones.">
+<Base titulo="Principios editoriales" descripcion="Las reglas editoriales de Dial: contexto, fuentes enlazadas, la versión de cada parte, opinión separada, uso de fotos, independencia y correcciones.">
   <div class="tema-papel">
     <header class="contenedor pagina-cabeza">
       <p class="kicker">La casa</p>
       <h1>Principios editoriales</h1>
-      <p class="bajada">Lo que puedes esperar de cada pieza de Dial, y lo que puedes exigirnos.</p>
+      <p class="bajada">Las reglas con las que trabajamos. Si una pieza no las cumple, puedes reclamarnos.</p>
     </header>
 
     <div class="contenedor cuerpo">
@@ -70,7 +70,7 @@ const principios = [
           <span class="n">{principios.length + 1}</span>
           <h2 class="titular t-2">Correcciones</h2>
           <p>
-            Nos equivocamos, como todos. Cuando pasa, corregimos la pieza y lo decimos al final, con la fecha y lo que cambió.
+            Cuando cometemos un error, corregimos la pieza y lo decimos al final, con la fecha y lo que cambió.
             No borramos errores en silencio. Si ves uno, escríbenos a <a href={`mailto:${sitio.correo}?subject=Corrección`}>{sitio.correo}</a>
             con el enlace y la fuente que lo muestra.
           </p>

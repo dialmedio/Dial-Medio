@@ -4,37 +4,47 @@
  */
 import { getCollection, type CollectionEntry } from 'astro:content';
 
-/** Las líneas de noticias. Cada una tiene su estética en Instagram; en la página comparten la de la casa. */
+/**
+ * Las líneas de noticias. Cada una tiene su estética en Instagram; en la página comparten la de la casa.
+ * `tema` es el rótulo corto que dice de qué trata (va junto al nombre en tarjetas y notas): a los lectores
+ * los nombres solos (Termómetro, Expediente) no les decían nada (1 nov 2026).
+ */
 export const lineas = {
   'al-aire': {
     nombre: 'Al Aire',
+    tema: 'Actualidad',
     cadencia: 'Todos los días',
-    texto: 'Lo que pasa en Colombia, América Latina y el mundo, con contexto: qué pasó, por qué importa y qué dicen las partes.',
+    texto: 'Noticias de Colombia, América Latina y el mundo. Cada pieza cuenta qué pasó y de dónde viene, recoge lo que dicen el Gobierno y sus críticos, y cierra con las fuentes.',
   },
   termometro: {
     nombre: 'Termómetro',
+    tema: 'Clima y ambiente',
     cadencia: 'Lunes y jueves',
-    texto: 'Clima y ambiente: denuncias con pruebas, soluciones que ya funcionan y la ciencia detrás de cada cifra.',
+    texto: 'Noticias de clima y medio ambiente: deforestación, minería, consulta previa, decisiones ambientales del Gobierno y proyectos de conservación que están dando resultados.',
   },
   expediente: {
     nombre: 'Expediente',
+    tema: 'Seguimiento al Gobierno',
     cadencia: 'Martes y jueves',
-    texto: 'Seguimiento a las decisiones del gobierno De la Espriella, con fuente y fecha. Lo publica la RED Quynza; Dial lo diseña y diagrama.',
+    texto: 'Registro de las decisiones del gobierno De la Espriella: decretos, nombramientos, presupuesto y cambios de política, cada una con su fuente y su fecha. Lo elabora Andrés Tafur Villarreal, lo publica la RED Quynza y Dial lo diseña.',
   },
   'tecnologia-y-poder': {
     nombre: 'Tecnología y poder',
+    tema: 'Política digital',
     cadencia: 'Miércoles',
-    texto: 'La política de la tecnología: quién controla los datos, las plataformas y las máquinas que deciden por nosotros.',
+    texto: 'Cómo la tecnología cambia la política y la vida diaria: datos personales, plataformas, inteligencia artificial, vigilancia y las leyes que intentan regularlas.',
   },
   'nuevos-mundos': {
     nombre: 'Nuevos mundos posibles',
+    tema: 'Alternativas',
     cadencia: 'Viernes',
-    texto: 'Salidas que ya existen: experiencias que muestran que otro modelo es posible.',
+    texto: 'Experiencias concretas, en Colombia y en otros países, que prueban otras formas de organizar la economía, el territorio o la vida en común.',
   },
   'arte-y-memoria': {
     nombre: 'Arte y memoria',
+    tema: 'Historia y cultura',
     cadencia: 'Domingos',
-    texto: 'Historias del arte y de la memoria que explican el presente.',
+    texto: 'Artistas, obras y episodios del pasado contados para entender el presente: quién los hizo, en qué contexto y por qué siguen vigentes.',
   },
 } as const;
 export type Linea = keyof typeof lineas;
@@ -72,11 +82,11 @@ export async function columnasPublicadas() {
 }
 
 /** Rótulo de una noticia: la línea y, en Al Aire, la región o el lugar. */
-export const rotulo = (n: CollectionEntry<'noticias'>) => {
-  const d = n.data;
-  if (d.linea === 'al-aire' && d.region && d.region !== 'colombia') return regiones[d.region];
-  return lineas[d.linea].nombre;
-};
+export const rotulo = (n: CollectionEntry<'noticias'>) => lineas[n.data.linea].nombre;
+
+/** El tema que acompaña al rótulo; en Al Aire es la región (Colombia, América Latina, Mundo). */
+export const temaDe = (n: CollectionEntry<'noticias'>) =>
+  n.data.linea === 'al-aire' && n.data.region ? regiones[n.data.region] : lineas[n.data.linea].tema;
 
 /** Titular con el acento entre asteriscos → <em>. Escapa el resto. */
 export const conAcento = (t: string) =>
