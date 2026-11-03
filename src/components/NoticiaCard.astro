@@ -15,8 +15,10 @@ interface Props {
   variante?: 'principal' | 'media' | 'horizontal' | 'texto';
   bajada?: boolean;
   cargaInmediata?: boolean;
+  /** Muestra la lámina diseñada (4:5) en lugar de la foto de portada. */
+  arte?: boolean;
 }
-const { n, variante = 'media', bajada = variante !== 'texto' && variante !== 'horizontal', cargaInmediata = false } = Astro.props;
+const { n, variante = 'media', bajada = variante !== 'texto' && variante !== 'horizontal', cargaInmediata = false, arte = false } = Astro.props;
 const d = n.data;
 const href = rutaNoticia(n);
 const tam = { principal: 't-1', media: 't-3', horizontal: 't-4', texto: 't-4' }[variante];
@@ -28,22 +30,23 @@ const sizes =
       ? '160px'
       : '(min-width: 980px) 30vw, (min-width: 640px) 50vw, 100vw';
 const alt = d.portadaAlt ?? '';
+const lamina = arte && variante !== 'texto' && variante !== 'horizontal' ? d.laminas[0] : undefined;
 ---
 
-<article class:list={['noticia', variante]} data-linea={d.linea} data-region={d.region}>
+<article class:list={['noticia', variante, { arte: !!lamina }]} data-linea={d.linea} data-region={d.region}>
   {
     variante !== 'texto' && (
       <a href={href} class="noticia-foto" tabindex="-1" aria-hidden="true">
-        <figure class:list={['foto', variante === 'principal' ? 'r-3-2' : variante === 'horizontal' ? 'r-1-1' : 'r-3-2']}>
+        <figure class:list={['foto', lamina ? 'r-4-5' : variante === 'principal' ? 'r-3-2' : variante === 'horizontal' ? 'r-1-1' : 'r-3-2']}>
           <Image
-            src={d.portada}
+            src={lamina ?? d.portada}
             alt={alt}
             widths={anchos}
             sizes={sizes}
             quality={78}
             loading={cargaInmediata ? 'eager' : 'lazy'}
             fetchpriority={cargaInmediata ? 'high' : undefined}
-            style={`object-position:${d.foco}`}
+            style={lamina ? undefined : `object-position:${d.foco}`}
           />
         </figure>
       </a>
@@ -75,6 +78,10 @@ const alt = d.portadaAlt ?? '';
 
   .principal { gap: 22px; }
   .principal .bajada { font-size: clamp(1.1rem, 1rem + .4vw, 1.3rem); max-width: 52ch; }
+
+  @media (min-width: 700px) {
+    .principal.arte { grid-template-columns: minmax(240px, 400px) 1fr; gap: 36px; align-items: center; }
+  }
 
   .horizontal { grid-template-columns: 1fr clamp(88px, 22vw, 128px); gap: 16px; align-items: start; }
   .horizontal .noticia-foto { order: 2; }

@@ -48,9 +48,9 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
     <!-- APERTURA -->
     <section class="contenedor apertura" aria-label="Apertura">
       <div class="apertura-principal">
-        <NoticiaCard n={apertura} variante="principal" cargaInmediata />
+        <NoticiaCard n={apertura} variante="principal" cargaInmediata arte />
         <div class="segundas">
-          {segundas.map((n) => <NoticiaCard n={n} />)}
+          {segundas.map((n) => <NoticiaCard n={n} arte />)}
         </div>
       </div>
       <aside class="ultimo" aria-labelledby="ultimo-t">
@@ -127,7 +127,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
         <section class="contenedor bloque-sec" aria-labelledby="colombia-t">
           <header class="seccion-cabeza"><h2 id="colombia-t"><a href="/noticias/al-aire">Colombia</a></h2><a href="/noticias/al-aire" class="ver">Al Aire · Actualidad →</a></header>
           <div class="rejilla r4 con-filetes">
-            {colombia.map((n) => <NoticiaCard n={n} />)}
+            {colombia.map((n) => <NoticiaCard n={n} arte />)}
           </div>
         </section>
       )
@@ -171,7 +171,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
             {bloques.map((b) => (
               <div class="bloque">
                 <header class="seccion-cabeza chica"><h2><a href={b.href}>{b.titulo}</a></h2>{b.nota && <span class="ver">{b.nota}</span>}</header>
-                <NoticiaCard n={b.piezas[0]} bajada={false} />
+                <NoticiaCard n={b.piezas[0]} bajada={false} arte />
                 {b.piezas.slice(1).map((n) => <NoticiaCard n={n} variante="texto" />)}
               </div>
             ))}
