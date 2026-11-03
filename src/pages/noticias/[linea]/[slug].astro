@@ -214,7 +214,8 @@ const ld = {
 
   .nota-foto { margin-block: clamp(28px, 4vw, 48px); max-width: calc(1180px + 2 * var(--gutter)); }
   .nota-foto .foto { aspect-ratio: 3 / 2; }
-  .nota-foto.vertical { max-width: calc(760px + 2 * var(--gutter)); margin-inline: 0; }
+  /* vertical: la misma caja que el titular y el cuerpo, para que la foto arranque en su borde izquierdo */
+  .nota-foto.vertical .foto, .nota-foto.vertical .pie-foto { max-width: 760px; }
   .nota-foto.vertical .foto { aspect-ratio: auto; max-height: none; }
   .nota-foto:hover img { transform: none; }
 
