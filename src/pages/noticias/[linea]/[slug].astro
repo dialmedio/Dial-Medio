@@ -30,7 +30,10 @@ const tarjeta = existsSync(`public/og/piezas/${n.id}.jpg`) ? `/og/piezas/${n.id}
 const serie = d.serie ? todas.filter((x) => x.data.serie?.nombre === d.serie!.nombre).sort((a, b) => a.data.serie!.parte - b.data.serie!.parte) : [];
 const mas = todas.filter((x) => x.id !== n.id && x.data.linea === d.linea && !serie.includes(x)).slice(0, 3);
 const otras = mas.length < 3 ? todas.filter((x) => x.id !== n.id && x.data.linea !== d.linea).slice(0, 3 - mas.length) : [];
-const minutos = lectura(n.body);
+// Expediente: el texto completo de Andrés va aparte (seguimiento.md, lo escribe importar_noticias.py), después de las láminas.
+const seguimientos = import.meta.glob<{ Content: any; rawContent: () => string }>('/src/content/noticias/*/seguimiento.md', { eager: true });
+const seguimiento = seguimientos[`/src/content/noticias/${n.id}/seguimiento.md`];
+const minutos = lectura(n.body + ' ' + (seguimiento?.rawContent() ?? ''));
 // Si la firma es de alguien de la casa (/autores/…), la firma lleva su retrato.
 const autorFirma = d.firmaEnlace?.startsWith('/autores/') ? await getEntry('autores', d.firmaEnlace.slice(9)) : undefined;
 
@@ -113,6 +116,15 @@ const ld = {
         }
 
         {d.laminas.length > 0 && <div class="nota-laminas"><Laminas laminas={d.laminas} titulo={sinAcento(d.titulo)} /></div>}
+
+        {
+          seguimiento && (
+            <section class="prosa seguimiento" aria-labelledby="seguimiento-t">
+              <h2 id="seguimiento-t">El seguimiento completo</h2>
+              <seguimiento.Content />
+            </section>
+          )
+        }
 
         {
           d.fuentes.length > 0 && (
@@ -226,6 +238,8 @@ const ld = {
 
   .pregunta { border-top: 1px solid var(--carbon); box-shadow: 0 -4px 0 -3px var(--carbon); padding-top: 18px; display: grid; gap: 10px; max-width: 60ch; }
   .pregunta p { margin: 0; }
+  .seguimiento { border-top: 1px solid var(--carbon); padding-top: 28px; }
+  .seguimiento h2 { margin-top: 0; }
   .pregunta-texto { font-family: var(--f-display); font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); line-height: 1.12; }
 
   .fuentes { display: grid; gap: 12px; max-width: 70ch; }

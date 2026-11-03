@@ -464,6 +464,7 @@ a:hover .foto img, .foto:hover img { transform: scale(1.025); }
 .prosa img { margin-block: 1.6em; }
 .prosa .footnotes { font-size: .82em; color: var(--texto-2); border-top: 1px solid var(--borde); padding-top: 1.2em; margin-top: 2.4em; }
 .prosa .footnotes h2 { font-size: 1rem; font-family: var(--f-rotulo); letter-spacing: .14em; text-transform: uppercase; margin-top: 0; }
+.prosa .cita { font-size: .78em; color: var(--texto-2); }
 .prosa sup a { text-decoration: none; color: var(--terracota-ink); font-weight: 600; padding-inline: .1em; }
 
 /* Capitular: la primera letra de las columnas y los análisis largos. */

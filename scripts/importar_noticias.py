@@ -279,6 +279,30 @@ def importar_pieza(ruta_json, hasta, forzar):
     print(f"  {linea:16} {fecha}  {s}")
 
 
+def texto_original(n):
+    """El seguimiento de Andrés tal como lo envía (ediciones/nNN/original.md), en markdown para la página."""
+    f = EXPEDIENTE / f"ediciones/n{n}/original.md"
+    if not f.exists():
+        return ""
+    lineas = f.read_text(encoding="utf-8").strip().splitlines()
+    if lineas and lineas[0].upper().startswith("EXPEDIENTE DE LA ESPRIELLA"):
+        lineas = lineas[1:]  # el titular ya está arriba
+    salida = []
+    for l in lineas:
+        l = l.strip()
+        l = re.sub(r"\[([^\]]+)\]", r'<span class="cita">[\1]</span>', l)
+        l = re.sub(r"\(ver N\.º (\d+)\)", lambda m: f"(ver [N.º {m.group(1)}](/noticias/expediente/expediente-de-la-espriella-n-{m.group(1)}))"
+                   if (DESTINO / f"expediente-de-la-espriella-n-{m.group(1)}").exists() else m.group(0), l)
+        if l and l == l.upper() and re.search(r"[A-ZÁÉÍÓÚÑ]{3}", l) and not l.startswith("@"):
+            titulo = re.sub(r"\b(niño|estado|onu|jep)\b", lambda m: {"onu": "ONU", "jep": "JEP"}.get(m.group(1), m.group(1).title()), l.capitalize())
+            salida += ["", f"### {titulo}", ""]
+        elif l.startswith("·"):
+            salida.append("- " + l.lstrip("· ").strip())
+        else:
+            salida += ["", l] if l else [""]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(salida)).strip()
+
+
 def importar_expediente(n, hasta, forzar):
     carpeta = NOTICIAS / "Expediente" / f"N{n}"
     cfg = json.loads((EXPEDIENTE / f"ediciones/n{n}/n{n}.json").read_text(encoding="utf-8"))
@@ -321,7 +345,11 @@ def importar_expediente(n, hasta, forzar):
         "coproduccion": "RED Quynza",
         "pregunta": pregunta,
     }
-    escribir(dest, campos, (primero + "\n\n" + resto) if portada.get("gancho") else resto)
+    cuerpo = (primero + "\n\n" + resto) if portada.get("gancho") else resto
+    escribir(dest, campos, cuerpo)
+    original = texto_original(n)
+    if original:
+        (dest / "seguimiento.md").write_text(original + "\n", encoding="utf-8")
     print(f"  expediente       {fecha}  {s}")
 
 
