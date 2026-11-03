@@ -13,12 +13,4 @@ firma: "Andrés Tafur Villarreal"
 firmaEnlace: "/autores/andres-tafur-villarreal"
 coproduccion: "RED Quynza"
 ---
-En tres días el gobierno perdió su presupuesto en el Congreso y lo expidió por decreto. Expediente De la Espriella N.º 19
-
-- Presupuesto 2027: $635 billones por decreto, tras un error de trámite. Se cayeron $6,5 billones para pensiones, $3 para salud y $3 para subsidios de energía y gas.
-- Recorte de $13,8 billones al gasto de 2026: Invías, Aerocivil, Ambiente y Víctimas, entre los más afectados.
-- Sale Rodrigo Lara del Ministerio del Interior; entra el exprocurador Alejandro Ordóñez.
-- Nuevas reglas para la consulta previa: se puede cerrar sin acuerdo con la comunidad.
-- Quinto bombardeo del gobierno: ocho muertos aún sin identificar.
-
-Todas las decisiones, con fuente y fecha. Desliza →
+En tres días el gobierno perdió su presupuesto en el Congreso y lo expidió por decreto, recortó $13,8 billones al gasto de 2026, despidió a su ministro del Interior y puso en el cargo a Alejandro Ordóñez. Además, el presidente ordenó por radio un bombardeo a la 1 de la madrugada y su gobierno cambió las reglas de la consulta previa. Sigue el barrido por sectores.

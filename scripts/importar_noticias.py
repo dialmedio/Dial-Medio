@@ -280,13 +280,17 @@ def importar_pieza(ruta_json, hasta, forzar):
 
 
 def texto_original(n):
-    """El seguimiento de Andrés tal como lo envía (ediciones/nNN/original.md), en markdown para la página."""
+    """El seguimiento de Andrés tal como lo envía (ediciones/nNN/original.md), en markdown para la página.
+    Devuelve (apertura, resto): la apertura son los primeros párrafos (hasta dos, o hasta la primera sección);
+    en la página el carrusel va entre las dos partes."""
     f = EXPEDIENTE / f"ediciones/n{n}/original.md"
     if not f.exists():
-        return ""
+        return "", ""
     lineas = f.read_text(encoding="utf-8").strip().splitlines()
     if lineas and lineas[0].upper().startswith("EXPEDIENTE DE LA ESPRIELLA"):
         lineas = lineas[1:]  # el titular ya está arriba
+    if lineas and re.match(r"\w+ \d{1,2} de \w+ de \d{4} ·", lineas[0]):
+        lineas = lineas[1:]  # fecha y periodo, también arriba
     salida = []
     for l in lineas:
         l = l.strip()
@@ -300,7 +304,14 @@ def texto_original(n):
             salida.append("- " + l.lstrip("· ").strip())
         else:
             salida += ["", l] if l else [""]
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(salida)).strip()
+    bloques = re.sub(r"\n{3,}", "\n\n", "\n".join(salida)).strip().split("\n\n")
+    corte, parrafos = 0, 0
+    for i, b in enumerate(bloques):
+        if (b.startswith("### ") and parrafos) or parrafos == 2:
+            break
+        parrafos += not b.startswith(("### ", "- "))
+        corte = i + 1
+    return "\n\n".join(bloques[:corte]), "\n\n".join(bloques[corte:])
 
 
 def importar_expediente(n, hasta, forzar):
@@ -345,11 +356,12 @@ def importar_expediente(n, hasta, forzar):
         "coproduccion": "RED Quynza",
         "pregunta": pregunta,
     }
-    cuerpo = (primero + "\n\n" + resto) if portada.get("gancho") else resto
+    # Con el texto de Andrés, la página es su columna: apertura, carrusel y el resto (seguimiento.md).
+    apertura, resto_original = texto_original(n)
+    cuerpo = apertura or ((primero + "\n\n" + resto) if portada.get("gancho") else resto)
     escribir(dest, campos, cuerpo)
-    original = texto_original(n)
-    if original:
-        (dest / "seguimiento.md").write_text(original + "\n", encoding="utf-8")
+    if resto_original:
+        (dest / "seguimiento.md").write_text(resto_original + "\n", encoding="utf-8")
     print(f"  expediente       {fecha}  {s}")
 
 

@@ -14,13 +14,6 @@ firma: "Andrés Tafur Villarreal"
 firmaEnlace: "/autores/andres-tafur-villarreal"
 coproduccion: "RED Quynza"
 ---
-Cae la reserva que cerraba la Amazonía a nuevas minas y pozos. Duró 80 días.
+El 23 de octubre el Ministerio de Ambiente firmó la Resolución 1405, que revoca la Resolución 0961 del 4 de agosto. La 0961 declaraba el bioma amazónico reserva definitiva de recursos naturales renovables <span class="cita">[MinAmbiente, 26/10]</span>. Esa reserva cubría 483.283 km², el 42% del país, y prohibía nuevas concesiones mineras, nuevos contratos de hidrocarburos y nuevas licencias para esas actividades. Los títulos y contratos vigentes seguían hasta su vencimiento, sin prórroga <span class="cita">[La Silla Vacía, 26/10]</span>. Duró 80 días.
 
-- Petro la firmó tres días antes de irse: cubría todo el bioma amazónico, el 42 % del territorio. Tuvo críticas desde el inicio: no atacaba el oro ilegal y Minas no la firmó.
-- El gobierno la revocó porque no terminó la consulta con las comunidades afro. Pero el 14 de octubre él mismo permitió cerrar consultas previas sin acuerdo.
-- Un proyecto de cobre en Mocoa, con socios del presidente entre sus principales accionistas según La Silla Vacía, era el que la reserva frenaba.
-- Viviane Morales llega a revisar la paz y a desmontar la Unidad de Implementación.
-- El presupuesto de 2027 baja la inversión en 21 de los 32 departamentos.
-- Recortes en la Presidencia: qué se sabe y qué se prometió en campaña.
-
-Todas las decisiones, con fuente y fecha.
+El ministro Fabio Arjona dio dos razones. La primera: la norma se expidió sin terminar la consulta previa con las comunidades negras, afrocolombianas, raizales y palenqueras. La segunda: “no garantizaba, por sí sola, la protección efectiva del bioma” y creaba incertidumbre económica. La llamó una resolución “expedida a último minuto por el gobierno anterior” y dijo que el ministerio podrá tomar nuevas medidas después de la consulta, sin dar fecha <span class="cita">[MinAmbiente, 26/10]</span>.

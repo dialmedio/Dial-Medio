@@ -1,7 +1,3 @@
-Viernes 23 de octubre de 2026 · Decisiones del 20 al 23 de octubre
-
-En tres días el gobierno perdió su presupuesto en el Congreso y lo expidió por decreto, recortó $13,8 billones al gasto de 2026, despidió a su ministro del Interior y puso en el cargo a Alejandro Ordóñez. Además, el presidente ordenó por radio un bombardeo a la 1 de la madrugada y su gobierno cambió las reglas de la consulta previa. Sigue el barrido por sectores.
-
 ### Hacienda
 
 El presupuesto se cayó por un error de trámite. Senado y Cámara aprobaron textos distintos del artículo 65, que trata de las coberturas frente al precio del petróleo, los combustibles y el dólar, y no los conciliaron antes de la medianoche del 20 de octubre. La senadora Esmeralda Hernández advirtió el error cuando ya no había tiempo de corregirlo <span class="cita">[Infobae, 21/10; La Silla Vacía, 21/10]</span>. El gobierno culpó a los ponentes. Los senadores culpan al Ministerio de Hacienda, que llevaba el registro del debate <span class="cita">[Infobae, 21/10]</span>.
