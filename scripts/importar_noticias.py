@@ -139,8 +139,17 @@ def creditos(md):
     return lista
 
 
-def fecha_de(meta, carpeta):
-    base = dt.date.fromisoformat(carpeta[:10])
+def fecha_base(carpeta, ruta_json):
+    """La fecha AAAA-MM-DD del nombre de la carpeta, de alguna carpeta de arriba o del JSON; None si no hay."""
+    for nombre in [carpeta.name, *(p.name for p in carpeta.parents), ruta_json.stem]:
+        try:
+            return dt.date.fromisoformat(nombre[:10])
+        except ValueError:
+            continue
+    return None
+
+
+def fecha_de(meta, base):
     m = re.search(r"\b(\d{1,2}) (ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEP|OCT|NOV|DIC)\b", meta or "")
     if m:
         return dt.date(base.year, MESES[m.group(2)], int(m.group(1)))
@@ -226,7 +235,11 @@ def importar_pieza(ruta_json, hasta, forzar):
     serie = cfg.get("serie")
     if serie:
         titulo = titulo_limpio(portada.get("titulo")) or titulo
-    fecha = fecha_de(cfg.get("meta"), carpeta_desc.name)
+    base = fecha_base(carpeta_desc, ruta_json)
+    if base is None:
+        print("  sin fecha en la carpeta ni en el JSON, se salta:", ruta_json.name)
+        return
+    fecha = fecha_de(cfg.get("meta"), base)
     if fecha > hasta:
         return
     s = slug(titulo.replace("*", ""))
