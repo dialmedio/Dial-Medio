@@ -174,8 +174,20 @@ def main():
     avisar("Dial: sitio actualizado", f"{len(nuevas)} noticia(s) nuevas en dialmedio.org" + (" (revisar el registro)" if malas else ""))
 
 
+def candado_vivo():
+    """True si el candado es de una actualización que sigue corriendo (no de una que se cortó al cerrar la ventana)."""
+    if not CANDADO.exists() or time.time() - CANDADO.stat().st_mtime > 3 * 3600:
+        return False
+    try:
+        pid = int(CANDADO.read_text().strip())
+    except ValueError:
+        return False
+    r = subprocess.run(["tasklist", "/FI", f"PID eq {pid}", "/NH"], capture_output=True, text=True, errors="replace")
+    return str(pid) in r.stdout
+
+
 if __name__ == "__main__":
-    if CANDADO.exists() and time.time() - CANDADO.stat().st_mtime < 3 * 3600:
+    if candado_vivo():
         print("ya hay una actualización corriendo")
         sys.exit(0)
     CANDADO.write_text(str(os.getpid()))
