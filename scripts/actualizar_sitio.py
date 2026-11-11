@@ -1,6 +1,6 @@
 """Sube a dialmedio.org las noticias ya publicadas en redes y despliega el sitio, sin intervención.
 
-Lo corre el Programador de tareas de Windows día de por medio (tarea «Dial - actualizar sitio»). Trabaja en su
+Lo corre el Programador de tareas de Windows cada sábado a las 7:00 (tarea «Dial - actualizar sitio»). Trabaja en su
 propia copia del repo (D:/Claude Code/dial-web-auto, un worktree de git), así no toca lo que otro chat tenga a
 medias en dial-web ni su `dist`:
 
