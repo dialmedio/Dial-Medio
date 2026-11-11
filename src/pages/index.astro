@@ -25,9 +25,9 @@ const segundas = tomar(() => true, 2);
 const ultimo = tomar(() => true, 6);
 const bloques = [
   { titulo: 'América Latina y el mundo', href: '/noticias', nota: 'Al Aire', piezas: tomar((n) => n.data.linea === 'al-aire' && n.data.region !== 'colombia', 3) },
-  { titulo: lineas.termometro.nombre, href: '/noticias/termometro', nota: lineas.termometro.tema, piezas: tomar((n) => n.data.linea === 'termometro', 3) },
-  { titulo: lineas.expediente.nombre, href: '/noticias/expediente', nota: lineas.expediente.tema, piezas: tomar((n) => n.data.linea === 'expediente', 3) },
-  { titulo: lineas['arte-y-memoria'].nombre, href: '/noticias/arte-y-memoria', nota: lineas['arte-y-memoria'].tema, piezas: tomar((n) => n.data.linea === 'arte-y-memoria', 3) },
+  { titulo: lineas.termometro.nombre, href: '/noticias/termometro', nota: lineas.termometro.tema, piezas: tomar((n) => n.data.linea === 'termometro', 3), sinTema: true },
+  { titulo: lineas.expediente.nombre, href: '/noticias/expediente', nota: lineas.expediente.tema, piezas: tomar((n) => n.data.linea === 'expediente', 3), sinTema: true },
+  { titulo: lineas['arte-y-memoria'].nombre, href: '/noticias/arte-y-memoria', nota: lineas['arte-y-memoria'].tema, piezas: tomar((n) => n.data.linea === 'arte-y-memoria', 3), sinTema: true },
 ].filter((b) => b.piezas.length);
 const colombia = tomar((n) => n.data.region === 'colombia', 4);
 
@@ -169,7 +169,7 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
         <section class="contenedor lineas-sec" aria-label="Más noticias">
           <div class={`rejilla r${Math.max(2, bloques.length)} con-filetes`}>
             {bloques.map((b) => (
-              <div class="bloque">
+              <div class:list={['bloque', { 'sin-tema': b.sinTema }]}>
                 <header class="seccion-cabeza chica"><h2><a href={b.href}>{b.titulo}</a></h2>{b.nota && <span class="ver">{b.nota}</span>}</header>
                 <NoticiaCard n={b.piezas[0]} bajada={false} arte />
                 {b.piezas.slice(1).map((n) => <NoticiaCard n={n} variante="texto" />)}
@@ -282,7 +282,18 @@ const enCamino = docs.filter((d) => d.data.estado !== 'publicado');
   .lineas-sec { padding-top: clamp(48px, 6vw, 80px); }
   .bloque { display: grid; gap: 22px; align-content: start; }
   .bloque > :global(.noticia.texto) { border-top: 1px solid var(--linea); padding-top: 16px; }
-  .seccion-cabeza.chica { margin-bottom: 0; }
+  .seccion-cabeza.chica { margin-bottom: 0; flex-direction: column; justify-content: flex-end; align-items: flex-start; gap: 8px; }
+  .seccion-cabeza.chica .ver { text-align: left; }
+  /* Las columnas comparten filas (subgrid): cabezas, fotos y titulares quedan a la misma altura aunque un nombre
+     de sección ocupe dos líneas o una columna tenga menos piezas. */
+  .bloque { grid-template-columns: minmax(0, 1fr); }
+  @supports (grid-template-rows: subgrid) {
+    .bloque { grid-row: span 4; grid-template-rows: subgrid; row-gap: 22px; }
+  }
+  /* El rótulo de cada tarjeta va en una sola línea para que los titulares de las cuatro columnas queden parejos;
+     en las líneas cuyo tema ya dice la cabeza («Clima y ambiente»…), se quita para no repetirlo. */
+  .bloque :global(.noticia-rotulo) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bloque.sin-tema :global(.noticia-rotulo .tema) { display: none; }
   .seccion-cabeza.chica h2 { font-size: clamp(1.5rem, 1.2rem + .8vw, 1.9rem); }
 
   /* Documentales */
