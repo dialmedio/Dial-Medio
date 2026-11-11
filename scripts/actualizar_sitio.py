@@ -107,7 +107,9 @@ def desplegar():
 def responde(ruta):
     for _ in range(3):
         try:
-            with urllib.request.urlopen(f"{SITIO}{ruta}?v={int(time.time())}", timeout=30) as r:
+            # Cloudflare le responde 403 al User-Agent de urllib aunque la página exista
+            pedido = urllib.request.Request(f"{SITIO}{ruta}?v={int(time.time())}", headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(pedido, timeout=30) as r:
                 return r.status
         except Exception as e:
             codigo = getattr(e, "code", 0)
