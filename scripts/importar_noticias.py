@@ -45,6 +45,7 @@ FUERA = {
     "2026-10-25-lula-remonta-video.json",
     "2026-10-25-serbia-estudiantes.json",
     "2026-10-26-brasil-celebra.json",
+    "2026-11-07-america-latina-sin-aliado.json",  # Martín la quitó del sitio (11 nov)
 }
 LINEAS = {None: "al-aire", "nuevos-mundos": "termometro", "arte": "arte-y-memoria",
           "tecnologia": "tecnologia-y-poder", "mundos": "nuevos-mundos"}
