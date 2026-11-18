@@ -8,6 +8,7 @@ import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
 import VideoLite from '../components/VideoLite.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import { FOTOS, credito } from '../lib/cine';
 import { anio, type Video } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
 
@@ -57,12 +58,13 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
 }));
 ---
 
-<Base titulo="Trabajo" descripcion="Documentales, debates, podcast, videoclips, sesiones en vivo y música original de Dial Medio y Fototoma.">
+<Base portada titulo="Trabajo" descripcion="Documentales, debates, podcast, videoclips, sesiones en vivo y música original de Dial Medio y Fototoma.">
   <PortadaPagina
     kicker="Trabajo"
     titulo="Lo que hemos <em>filmado.</em>"
     bajada="Obra propia y muestras de oficio. Los encargos de clientes se irán sumando aquí."
     indice={[...grupos.map((g) => ({ texto: g.titulo, href: `#${g.id}` })), ...(enCurso.length ? [{ texto: 'En curso', href: '#en-curso' }] : [])]}
+    imagen={FOTOS.setAzul}
   />
 
   {

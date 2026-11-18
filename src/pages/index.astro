@@ -1,8 +1,9 @@
 ---
 /**
  * Portada de Dial Medio, la productora (marca v6, 18 nov 2026). Dial dejó de presentarse como medio de
- * comunicación: «medio» es el punto medio. Héroe con fotogramas propios en formato ancho, servicios, trabajo,
- * lo que nos distingue y la casa (Fototoma en la música, RED Quynza en la investigación).
+ * comunicación: «medio» es el punto medio. Héroe de fotogramas que alterna lo documental y lo comercial, el punto
+ * medio como cartela, pantalla partida para los dos públicos, servicios con imagen, trabajo, lo que nos distingue
+ * y la casa. Las fotos de ambiente son libres (src/lib/cine.ts) y nunca se presentan como trabajo de Dial.
  * Nada de clientes ni cifras inventadas.
  */
 import { getCollection } from 'astro:content';
@@ -14,10 +15,8 @@ import Sintonizador from '../components/Sintonizador.astro';
 import { dos, anio } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
 
-import palenque from '../assets/estudio/palenque.jpg';
-import liveSession from '../assets/estudio/live-session.jpg';
-import feoPalante from '../assets/estudio/feo-palante.jpg';
 import disco from '../assets/estudio/in-vitro-disco.jpg';
+import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
@@ -32,11 +31,34 @@ const muestras = (await getCollection('muestras', (m) => !m.data.borrador))
 const sesion = { titulo: 'In-Vitro Live Sessions', video: { plataforma: 'youtube' as const, id: 'tt3X0UynmCk' }, href: 'https://youtu.be/tt3X0UynmCk', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Bogotá' };
 const trabajo = [sesion, ...propios, ...muestras].slice(0, 5);
 
-const fotogramas = [
-  { src: palenque, alt: 'Calle de San Basilio de Palenque, con casas de colores', lugar: 'San Basilio de Palenque', autor: 'Foto de Martín Perea' },
-  { src: liveSession, alt: 'Saxofonista y guitarrista tocando en una sesión en vivo', lugar: 'In-Vitro Live Sessions', autor: 'Bogotá' },
-  { src: feoPalante, alt: 'Retrato en blanco y negro de un cantante con gafas oscuras', lugar: 'Delayn Núñez, «Feo Palante»', autor: 'Videoclip' },
+// Héroe: documental y comercial intercalados, seis fotogramas de 6 s.
+const fotogramas = [FOTOS.paramoFigura, FOTOS.camaraLuz, FOTOS.retratoAndino, FOTOS.setAzul, FOTOS.palmasNiebla, FOTOS.concierto];
+
+// Diseño de comunicación se ilustra con tres láminas propias.
+const LAMINAS = ['donde-se-le-llevan-flores-a-un-desaparecido', 'el-congreso-aprobo-a-las-4-de-la-manana-el-presupuesto-de-2027', 'este-jueves-lectores-y-bibliotecarios-salen-a-defender-las-bibliotecas'];
+const laminas = (await getCollection('noticias', (n) => LAMINAS.includes(n.id) && n.data.laminas.length > 0))
+  .sort((a, b) => LAMINAS.indexOf(a.id) - LAMINAS.indexOf(b.id))
+  .map((n) => n.data.laminas[0]);
+
+const publicos = [
+  {
+    id: 'marcas',
+    kicker: 'Para marcas y artistas',
+    titulo: 'Imagen de cine para lo que <em>haces.</em>',
+    texto: 'Comerciales, videoclips, sesiones en vivo y eventos. La música la compone Fototoma para cada pieza.',
+    foto: FOTOS.setRodaje,
+    enlaces: ['publicidad', 'musica', 'eventos'],
+  },
+  {
+    id: 'organizaciones',
+    kicker: 'Para organizaciones e instituciones',
+    titulo: 'Historias con <em>contexto.</em>',
+    texto: 'Documental, divulgación de investigación y diseño de comunicación, con la investigación de la RED Quynza detrás.',
+    foto: FOTOS.ancianaColina,
+    enlaces: ['documental', 'divulgacion', 'diseno'],
+  },
 ];
+const nombre = Object.fromEntries(servicios.map((s) => [s.id, s.data.titulo]));
 
 const distintos = [
   { titulo: 'Música original', texto: 'Fototoma, nuestra productora hermana, compone la música y hace el diseño sonoro de cada pieza. No usamos bancos de música.' },
@@ -52,14 +74,14 @@ const distintos = [
   descripcion="Dial Medio es una productora audiovisual de Bogotá: publicidad, videoclips, eventos y documental, con la investigación de la RED Quynza y la música original de Fototoma."
   portada
 >
-  <!-- HÉROE: fotogramas a sangre con bandas de cine arriba y abajo -->
+  <!-- HÉROE: fotogramas a sangre, bandas de cine arriba y abajo -->
   <section class="heroe tema-carbon grano">
     <div class="cuadros">
       {
         fotogramas.map((f, i) => (
           <figure class="cuadro" style={`--i:${i}`}>
-            <Image src={f.src} alt={i === 0 ? f.alt : ''} widths={[800, 1400, 2200]} sizes="100vw" loading={i === 0 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} />
-            <figcaption class="credito"><b>{f.lugar}</b><span>{f.autor}</span></figcaption>
+            <Image src={f.src} alt={i === 0 ? f.alt : ''} widths={[800, 1400, 2200]} sizes="100vw" loading={i < 2 ? 'eager' : 'lazy'} fetchpriority={i === 0 ? 'high' : 'auto'} style={f.foco ? `object-position:${f.foco}` : undefined} />
+            <figcaption class="credito">{credito(f)}</figcaption>
           </figure>
         ))
       }
@@ -75,28 +97,51 @@ const distintos = [
         <a href="/trabajo" class="btn linea">Ver el trabajo</a>
       </div>
     </div>
+    <ol class="heroe-conteo" aria-hidden="true">{fotogramas.map((_, i) => <li style={`--i:${i}`} />)}</ol>
   </section>
 
-  <!-- EL PUNTO MEDIO -->
-  <section class="seccion tema-papel punto">
-    <div class="contenedor punto-grid">
-      <div data-revela>
-        <p class="kicker">Por qué Dial Medio</p>
-        <h2 class="display d-2">El punto <em>medio.</em></h2>
-      </div>
-      <div class="punto-texto" data-revela style="--retraso:.1s">
-        <p class="lead-xl">Un dial se mueve hasta encontrar la señal. En nuestro nombre, <em>medio</em> es ese punto.</p>
-        <p class="texto-2">
-          Trabajamos con empresas, entidades públicas, organizaciones sociales y artistas de todas las orillas. En cada proyecto buscamos el lugar desde donde
-          la historia se puede contar con datos verificados y sin caricaturas, para que la entienda quien está de acuerdo y también quien no.
-        </p>
-      </div>
+  <!-- EL PUNTO MEDIO: cartela sobre el páramo -->
+  <section class="punto tema-carbon grano">
+    <figure class="punto-foto" aria-hidden="true">
+      <Image src={FOTOS.lagunaParamo.src} alt="" widths={[800, 1400, 2200]} sizes="100vw" />
+      <figcaption class="credito">{credito(FOTOS.lagunaParamo)}</figcaption>
+    </figure>
+    <div class="contenedor punto-texto" data-revela>
+      <p class="kicker">Por qué Dial Medio</p>
+      <h2 class="display d-1">El punto <em>medio.</em></h2>
+      <p class="lead-xl">Un dial se mueve hasta encontrar la señal. En nuestro nombre, <em>medio</em> es ese punto.</p>
+      <p class="punto-bajada">
+        Trabajamos con empresas, entidades públicas, organizaciones sociales y artistas de todas las orillas. En cada proyecto buscamos el lugar desde donde
+        la historia se puede contar con datos verificados y sin caricaturas, para que la entienda quien está de acuerdo y también quien no.
+      </p>
     </div>
-    <div class="contenedor"><Sintonizador frecuencia={1110} /></div>
+    <div class="contenedor punto-dial"><Sintonizador frecuencia={1110} /></div>
   </section>
 
-  <!-- SERVICIOS -->
-  <section class="seccion tema-carbon grano" id="servicios">
+  <!-- DOS PÚBLICOS: pantalla partida -->
+  <section class="publicos" aria-label="Para quién trabajamos">
+    {
+      publicos.map((p) => (
+        <article class:list={['publico', 'tema-carbon', p.id]}>
+          <figure class="publico-foto" aria-hidden="true">
+            <Image src={p.foto.src} alt="" widths={[700, 1100, 1600]} sizes="(min-width: 980px) 50vw, 100vw" style={p.foto.foco ? `object-position:${p.foto.foco}` : undefined} />
+          </figure>
+          <div class="publico-texto">
+            <p class="kicker">{p.kicker}</p>
+            <h2 class="display d-2" set:html={p.titulo} />
+            <p class="texto-2">{p.texto}</p>
+            <ul class="publico-enlaces">
+              {p.enlaces.map((id) => <li><a href={`/servicios#${id}`}>{nombre[id]}<span aria-hidden="true">→</span></a></li>)}
+            </ul>
+          </div>
+          <p class="credito publico-credito">{credito(p.foto)}</p>
+        </article>
+      ))
+    }
+  </section>
+
+  <!-- SERVICIOS con imagen -->
+  <section class="seccion tema-papel" id="servicios">
     <div class="contenedor">
       <header class="cabeza doble">
         <div data-revela>
@@ -108,23 +153,30 @@ const distintos = [
       <ol class="servicios">
         {
           servicios.map((s, i) => (
-            <li data-revela style={`--retraso:${i * 0.04}s`}>
+            <li data-revela style={`--retraso:${(i % 3) * 0.06}s`}>
               <a href={`/servicios#${s.id}`} class="servicio">
+                {FOTO_SERVICIO[s.id] ? (
+                  <span class="servicio-foto">
+                    <Image src={FOTO_SERVICIO[s.id].src} alt="" widths={[480, 800, 1100]} sizes="(min-width: 1100px) 31vw, (min-width: 760px) 48vw, 100vw" style={FOTO_SERVICIO[s.id].foco ? `object-position:${FOTO_SERVICIO[s.id].foco}` : undefined} />
+                  </span>
+                ) : (
+                  <span class="servicio-foto servicio-laminas">
+                    {laminas.map((l) => <Image src={l} alt="" widths={[240, 400]} sizes="12vw" />)}
+                  </span>
+                )}
                 <span class="servicio-n">{dos(i + 1)}</span>
-                <span class="titular t-2">{s.data.titulo}</span>
+                <span class="titular t-3">{s.data.titulo}</span>
                 {s.data.gancho && <span class="gancho servicio-gancho">{s.data.gancho}</span>}
-                <span class="servicio-para">{s.data.paraQuien}</span>
               </a>
             </li>
           ))
         }
       </ol>
-      <p class="mas"><a href="/servicios" class="enlace">Todos los servicios <span>→</span></a></p>
     </div>
   </section>
 
-  <!-- TRABAJO -->
-  <section class="seccion tema-papel" id="trabajo">
+<!-- TRABAJO -->
+  <section class="seccion tema-carbon grano" id="trabajo">
     <div class="contenedor">
       <header class="seccion-cabeza"><h2>Trabajo</h2><a href="/trabajo" class="ver">Todo el trabajo →</a></header>
       <div class="obras">
@@ -213,43 +265,83 @@ const distintos = [
   /* ---------- Héroe: fotogramas que se funden, bandas de cine ---------- */
   .heroe { position: relative; min-height: 100svh; display: grid; align-items: end; background: #0f0d0c; overflow: hidden; }
   .cuadros { position: absolute; inset: clamp(68px, 9vh, 96px) 0 clamp(28px, 7vh, 72px); }
-  .cuadro { position: absolute; inset: 0; margin: 0; opacity: 0; animation: funde 21s infinite; animation-delay: calc(var(--i) * 7s); }
-  .cuadro:first-child { opacity: 1; }
-  .cuadro img { width: 100%; height: 100%; object-fit: cover; animation: acerca 21s infinite linear; animation-delay: calc(var(--i) * 7s); }
+  /* Seis fotogramas de 6 s: ciclo de 36 s, cada uno visible un sexto. */
+  .cuadro { position: absolute; inset: 0; margin: 0; opacity: 0; animation: funde 36s infinite; animation-delay: calc(var(--i) * 6s - 1s); }
+  .cuadro img { width: 100%; height: 100%; object-fit: cover; animation: acerca 36s infinite linear; animation-delay: calc(var(--i) * 6s - 1s); }
   .cuadro::after { content: ''; position: absolute; inset: 0; background:
     linear-gradient(0deg, rgba(15, 13, 12, .9) 0%, rgba(15, 13, 12, .2) 50%, rgba(15, 13, 12, 0) 100%),
     linear-gradient(90deg, rgba(15, 13, 12, .82) 0%, rgba(15, 13, 12, .5) 38%, rgba(15, 13, 12, 0) 70%); }
   @media (max-width: 760px) { .cuadro::after { background: linear-gradient(0deg, rgba(15, 13, 12, .95) 0%, rgba(15, 13, 12, .6) 55%, rgba(15, 13, 12, .15) 100%); } }
   .cuadro .credito { position: absolute; right: var(--gutter); bottom: 14px; z-index: 2; color: rgba(244, 238, 229, .75); margin: 0; }
-  @keyframes funde { 0% { opacity: 0; } 6% { opacity: 1; } 33% { opacity: 1; } 39% { opacity: 0; } 100% { opacity: 0; } }
-  @keyframes acerca { from { transform: scale(1); } to { transform: scale(1.08); } }
+  @keyframes funde { 0% { opacity: 0; } 2.8% { opacity: 1; } 16.7% { opacity: 1; } 19.5% { opacity: 0; } 100% { opacity: 0; } }
+  @keyframes acerca { 0% { transform: scale(1.02); } 20% { transform: scale(1.09); } 100% { transform: scale(1.09); } }
   @media (prefers-reduced-motion: reduce) {
-    .cuadro, .cuadro img { animation: none; }
+    .cuadro, .cuadro img, .heroe-conteo li::after { animation: none; }
+    .cuadro:first-child { opacity: 1; }
     .cuadro:not(:first-child) { display: none; }
   }
+  /* Conteo de fotogramas: seis rayas finas abajo a la izquierda; la que está en pantalla se llena de luz. */
+  .heroe-conteo { position: absolute; left: var(--gutter); bottom: clamp(36px, 5vh, 52px); z-index: 3; list-style: none; display: flex; gap: 6px; }
+  @media (min-width: 1000px) { .heroe-conteo { left: max(var(--gutter), calc((100vw - var(--ancho)) / 2)); } }
+  .heroe-conteo li { width: 28px; height: 2px; background: rgba(244, 238, 229, .25); position: relative; overflow: hidden; }
+  .heroe-conteo li::after { content: ''; position: absolute; inset: 0; background: var(--luz); transform: scaleX(0); transform-origin: left; animation: llena 36s infinite linear; animation-delay: calc(var(--i) * 6s - 1s); }
+  @keyframes llena { 0% { transform: scaleX(0); } 16.7% { transform: scaleX(1); } 17% { transform: scaleX(0); } 100% { transform: scaleX(0); } }
   .heroe-texto { position: relative; z-index: 2; display: grid; gap: 22px; justify-items: start; padding-bottom: clamp(72px, 13vh, 140px); }
   .heroe-titulo { font-size: clamp(3rem, 1.3rem + 5.6vw, 7rem); line-height: .94; max-width: 12ch; }
   .heroe-bajada { margin: 0; color: var(--hueso-2); max-width: 46ch; }
   @media (prefers-reduced-motion: no-preference) { .heroe-texto { animation: aparece 1.1s var(--ease) both .2s; } }
   @keyframes aparece { from { opacity: 0; transform: translateY(12px); } }
 
-  /* ---------- Punto medio ---------- */
-  .punto-grid { display: grid; gap: 28px 72px; margin-bottom: clamp(40px, 5vw, 72px); }
-  @media (min-width: 980px) { .punto-grid { grid-template-columns: 1fr 1.3fr; align-items: end; } }
-  .punto-texto { display: grid; gap: 20px; }
-  .punto-texto p { margin: 0; max-width: 56ch; }
+  /* ---------- Punto medio: cartela a pantalla sobre el páramo ---------- */
+  .punto { position: relative; overflow: hidden; background: #0f0d0c; padding-block: clamp(120px, 20vw, 260px) clamp(40px, 5vw, 64px); }
+  .punto-foto { position: absolute; inset: 0; margin: 0; z-index: 0 !important; }
+  .punto-foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .punto-foto::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, rgba(15, 13, 12, .55) 0%, rgba(15, 13, 12, .82) 70%), linear-gradient(0deg, #0f0d0c 0%, rgba(15, 13, 12, 0) 35%); }
+  .punto-foto .credito { position: absolute; right: var(--gutter); top: 18px; z-index: 1; margin: 0; color: rgba(244, 238, 229, .55); font-size: .74rem; }
+  .punto-texto { display: grid; gap: 26px; justify-items: center; text-align: center; }
+  .punto-texto p { margin: 0; }
+  .punto-texto .kicker { justify-content: center; }
+  .punto-texto .lead-xl { max-width: 24ch; }
+  .punto-bajada { max-width: 58ch; color: var(--hueso-2); }
+  .punto-dial { margin-top: clamp(72px, 10vw, 140px); }
 
-  /* ---------- Servicios ---------- */
-  .servicios { list-style: none; display: grid; gap: 1px; background: var(--linea-clara); border: 1px solid var(--linea-clara); }
+  /* ---------- Dos públicos: pantalla partida ---------- */
+  .publicos { display: grid; background: #0f0d0c; gap: 2px; }
+  @media (min-width: 980px) { .publicos { grid-template-columns: 1fr 1fr; } }
+  .publico { position: relative; overflow: hidden; min-height: clamp(560px, 92svh, 900px); display: grid; align-items: end; isolation: isolate; }
+  .publico-foto { position: absolute; inset: 0; margin: 0; z-index: -1; }
+  .publico-foto :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease), filter 1s; filter: saturate(.85); }
+  .publico:hover .publico-foto :global(img) { transform: scale(1.04); filter: saturate(1); }
+  .publico-foto::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15, 13, 12, .96) 0%, rgba(15, 13, 12, .6) 42%, rgba(15, 13, 12, .12) 100%); }
+  .publico-texto { display: grid; gap: 18px; justify-items: start; padding: clamp(28px, 4vw, 64px); padding-bottom: clamp(56px, 6vw, 88px); max-width: 640px; }
+  .publico-texto p { margin: 0; max-width: 44ch; }
+  .publico-enlaces { list-style: none; width: 100%; border-top: 1px solid var(--linea-clara); margin-top: 8px; }
+  .publico-enlaces a { display: flex; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--linea-clara); text-decoration: none; font-family: var(--f-display); font-size: clamp(1.25rem, 1.1rem + .5vw, 1.6rem); line-height: 1.1; transition: color .2s, padding .3s var(--ease); }
+  .publico-enlaces a span { color: var(--hueso-2); transition: transform .3s var(--ease), color .2s; }
+  .publico-enlaces a:hover { color: var(--papel); padding-left: 6px; }
+  .publico-enlaces a:hover span { color: var(--luz); transform: translateX(4px); }
+  .publico-credito { position: absolute; right: clamp(16px, 2vw, 28px); top: 18px; margin: 0; color: rgba(244, 238, 229, .55); font-size: .74rem; }
+
+  /* ---------- Servicios con imagen ---------- */
+  .servicios { list-style: none; display: grid; gap: 40px 24px; }
   @media (min-width: 760px) { .servicios { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .servicios { grid-template-columns: repeat(3, 1fr); } }
   .servicios li { display: grid; }
-  .servicio { display: grid; gap: 12px; align-content: start; padding: clamp(24px, 2.6vw, 36px); background: var(--carbon); text-decoration: none; transition: background .3s var(--ease); }
-  .servicio:hover { background: var(--carbon-2); }
-  .servicio-n { font-family: var(--f-display); font-style: italic; font-size: 1.6rem; line-height: 1; color: var(--terracota-clara); }
-  .servicio-gancho { font-size: 1.12rem; color: var(--hueso-2); }
-  .servicio-para { font-size: .86rem; color: var(--hueso-2); border-top: 1px solid var(--linea-clara); padding-top: 12px; margin-top: 6px; }
-  .mas { margin: 32px 0 0; }
+  .servicio { display: grid; gap: 10px; align-content: start; text-decoration: none; }
+  .servicio-foto { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #0f0d0c; margin-bottom: 8px; }
+  .servicio-foto :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .servicio:hover .servicio-foto :global(img) { transform: scale(1.04); }
+  .servicio-laminas { display: flex; align-items: center; justify-content: center; gap: 0; padding: 0 8%; background: var(--carbon); }
+  .servicio-laminas :global(img) { width: 34%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; box-shadow: 0 10px 30px rgba(0, 0, 0, .45); transition: transform .8s var(--ease); }
+  .servicio-laminas :global(img:nth-child(1)) { transform: rotate(-6deg) translateX(18%); }
+  .servicio-laminas :global(img:nth-child(2)) { transform: translateY(-4%); z-index: 1; position: relative; }
+  .servicio-laminas :global(img:nth-child(3)) { transform: rotate(6deg) translateX(-18%); }
+  .servicio:hover .servicio-laminas :global(img:nth-child(1)) { transform: rotate(-9deg) translateX(10%); }
+  .servicio:hover .servicio-laminas :global(img:nth-child(3)) { transform: rotate(9deg) translateX(-10%); }
+  .servicio-n { font-family: var(--f-display); font-style: italic; font-size: 1.3rem; line-height: 1; color: var(--terracota-ink); }
+  .servicio .titular { transition: color .2s; }
+  .servicio:hover .titular { color: var(--terracota-ink); }
+  .servicio-gancho { font-size: 1.05rem; color: var(--tinta-2); }
 
   /* ---------- Trabajo ---------- */
   .obras { display: grid; gap: 40px 28px; }

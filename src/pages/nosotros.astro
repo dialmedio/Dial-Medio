@@ -8,6 +8,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import { FOTOS, credito } from '../lib/cine';
 import cap from '../data/capacidades.json';
 import sitio from '../data/sitio.json';
 import { dos } from '../lib/util';
@@ -16,12 +17,13 @@ const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.d
 const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', 'Pereira', 'Barranquilla', 'Cali', 'Popayán', 'Tres países de Asia'];
 ---
 
-<Base titulo="Nosotros" descripcion="El equipo de Dial Medio, productora audiovisual de Bogotá, y su casa: Fototoma en la música y la RED Quynza en la investigación.">
+<Base portada titulo="Nosotros" descripcion="El equipo de Dial Medio, productora audiovisual de Bogotá, y su casa: Fototoma en la música y la RED Quynza en la investigación.">
   <PortadaPagina
     kicker="Nosotros"
     titulo="Un equipo pequeño, de la idea al <em>estreno.</em>"
     bajada="Dial Medio es una productora audiovisual de Bogotá. Trabaja junto a Fototoma, que hace la música y el sonido, y a la RED Quynza, que investiga."
     indice={[{ texto: 'Equipo', href: '#equipo' }, { texto: 'La casa', href: '#casa' }, { texto: 'Capacidades', href: '#capacidades' }]}
+    imagen={FOTOS.direccion}
   />
 
   <section class="seccion compacta tema-papel">

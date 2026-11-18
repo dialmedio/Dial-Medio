@@ -4,10 +4,12 @@
  * la divulgación académica y el formato de preguntas en la calle (en preparación, de la RED y de Dial).
  * Reemplaza /impacto/medicion.
  */
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
 import EscalaMedicion from '../components/EscalaMedicion.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import { FOTOS, credito } from '../lib/cine';
 import { dos } from '../lib/util';
 
 const red = [
@@ -25,6 +27,7 @@ const escalones = [
 ---
 
 <Base
+  portada
   titulo="Investigación"
   descripcion="La RED Quynza es el brazo investigativo de Dial Medio: contexto, verificación, acceso al territorio y medición de lo que pasa con cada pieza."
 >
@@ -33,6 +36,7 @@ const escalones = [
     titulo="Primero el contexto, después la <em>cámara.</em>"
     bajada="La RED Quynza es una red académica de profesores e investigadores con nodos en varias regiones del país. Es el brazo investigativo de Dial."
     indice={[{ texto: 'Qué hace la RED', href: '#red' }, { texto: 'Medir', href: '#medir' }, { texto: 'Divulgación', href: '#divulgacion' }, { texto: 'Preguntas en la calle', href: '#calle' }]}
+    imagen={FOTOS.palmasNiebla}
   >
     <div class="acciones">
       <a href="https://redquynza.org" class="btn linea" target="_blank" rel="noopener">Conoce la RED Quynza <span class="flecha">↗</span></a>
@@ -92,7 +96,11 @@ const escalones = [
     </div>
   </section>
 
-  <section class="seccion tema-carbon grano cartela" id="calle">
+  <section class="seccion tema-carbon grano cartela calle" id="calle">
+    <figure class="calle-foto" aria-hidden="true">
+      <Image src={FOTOS.campoCiudad.src} alt="" widths={[800, 1400, 2200]} sizes="100vw" style={`object-position:${FOTOS.campoCiudad.foco}`} />
+      <figcaption class="credito">Imagen de referencia · {credito(FOTOS.campoCiudad)}</figcaption>
+    </figure>
     <div class="contenedor">
       <p class="kicker vivo calle-kicker">{dos(4)} · En preparación · RED Quynza y Dial</p>
       <h2 class="display d-2">Preguntas en la <em>calle.</em></h2>
@@ -119,4 +127,9 @@ const escalones = [
   .dos-col-texto { display: grid; gap: 22px; justify-items: start; }
   .dos-col-texto p { margin: 0; max-width: 56ch; }
   .calle-kicker { justify-content: center; margin-bottom: 22px; }
+  .calle { position: relative; overflow: hidden; background: #0f0d0c; }
+  .calle-foto { position: absolute; inset: 0; margin: 0; z-index: 0 !important; }
+  .calle-foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .calle-foto::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(15, 13, 12, .62), rgba(15, 13, 12, .88) 75%); }
+  .calle-foto .credito { position: absolute; right: var(--gutter); bottom: 14px; z-index: 1; margin: 0; color: rgba(244, 238, 229, .55); font-size: .74rem; }
 </style>

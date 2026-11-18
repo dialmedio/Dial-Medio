@@ -11,6 +11,7 @@ import CTAFinal from '../components/CTAFinal.astro';
 import cap from '../data/capacidades.json';
 import { dos } from '../lib/util';
 import { rutaNoticia } from '../lib/medio';
+import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
@@ -26,6 +27,7 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
 ---
 
 <Base
+  portada
   titulo="Servicios"
   descripcion="Documental, publicidad, videoclips, eventos, divulgación de investigación y diseño de comunicación. Dial Medio, productora audiovisual de Bogotá."
 >
@@ -34,11 +36,20 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
     titulo="Del comercial al <em>documental.</em>"
     bajada="Lo comercial y lo social los hace el mismo equipo, con la misma investigación detrás y música compuesta para cada pieza."
     indice={servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` }))}
+    imagen={FOTOS.camaraLuz}
   />
 
   {
     servicios.map((s, i) => (
-      <section class:list={['seccion', 'compacta', i % 2 ? 'tema-hueso' : 'tema-papel']} id={s.id}>
+      <section class:list={['seccion', 'compacta', 'serv-sec', i % 2 ? 'tema-hueso' : 'tema-papel']} id={s.id}>
+        {FOTO_SERVICIO[s.id] && (
+          <figure class="serv-foto" data-revela>
+            <div class="fotograma">
+              <Image src={FOTO_SERVICIO[s.id].src} alt={FOTO_SERVICIO[s.id].alt} widths={[800, 1400, 2200]} sizes="100vw" style={FOTO_SERVICIO[s.id].foco ? `object-position:${FOTO_SERVICIO[s.id].foco}` : undefined} />
+            </div>
+            <figcaption class="contenedor credito"><b>Imagen de referencia</b><span>{credito(FOTO_SERVICIO[s.id])}</span></figcaption>
+          </figure>
+        )}
         <div class="contenedor serv">
           <div class="serv-cabeza" data-revela>
             <p class="kicker">{dos(i + 1)} · Para {s.data.paraQuien.charAt(0).toLowerCase() + s.data.paraQuien.slice(1).replace(/\.$/, '')}</p>
@@ -95,6 +106,13 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
 </Base>
 
 <style>
+  .serv-sec { padding-top: 0; }
+  .serv-sec:first-of-type { padding-top: 0; }
+  .serv-foto { margin: 0 0 clamp(40px, 5vw, 72px); }
+  .serv-foto .fotograma { aspect-ratio: 2.39 / 1; }
+  @media (max-width: 640px) { .serv-foto .fotograma { aspect-ratio: 16 / 10; } }
+  .serv-foto .credito { margin-top: 10px; }
+  .serv-sec:not(:has(.serv-foto)) { padding-top: calc(var(--seccion) * .62); }
   .serv { display: grid; gap: 28px 72px; }
   @media (min-width: 980px) { .serv { grid-template-columns: 1fr 1.25fr; } }
   .serv-cabeza { display: grid; gap: 16px; align-content: start; }

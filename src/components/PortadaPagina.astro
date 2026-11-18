@@ -3,7 +3,9 @@
  * Portada de las páginas interiores.
  * `indice` agrega a la derecha los accesos a las secciones de la página.
  */
+import { Image } from 'astro:assets';
 import Simbolo from './Simbolo.astro';
+import { credito, type Foto } from '../lib/cine';
 
 interface Props {
   kicker: string;
@@ -12,11 +14,21 @@ interface Props {
   tema?: 'carbon' | 'hueso';
   simbolo?: boolean;
   indice?: { texto: string; href: string }[];
+  /** v6: fotograma de fondo a sangre, con velo negro y crédito abajo a la derecha. */
+  imagen?: Foto;
 }
-const { kicker, titulo, bajada, tema = 'carbon', simbolo = false, indice = [] } = Astro.props;
+const { kicker, titulo, bajada, tema = 'carbon', simbolo = false, indice = [], imagen } = Astro.props;
 ---
 
-<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon', luz: tema === 'carbon', 'con-indice': indice.length > 0 }]}>
+<section class:list={['portada-pag', `tema-${tema}`, { grano: tema === 'carbon', luz: tema === 'carbon', 'con-indice': indice.length > 0, 'con-imagen': !!imagen }]}>
+  {
+    imagen && (
+      <figure class="portada-pag-foto" aria-hidden="true">
+        <Image src={imagen.src} alt="" widths={[800, 1400, 2200]} sizes="100vw" loading="eager" fetchpriority="high" style={imagen.foco ? `object-position:${imagen.foco}` : undefined} />
+        <figcaption class="credito">{credito(imagen)}</figcaption>
+      </figure>
+    )
+  }
   {simbolo && <Simbolo tono={tema === 'carbon' ? 'claro' : 'oscuro'} class="portada-pag-simbolo" anima />}
   <div class="contenedor portada-pag-grid">
     <div class="portada-pag-cuerpo">
@@ -52,7 +64,16 @@ const { kicker, titulo, bajada, tema = 'carbon', simbolo = false, indice = [] } 
     overflow: hidden;
     padding-block: clamp(72px, 10vw, 136px) clamp(64px, 8vw, 104px);
   }
-  .portada-pag-grid { display: grid; gap: 56px; align-items: end; }
+  .portada-pag-grid { display: grid; gap: 56px; align-items: end; position: relative; z-index: 1; }
+  .con-imagen { min-height: min(86svh, 820px); display: grid; align-items: end; padding-top: clamp(140px, 22vh, 240px); background: #0f0d0c; }
+  .portada-pag-foto { position: absolute; inset: 0; margin: 0; z-index: 0; }
+  .portada-pag-foto :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .portada-pag-foto::after { content: ''; position: absolute; inset: 0; background:
+      linear-gradient(0deg, rgba(15, 13, 12, .94) 0%, rgba(15, 13, 12, .45) 48%, rgba(15, 13, 12, .2) 100%),
+      linear-gradient(90deg, rgba(15, 13, 12, .7) 0%, rgba(15, 13, 12, 0) 65%); }
+  .portada-pag-foto .credito { position: absolute; right: var(--gutter); bottom: 14px; z-index: 1; margin: 0; color: rgba(244, 238, 229, .6); font-size: .74rem; }
+  .con-imagen .indice ol { border-color: var(--linea-clara); }
+  .con-imagen .indice a { border-color: var(--linea-clara); }
   .portada-pag-cuerpo { display: grid; gap: 26px; justify-items: start; }
   .portada-pag h1 { max-width: 15ch; }
   .portada-pag .lead { margin: 0; max-width: 46ch; }
