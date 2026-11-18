@@ -10,20 +10,13 @@ import PortadaPagina from '../components/PortadaPagina.astro';
 import CTAFinal from '../components/CTAFinal.astro';
 import cap from '../data/capacidades.json';
 import { dos } from '../lib/util';
-import { rutaNoticia } from '../lib/medio';
+import CarruselMuestra from '../components/CarruselMuestra.astro';
+import { CARRUSELES } from '../lib/muestras';
 import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
-const MUESTRAS = [
-  'donde-se-le-llevan-flores-a-un-desaparecido',
-  'el-congreso-aprobo-a-las-4-de-la-manana-el-presupuesto-de-2027',
-  'brasil-vota-con-la-menor-deforestacion-en-casi-40-anos',
-  'este-jueves-lectores-y-bibliotecarios-salen-a-defender-las-bibliotecas',
-];
-const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) && n.data.laminas.length > 0))
-  .sort((a, b) => MUESTRAS.indexOf(a.id) - MUESTRAS.indexOf(b.id))
-  .map((n) => ({ src: n.data.laminas[0], href: rutaNoticia(n), alt: n.data.titulo.replace(/\*/g, '') }));
+// Muestras del servicio de campañas: carruseles propios que se recorren con el mouse (src/lib/muestras.ts).
 ---
 
 <Base
@@ -71,14 +64,10 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
             <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
           </div>
           {
-            s.id === 'diseno' && laminas.length > 0 && (
+            s.id === 'diseno' && (
               <div class="laminas" data-revela>
-                {laminas.map((l) => (
-                  <a href={l.href} class="lamina">
-                    <Image src={l.src} alt={l.alt} widths={[360, 540, 720]} sizes="(min-width: 980px) 22vw, 45vw" />
-                  </a>
-                ))}
-                <p class="credito"><b>Muestras</b><span>Carruseles que Dial diseñó y publicó en 2026</span></p>
+                {CARRUSELES.map((c) => <CarruselMuestra c={c} />)}
+                <p class="credito"><b>Muestras</b><span>Carruseles que Dial diseñó y publicó en 2026. Pasa el mouse por encima para ver las láminas.</span></p>
               </div>
             )
           }
@@ -125,10 +114,7 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
   .serv-listas dd { margin: 10px 0 0; }
   .serv-listas ul { list-style: none; display: grid; gap: 8px; }
   .serv-listas li { padding-top: 8px; border-top: 1px solid var(--borde); font-size: .98rem; }
-  .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
   @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
-  .lamina { display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--carbon-2); }
-  .lamina img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
-  .lamina:hover img { transform: scale(1.03); }
   .laminas .credito { grid-column: 1 / -1; margin: 0; }
 </style>

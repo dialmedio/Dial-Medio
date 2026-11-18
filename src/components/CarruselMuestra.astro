@@ -1,0 +1,54 @@
+---
+/**
+ * Un carrusel de Dial que se recorre como en Instagram (18 nov 2026): con el mouse, la lámina cambia según
+ * dónde esté el puntero (de izquierda a derecha); en el celular, cada toque pasa a la siguiente. Rayitas
+ * arriba como las de las historias. El script está en Base.astro ([data-carrusel]).
+ */
+import { Image } from 'astro:assets';
+import type { Carrusel } from '../lib/muestras';
+
+interface Props {
+  c: Carrusel;
+  sizes?: string;
+  pie?: boolean;
+  class?: string;
+}
+const { c, sizes = '(min-width: 980px) 22vw, 45vw', pie = true, class: clase = '' } = Astro.props;
+---
+
+<figure class:list={['carrusel', clase]} data-carrusel data-cursor="Desliza">
+  <div class="carrusel-marco">
+    {
+      c.laminas.map((l, i) => (
+        <Image src={l} alt={i === 0 ? `Carrusel de Dial: ${c.titulo}` : ''} widths={[360, 540, 760]} sizes={sizes} class:list={['carrusel-lamina', { activa: i === 0 }]} loading="lazy" />
+      ))
+    }
+    <ol class="carrusel-rayas" aria-hidden="true">{c.laminas.map((_, i) => <li class:list={{ activa: i === 0 }} />)}</ol>
+  </div>
+  {
+    pie && (
+      <figcaption>
+        <span class="rotulo">{c.tema}</span>
+        <span class="carrusel-titulo">{c.titulo}</span>
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .carrusel { margin: 0; display: grid; gap: 12px; align-content: start; }
+  .carrusel-marco {
+    position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #0f0d0c;
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, .55);
+    transition: transform .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .carrusel:hover .carrusel-marco { transform: translateY(-6px) rotate(-.6deg); box-shadow: 0 28px 50px -20px rgba(0, 0, 0, .6); }
+  .carrusel-marco :global(.carrusel-lamina) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .25s; }
+  .carrusel-marco :global(.carrusel-lamina.activa) { opacity: 1; }
+  .carrusel-rayas { position: absolute; left: 8px; right: 8px; top: 8px; list-style: none; display: flex; gap: 4px; z-index: 1; opacity: 0; transition: opacity .3s; }
+  .carrusel:hover .carrusel-rayas, .carrusel.tocado .carrusel-rayas { opacity: 1; }
+  .carrusel-rayas li { flex: 1; height: 2px; background: rgba(244, 238, 229, .4); }
+  .carrusel-rayas li.activa { background: var(--papel); }
+  figcaption { display: grid; gap: 4px; }
+  .carrusel-titulo { font-family: var(--f-display); font-size: 1.15rem; line-height: 1.12; }
+</style>

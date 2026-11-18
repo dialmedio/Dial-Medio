@@ -12,7 +12,9 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import VideoLite from '../components/VideoLite.astro';
 import CTAFinal from '../components/CTAFinal.astro';
-import Sintonizador from '../components/Sintonizador.astro';
+import DialServicios from '../components/DialServicios.astro';
+import CarruselMuestra from '../components/CarruselMuestra.astro';
+import { CARRUSELES, carrusel } from '../lib/muestras';
 import { dos, anio } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
 
@@ -40,11 +42,10 @@ const trabajo = [sesion, ...propios, ...debate, ...muestras].slice(0, 6);
 // Héroe: documental y comercial intercalados, seis fotogramas de 6 s.
 const fotogramas = [FOTOS.paramoFigura, FOTOS.camaraLuz, FOTOS.retratoAndino, FOTOS.setAzul, FOTOS.palmasNiebla, FOTOS.concierto];
 
-// Campañas se ilustra con tres láminas propias.
-const LAMINAS = ['donde-se-le-llevan-flores-a-un-desaparecido', 'el-congreso-aprobo-a-las-4-de-la-manana-el-presupuesto-de-2027', 'este-jueves-lectores-y-bibliotecarios-salen-a-defender-las-bibliotecas'];
-const laminas = (await getCollection('noticias', (n) => LAMINAS.includes(n.id) && n.data.laminas.length > 0))
-  .sort((a, b) => LAMINAS.indexOf(a.id) - LAMINAS.indexOf(b.id))
-  .map((n) => n.data.laminas[0]);
+// Campañas se ilustra con carruseles propios (los eligió Martín, src/lib/muestras.ts).
+const laminas = ['quintin-lame', 'museo-nacional', 'tina-modotti'].map((id) => carrusel(id).laminas[0]);
+const CORTO: Record<string, string> = { documental: 'Documental', diseno: 'Campañas', publicidad: 'Publicidad', musica: 'Videoclips', eventos: 'Eventos', divulgacion: 'Divulgación' };
+const dialServicios = servicios.map((s) => ({ id: s.id, titulo: s.data.titulo, corto: CORTO[s.id] ?? s.data.titulo, gancho: s.data.gancho }));
 
 const publicos = [
   {
@@ -91,8 +92,8 @@ const distintos = [
   portada
 >
   <!-- HÉROE: fotogramas a sangre, sin bandas -->
-  <section class="heroe tema-carbon grano">
-    <div class="cuadros">
+  <section class="heroe tema-carbon grano" data-parallax>
+    <div class="cuadros" data-parallax-capa>
       {
         fotogramas.map((f, i) => (
           <figure class="cuadro" style={`--i:${i}`}>
@@ -126,11 +127,8 @@ const distintos = [
       <p class="kicker">Dial Medio</p>
       <h2 class="display d-1">Encontramos la <em>señal.</em></h2>
       <p class="lead-xl">Como la aguja de un dial, buscamos la frecuencia en la que tu historia se escucha clara.</p>
-      <ul class="punto-servicios">
-        {servicios.map((s) => <li><a href={`/servicios#${s.id}`}>{s.data.titulo}</a></li>)}
-      </ul>
     </div>
-    <div class="contenedor punto-dial"><Sintonizador frecuencia={1110} /></div>
+    <div class="contenedor punto-dial"><DialServicios servicios={dialServicios} /></div>
   </section>
 
   <!-- DOS PÚBLICOS: pantalla partida -->
@@ -177,11 +175,18 @@ const distintos = [
       <div class="campana-mosaico" data-revela>
         <figure class="cm-a"><Image src={FOTOS.chef.src} alt={FOTOS.chef.alt} widths={[600, 1000, 1400]} sizes="(min-width: 1000px) 40vw, 100vw" style={`object-position:${FOTOS.chef.foco}`} /></figure>
         <figure class="cm-b"><Image src={FOTOS.celular.src} alt={FOTOS.celular.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" style={`object-position:${FOTOS.celular.foco}`} /></figure>
-        <figure class="cm-c lamina-sola">{laminas[0] && <Image src={laminas[0]} alt="Carrusel diseñado por Dial" widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" />}</figure>
+        <div class="cm-c"><CarruselMuestra c={carrusel('quintin-lame')} pie={false} sizes="(min-width: 1000px) 16vw, 33vw" /></div>
         <figure class="cm-d"><Image src={FOTOS.barista.src} alt={FOTOS.barista.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" /></figure>
         <figure class="cm-e"><Image src={FOTOS.moda.src} alt={FOTOS.moda.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" /></figure>
         <p class="credito cm-credito">Imágenes de referencia: {[FOTOS.chef, FOTOS.celular, FOTOS.barista, FOTOS.moda].map((f) => f.autor).join(', ')} / Unsplash. El carrusel es de Dial.</p>
       </div>
+    </div>
+    <div class="contenedor tira-cabeza" data-revela>
+      <p class="kicker">Carruseles que hicimos</p>
+      <p class="texto-2">Pasa el mouse por encima (o toca) para ver las láminas. Arrastra la tira para ver más.</p>
+    </div>
+    <div class="tira" data-tira data-cursor="Arrastra">
+      {CARRUSELES.map((c) => <CarruselMuestra c={c} class="tira-item" sizes="(min-width: 980px) 18vw, 62vw" />)}
     </div>
   </section>
 
@@ -350,11 +355,7 @@ const distintos = [
   .punto-texto p { margin: 0; }
   .punto-texto .kicker { justify-content: center; }
   .punto-texto .lead-xl { max-width: 26ch; }
-  .punto-servicios { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 0; max-width: 68ch; margin-top: 8px; }
-  .punto-servicios li + li::before { content: '·'; margin: 0 .7em; color: var(--luz); }
-  .punto-servicios a { text-decoration: none; font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; color: var(--hueso-2); transition: color .2s; }
-  .punto-servicios a:hover { color: var(--papel); }
-  .punto-dial { margin-top: clamp(72px, 10vw, 140px); }
+  .punto-dial { margin-top: clamp(48px, 6vw, 88px); }
 
   /* ---------- Dos públicos: pantalla partida ---------- */
   .publicos { display: grid; background: #0f0d0c; gap: 2px; }
@@ -388,7 +389,7 @@ const distintos = [
   .servicio:hover .servicio-foto :global(img) { transform: scale(1.04); }
   /* Campañas: tres láminas propias sobre una pared con luz de ventana. */
   .servicio-laminas { position: relative; display: flex; align-items: center; justify-content: center; padding: 0 10%; }
-  .servicio-laminas :global(.laminas-fondo) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.7) saturate(.8); }
+  .servicio-laminas :global(.laminas-fondo) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.7) saturate(.8) !important; }
   .servicio-laminas :global(.lamina-mini) { position: relative; width: 30%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; box-shadow: 0 14px 30px rgba(0, 0, 0, .5); transition: transform .8s var(--ease); }
   .servicio-laminas :global(.lamina-mini:nth-of-type(2)) { transform: rotate(-5deg) translateX(14%); }
   .servicio-laminas :global(.lamina-mini:nth-of-type(3)) { transform: translateY(-3%); z-index: 1; }
@@ -417,6 +418,15 @@ const distintos = [
   .cm-c { grid-column: 3 / span 2; grid-row: span 3; }
   .cm-d { grid-column: 5 / span 2; grid-row: span 2; }
   .cm-e { grid-column: 5 / span 2; grid-row: span 1; }
+  .cm-c { min-height: 0; }
+  .cm-c :global(.carrusel) { height: 100% !important; display: block !important; }
+  .cm-c :global(.carrusel-marco) { height: 100% !important; aspect-ratio: auto !important; }
+  .tira-cabeza { display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; margin-top: clamp(72px, 9vw, 120px); margin-bottom: 24px; }
+  .tira-cabeza p { margin: 0; }
+  .tira { display: flex; gap: 20px; overflow-x: auto; padding: 8px max(var(--gutter), calc((100vw - var(--ancho)) / 2)) 28px; scroll-snap-type: x proximity; scrollbar-width: none; cursor: grab; }
+  .tira::-webkit-scrollbar { display: none; }
+  .tira.arrastrando { cursor: grabbing; scroll-snap-type: none; }
+  .tira :global(.tira-item) { flex: 0 0 clamp(220px, 19vw, 280px); scroll-snap-align: start; }
   .lamina-sola { display: grid; place-items: center; padding: 10px; background: #2a2521 !important; }
   .lamina-sola :global(img) { object-fit: contain; box-shadow: 0 10px 24px rgba(0, 0, 0, .45); }
   .cm-credito { grid-column: 1 / -1; margin: 4px 0 0; color: var(--hueso-2); font-size: .74rem; }

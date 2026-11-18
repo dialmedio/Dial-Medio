@@ -1,0 +1,149 @@
+---
+/**
+ * El dial de los servicios (18 nov 2026): una regla de radio con seis estaciones, una por servicio. La aguja
+ * sigue al mouse (o al dedo, arrastrando de lado) y la estación más cercana se sintoniza: se enciende y arriba
+ * aparece el servicio con su enlace. Si nadie la toca, la aguja recorre las estaciones sola.
+ * Sin JavaScript: las estaciones son enlaces normales. Con movimiento reducido no hay barrido automático.
+ */
+import { dos } from '../lib/util';
+
+interface Props {
+  servicios: { id: string; titulo: string; corto: string; gancho?: string }[];
+}
+const { servicios } = Astro.props;
+const n = servicios.length;
+// Estaciones repartidas entre el 8 % y el 92 % de la regla, con frecuencias de AM inventadas.
+const pos = (i: number) => 8 + (84 * i) / (n - 1);
+const frec = (i: number) => 610 + i * 180;
+const ticks = Array.from({ length: 85 }, (_, i) => ({ x: (i / 84) * 100, mayor: i % 7 === 0 }));
+---
+
+<div class="ds" data-dial>
+  <div class="ds-panel" aria-live="polite">
+    {
+      servicios.map((s, i) => (
+        <a href={`/servicios#${s.id}`} class:list={['ds-item', { activa: i === 0 }]} data-i={i} tabindex="-1">
+          <span class="ds-n">{dos(i + 1)} · {frec(i)} AM</span>
+          <span class="ds-titulo">{s.titulo}</span>
+          {s.gancho && <span class="ds-gancho">{s.gancho}</span>}
+          <span class="ds-ver">Ver el servicio <span aria-hidden="true">→</span></span>
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="ds-escala" data-escala>
+    <div class="ds-ticks" aria-hidden="true">
+      {ticks.map((t) => <span class:list={{ mayor: t.mayor }} style={`left:${t.x}%`} />)}
+    </div>
+    {
+      servicios.map((s, i) => (
+        <a href={`/servicios#${s.id}`} class:list={['ds-estacion', { activa: i === 0 }]} style={`left:${pos(i)}%`} data-i={i} data-pos={pos(i)}>
+          <span class="ds-frec">{frec(i)}</span>
+          <span class="ds-nombre">{s.corto}</span>
+        </a>
+      ))
+    }
+    <div class="ds-aguja" data-aguja style={`left:${pos(0)}%`} aria-hidden="true"><span /></div>
+  </div>
+  <p class="ds-ayuda" aria-hidden="true"><span class="ds-flecha">←</span> Mueve el dial <span class="ds-flecha">→</span></p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dial]').forEach((dial) => {
+    const escala = dial.querySelector<HTMLElement>('[data-escala]')!;
+    const aguja = dial.querySelector<HTMLElement>('[data-aguja]')!;
+    const estaciones = [...dial.querySelectorAll<HTMLAnchorElement>('.ds-estacion')];
+    const items = [...dial.querySelectorAll<HTMLAnchorElement>('.ds-item')];
+    const posiciones = estaciones.map((e) => Number(e.dataset.pos));
+    let activa = 0;
+    let tocado = false;
+    let objetivo = posiciones[0];
+    let actual = posiciones[0];
+
+    const sintoniza = (i: number) => {
+      if (i === activa) return;
+      activa = i;
+      estaciones.forEach((e, k) => e.classList.toggle('activa', k === i));
+      items.forEach((e, k) => e.classList.toggle('activa', k === i));
+    };
+    const cercana = (p: number) => posiciones.reduce((m, x, k) => (Math.abs(x - p) < Math.abs(posiciones[m] - p) ? k : m), 0);
+
+    // La aguja se mueve con inercia hacia el objetivo, como un dial con resorte.
+    const anima = () => {
+      actual += (objetivo - actual) * 0.18;
+      aguja.style.left = `${actual}%`;
+      if (Math.abs(objetivo - actual) > 0.05) requestAnimationFrame(anima);
+    };
+    const mover = (p: number) => {
+      objetivo = Math.max(2, Math.min(98, p));
+      sintoniza(cercana(objetivo));
+      requestAnimationFrame(anima);
+    };
+    const desdePuntero = (e: PointerEvent) => {
+      const r = escala.getBoundingClientRect();
+      mover(((e.clientX - r.left) / r.width) * 100);
+    };
+
+    escala.addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'mouse' || e.buttons) { tocado = true; desdePuntero(e); }
+    });
+    escala.addEventListener('pointerdown', (e) => { tocado = true; desdePuntero(e); });
+    // Al soltar, la aguja cae en la estación más cercana.
+    const asienta = () => mover(posiciones[activa]);
+    escala.addEventListener('pointerleave', asienta);
+    escala.addEventListener('pointerup', asienta);
+    estaciones.forEach((e, k) => e.addEventListener('focus', () => { tocado = true; mover(posiciones[k]); }));
+    dial.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const k = Math.max(0, Math.min(estaciones.length - 1, activa + (e.key === 'ArrowRight' ? 1 : -1)));
+      estaciones[k].focus();
+    });
+
+    // Barrido automático mientras se ve y nadie lo ha tocado.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let visible = false;
+      new IntersectionObserver(([en]) => (visible = en.isIntersecting), { threshold: 0.4 }).observe(dial);
+      setInterval(() => {
+        if (tocado || !visible) return;
+        mover(posiciones[(activa + 1) % posiciones.length]);
+      }, 3200);
+    }
+  });
+</script>
+
+<style>
+  .ds { display: grid; gap: clamp(28px, 4vw, 48px); user-select: none; }
+  .ds-panel { position: relative; min-height: clamp(170px, 18vw, 210px); }
+  .ds-item { position: absolute; inset: 0; display: grid; gap: 10px; align-content: end; justify-items: center; text-align: center; text-decoration: none; opacity: 0; transform: translateY(10px); transition: opacity .4s var(--ease), transform .5s var(--ease); pointer-events: none; }
+  .ds-item.activa { opacity: 1; transform: none; pointer-events: auto; }
+  .ds-n { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; color: var(--terracota-clara); }
+  .ds-titulo { font-family: var(--f-display); font-size: clamp(2rem, 1.2rem + 3vw, 3.8rem); line-height: 1; max-width: 18ch; }
+  .ds-gancho { font-family: var(--f-serif); font-style: italic; font-size: clamp(1.05rem, 1rem + .4vw, 1.35rem); color: var(--hueso-2); }
+  .ds-ver { font-weight: 600; font-size: .92rem; margin-top: 4px; border-bottom: 1px solid currentColor; }
+  .ds-item:hover .ds-ver { color: var(--terracota-clara); }
+
+  .ds-escala { position: relative; height: 104px; cursor: ew-resize; touch-action: pan-y; }
+  .ds-ticks { position: absolute; left: 0; right: 0; top: 0; height: 30px; border-bottom: 1px solid rgba(244, 238, 229, .25); }
+  .ds-ticks span { position: absolute; bottom: 0; width: 1px; height: 9px; background: rgba(244, 238, 229, .3); }
+  .ds-ticks span.mayor { height: 18px; background: rgba(244, 238, 229, .55); }
+  .ds-estacion { position: absolute; top: 38px; transform: translateX(-50%); display: grid; gap: 4px; justify-items: center; text-decoration: none; color: var(--hueso-2); transition: color .25s; padding: 4px 6px; }
+  .ds-estacion::before { content: ''; position: absolute; top: -12px; left: 50%; width: 7px; height: 7px; margin-left: -3.5px; border-radius: 50%; background: rgba(244, 238, 229, .35); transition: background .25s, box-shadow .25s; }
+  .ds-estacion.activa { color: var(--papel); }
+  .ds-estacion.activa::before { background: var(--luz); box-shadow: 0 0 12px 3px rgba(212, 81, 46, .65); }
+  .ds-frec { font-variant-numeric: tabular-nums; font-size: .74rem; letter-spacing: .06em; }
+  .ds-nombre { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+  .ds-aguja { position: absolute; top: -14px; bottom: 30px; width: 2px; margin-left: -1px; background: var(--luz); pointer-events: none; box-shadow: 0 0 14px rgba(212, 81, 46, .55); }
+  .ds-aguja span { position: absolute; top: -5px; left: 50%; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: var(--luz); }
+  .ds-ayuda { margin: 0; text-align: center; font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; color: var(--hueso-2); }
+  .ds-flecha { display: inline-block; animation: vaiven 1.8s var(--ease) infinite; }
+  .ds-flecha:last-child { animation-direction: reverse; }
+  @keyframes vaiven { 50% { transform: translateX(-4px); } }
+  @media (max-width: 760px) {
+    .ds-nombre { font-size: .54rem; letter-spacing: .08em; }
+    .ds-frec { display: none; }
+    .ds-estacion:nth-child(odd of .ds-estacion) { top: 62px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .ds-flecha { animation: none; } }
+</style>

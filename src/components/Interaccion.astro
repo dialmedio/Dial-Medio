@@ -1,0 +1,142 @@
+---
+/**
+ * Capa de juego del sitio (18 nov 2026, Martín: «más divertido e interactivo: botones, animaciones, cosas con el mouse»).
+ * - Cursor: un punto de luz roja (el punto de la i) que sigue al mouse con retraso; sobre enlaces crece a aro y
+ *   sobre videos y carruseles muestra una palabra («Reproducir», «Desliza»). Solo con mouse; el cursor normal se queda.
+ * - Botones con imán: se acercan un poco al puntero.
+ * - Carruseles [data-carrusel]: la lámina cambia según la posición del mouse; en el celular, cada toque pasa a la siguiente.
+ * - Fotos [data-parallax]: se desplazan unos píxeles con el mouse (héroe y cartelas).
+ * Todo se apaga con movimiento reducido. Sin dependencias.
+ */
+---
+
+<div class="cursor" aria-hidden="true" data-cursor-punto><span data-cursor-texto></span></div>
+
+<script>
+  const fino = matchMedia('(pointer: fine)').matches;
+  const quieto = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- Carruseles: recorrer láminas ----------
+  document.querySelectorAll<HTMLElement>('[data-carrusel]').forEach((c) => {
+    const laminas = [...c.querySelectorAll<HTMLElement>('.carrusel-lamina')];
+    const rayas = [...c.querySelectorAll<HTMLElement>('.carrusel-rayas li')];
+    if (laminas.length < 2) return;
+    let i = 0;
+    const ver = (k: number) => {
+      if (k === i) return;
+      laminas[i].classList.remove('activa'); rayas[i]?.classList.remove('activa');
+      i = k;
+      laminas[i].classList.add('activa'); rayas[i]?.classList.add('activa');
+    };
+    const marco = c.querySelector<HTMLElement>('.carrusel-marco')!;
+    marco.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse' || e.buttons) return;
+      const r = marco.getBoundingClientRect();
+      ver(Math.min(laminas.length - 1, Math.floor(((e.clientX - r.left) / r.width) * laminas.length)));
+    });
+    marco.addEventListener('pointerleave', () => ver(0));
+    marco.addEventListener('click', (e) => {
+      if ((e as PointerEvent).pointerType === 'mouse') return;
+      c.classList.add('tocado');
+      ver((i + 1) % laminas.length);
+    });
+  });
+
+  // ---------- Tiras que se arrastran con el mouse ----------
+  document.querySelectorAll<HTMLElement>('[data-tira]').forEach((t) => {
+    let inicio = 0, desde = 0, movio = false, activo = false;
+    t.addEventListener('pointerdown', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      activo = true; movio = false; inicio = e.clientX; desde = t.scrollLeft;
+    });
+    addEventListener('pointermove', (e) => {
+      if (!activo) return;
+      const d = e.clientX - inicio;
+      if (Math.abs(d) > 5) { movio = true; t.classList.add('arrastrando'); }
+      t.scrollLeft = desde - d;
+    });
+    addEventListener('pointerup', () => { activo = false; t.classList.remove('arrastrando'); });
+    t.addEventListener('click', (e) => { if (movio) { e.preventDefault(); e.stopPropagation(); } }, true);
+    t.addEventListener('dragstart', (e) => e.preventDefault());
+  });
+
+  if (fino && !quieto) {
+    // ---------- Cursor de luz ----------
+    const punto = document.querySelector<HTMLElement>('[data-cursor-punto]')!;
+    const texto = document.querySelector<HTMLElement>('[data-cursor-texto]')!;
+    let x = innerWidth / 2, y = innerHeight / 2, px = x, py = y, visto = false;
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      x = e.clientX; y = e.clientY;
+      if (!visto) { visto = true; px = x; py = y; punto.classList.add('visible'); }
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => punto.classList.remove('visible'));
+    document.addEventListener('pointerenter', () => visto && punto.classList.add('visible'));
+    const sigue = () => {
+      px += (x - px) * 0.2; py += (y - py) * 0.2;
+      punto.style.transform = `translate3d(${px}px, ${py}px, 0)`;
+      requestAnimationFrame(sigue);
+    };
+    requestAnimationFrame(sigue);
+    document.addEventListener('pointerover', (e) => {
+      const t = e.target as HTMLElement;
+      const conTexto = t.closest<HTMLElement>('[data-cursor], [data-video]');
+      const enlace = t.closest('a, button, [role="button"], input, select, textarea, label');
+      punto.classList.toggle('aro', !!enlace && !conTexto);
+      punto.classList.toggle('con-texto', !!conTexto);
+      texto.textContent = conTexto ? (conTexto.dataset.cursor ?? 'Reproducir') : '';
+    });
+
+    // ---------- Botones con imán ----------
+    document.querySelectorAll<HTMLElement>('.btn, .cab-cta').forEach((b) => {
+      b.addEventListener('pointermove', (e) => {
+        const r = b.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / r.width;
+        const dy = (e.clientY - (r.top + r.height / 2)) / r.height;
+        b.style.transform = `translate(${dx * 8}px, ${dy * 6}px)`;
+      });
+      b.addEventListener('pointerleave', () => (b.style.transform = ''));
+    });
+
+    // ---------- Fotos que siguen al mouse ----------
+    document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((zona) => {
+      const capa = zona.querySelector<HTMLElement>('[data-parallax-capa]') ?? zona;
+      zona.addEventListener('pointermove', (e) => {
+        const r = zona.getBoundingClientRect();
+        const dx = (e.clientX - r.left) / r.width - 0.5;
+        const dy = (e.clientY - r.top) / r.height - 0.5;
+        capa.style.transform = `translate3d(${dx * -18}px, ${dy * -12}px, 0) scale(1.03)`;
+      });
+      zona.addEventListener('pointerleave', () => (capa.style.transform = ''));
+    });
+  }
+</script>
+
+<style is:global>
+  /* ---------- Cursor de luz ---------- */
+  .cursor { position: fixed; left: 0; top: 0; z-index: 200; pointer-events: none; opacity: 0; transition: opacity .3s; mix-blend-mode: normal; }
+  .cursor.visible { opacity: 1; }
+  .cursor::before { content: ''; position: absolute; left: -5px; top: -5px; width: 10px; height: 10px; border-radius: 50%; background: var(--luz); box-shadow: 0 0 14px 2px rgba(212, 81, 46, .45); transition: transform .3s var(--ease), background .3s, border-color .3s; border: 1.5px solid transparent; }
+  .cursor.aro::before { transform: scale(3.4); background: transparent; border-color: var(--luz); box-shadow: none; }
+  .cursor span { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) scale(.4); opacity: 0; white-space: nowrap; padding: 10px 16px; border-radius: 999px; background: var(--luz); color: var(--papel); font-family: var(--f-rotulo); font-weight: 600; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; transition: transform .35s var(--ease), opacity .25s; }
+  .cursor.con-texto::before { transform: scale(0); }
+  .cursor.con-texto span { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  @media (pointer: coarse), (prefers-reduced-motion: reduce) { .cursor { display: none; } }
+
+  /* ---------- Botones: la luz entra de izquierda a derecha ---------- */
+  .btn { position: relative; overflow: hidden; isolation: isolate; transition: transform .35s var(--ease), color .3s, border-color .3s; }
+  .btn::before { content: ''; position: absolute; inset: 0; z-index: -1; background: var(--luz); transform: scaleX(0); transform-origin: right; transition: transform .45s var(--ease); }
+  .btn:hover::before { transform: scaleX(1); transform-origin: left; }
+  .btn:hover { --fg: var(--papel); color: var(--papel); border-color: var(--luz); }
+  .btn.linea:hover, .tema-carbon .btn.linea:hover, .tema-terracota .btn.linea:hover { border-color: var(--luz); color: var(--papel); }
+
+  /* ---------- Videos y fotos: zoom suave y aparición como en el revelado ---------- */
+  .video img, .video .video-portada { transition: transform 1s var(--ease), filter .6s; }
+  .video:hover img { transform: scale(1.05); }
+  @media (prefers-reduced-motion: no-preference) {
+    /* Como una copia en la cubeta: la foto aparece desde lo oscuro y desenfocado. */
+    .js [data-revela] img { filter: brightness(.35) blur(6px); transition: filter 1.4s var(--ease), transform 1.2s var(--ease), opacity .25s; }
+    .js [data-revela].visible img { filter: none; }
+  }
+  [data-parallax-capa] { transition: transform .9s var(--ease); will-change: transform; }
+</style>
