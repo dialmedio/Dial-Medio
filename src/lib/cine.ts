@@ -21,6 +21,13 @@ import salaMusica from '../assets/cine/sala-musica.jpg';
 import direccion from '../assets/cine/direccion.jpg';
 import estudioFoto from '../assets/cine/estudio-foto.jpg';
 import setRodaje from '../assets/cine/set-rodaje.jpg';
+import chef from '../assets/cine/chef.jpg';
+import emplatado from '../assets/cine/emplatado.jpg';
+import afiche from '../assets/cine/afiche.jpg';
+import celular from '../assets/cine/celular.jpg';
+import barista from '../assets/cine/barista.jpg';
+import carta from '../assets/cine/carta.jpg';
+import moda from '../assets/cine/moda.jpg';
 
 export type Foto = { src: ImageMetadata; alt: string; autor: string; lugar?: string; foco?: string };
 
@@ -39,15 +46,24 @@ export const FOTOS = {
   direccion: { src: direccion, alt: 'Un director habla con el camarógrafo junto a una ventana', autor: 'Jakob Owens' },
   estudioFoto: { src: estudioFoto, alt: 'Estudio con fondo blanco, luces y softbox', autor: 'Alexander Dummer' },
   setRodaje: { src: setRodaje, alt: 'Equipo de rodaje trabajando en un estudio grande', autor: 'Brands&People' },
+  // Campañas (18 nov 2026, tarde): restaurantes, cafés, redes y marcas.
+  chef: { src: chef, alt: 'Un cocinero saltea con fuego en la cocina de un restaurante', autor: 'Johnathan Macedo', foco: '60% 45%' },
+  emplatado: { src: emplatado, alt: 'Manos que emplatan en una cocina en penumbra', autor: 'Fabrizio Magoni', lugar: 'Crevalcore, Italia' },
+  afiche: { src: afiche, alt: 'Un afiche en una pared con luz de ventana', autor: 'mottss designco' },
+  celular: { src: celular, alt: 'Una mano sostiene un celular con un perfil de Instagram en la ciudad', autor: 'Jakob Owens', foco: '50% 40%' },
+  barista: { src: barista, alt: 'Una barista sirve arte latte en una taza', autor: 'Brooke Cagle' },
+  carta: { src: carta, alt: 'Una carta de restaurante sobre la mesa junto a una taza', autor: 'Annie Spratt' },
+  moda: { src: moda, alt: 'Una maquilladora prepara a una modelo en un estudio blanco', autor: 'Vitaly Gariev' },
 } satisfies Record<string, Foto>;
 
 export const credito = (f: Foto) => `${f.lugar ? f.lugar + ' · ' : ''}Foto: ${f.autor} / Unsplash`;
 
-/** Imagen de cada servicio (en la portada y en /servicios). Diseño usa láminas propias. */
+/** Imagen de cada servicio en /servicios. En la portada, Campañas muestra láminas propias sobre el afiche. */
 export const FOTO_SERVICIO: Record<string, Foto> = {
   documental: FOTOS.campoCiudad,
   publicidad: FOTOS.estudioFoto,
   musica: FOTOS.salaMusica,
   eventos: FOTOS.concierto,
   divulgacion: FOTOS.manos,
+  diseno: FOTOS.chef,
 };

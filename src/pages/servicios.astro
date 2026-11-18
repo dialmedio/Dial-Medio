@@ -34,7 +34,7 @@ const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) 
   <PortadaPagina
     kicker="Servicios"
     titulo="Del comercial al <em>documental.</em>"
-    bajada="Lo comercial y lo social los hace el mismo equipo, con la misma investigación detrás y música compuesta para cada pieza."
+    bajada="Desde una campaña completa hasta un documental. Lo comercial y lo social los hace el mismo equipo, con investigación detrás y música compuesta para cada pieza."
     indice={servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` }))}
     imagen={FOTOS.camaraLuz}
   />

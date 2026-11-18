@@ -107,8 +107,8 @@ function redireccion(ruta: string): string | null {
     '/encuentros': '/servicios#eventos',
     '/encuentros/celebraciones': '/servicios#eventos',
     '/documentales': '/trabajo#documental',
-    '/laboratorio': '/trabajo#conversacion',
-    '/podcast': '/trabajo#conversacion',
+    '/laboratorio': '/trabajo#documental',
+    '/podcast': '/trabajo#documental',
   };
   if (fijas[r]) return fijas[r];
   if (r.startsWith('/impacto/') || r.startsWith('/encuentros/')) return '/servicios';
@@ -119,7 +119,7 @@ function redireccion(ruta: string): string | null {
   const id = m[1];
   if (id.startsWith('debate-')) return `/laboratorio/${id}`;
   if (id.startsWith('podcast-')) return `/podcast/${id}`;
-  if (id.startsWith('clip-')) return '/trabajo#conversacion';
+  if (id.startsWith('clip-')) return '/trabajo#documental';
   return `/documentales/${id}`;
 }
 

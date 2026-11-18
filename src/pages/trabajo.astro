@@ -29,15 +29,12 @@ const muestras = (await getCollection('muestras', (m) => !m.data.borrador)).sort
 const grupos: { id: string; titulo: string; texto: string; piezas: Pieza[] }[] = [
   {
     id: 'documental',
-    titulo: 'Documental',
-    texto: 'Obra propia, investigada y filmada por Dial.',
-    piezas: medio.filter((m) => m.data.formato === 'documental').map((m) => deMedio(m, m.data.serie ?? 'Documental')),
-  },
-  {
-    id: 'conversacion',
-    titulo: 'Conversación',
-    texto: 'Debates entre personas que piensan distinto y el podcast que hacemos con la RED Quynza.',
-    piezas: medio.filter((m) => m.data.formato === 'debate' || m.data.formato === 'videopodcast').map((m) => deMedio(m, m.data.formato === 'debate' ? 'Debate' : 'Videopodcast · con la RED Quynza')),
+    titulo: 'Documental y conversación',
+    texto: 'Obra propia investigada y filmada por Dial, debates entre personas que piensan distinto y el podcast que hacemos con la RED Quynza.',
+    piezas: [
+      ...medio.filter((m) => m.data.formato === 'documental').map((m) => deMedio(m, m.data.serie ?? 'Documental')),
+      ...medio.filter((m) => m.data.formato === 'debate' || m.data.formato === 'videopodcast').map((m) => deMedio(m, m.data.formato === 'debate' ? 'Debate' : 'Videopodcast · con la RED Quynza')),
+    ],
   },
   {
     id: 'musica',
@@ -75,7 +72,7 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
             <div data-revela><h2 class="display d-3">{g.titulo}</h2></div>
             <p class="texto-2" data-revela>{g.texto}</p>
           </header>
-          <div class="obras">
+          <div class:list={['obras', { tres: g.piezas.length % 3 === 0 }]}>
             {g.piezas.map((t) => (
               <article class="obra" data-revela>
                 <VideoLite video={t.video} titulo={t.titulo} />
@@ -118,7 +115,7 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
 <style>
   .obras { display: grid; gap: 40px 28px; }
   @media (min-width: 760px) { .obras { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1100px) { .obras { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1100px) { .obras.tres { grid-template-columns: repeat(3, 1fr); } }
   .obra { display: grid; gap: 10px; align-content: start; }
   .obra .rotulo { margin-top: 6px; }
   .obra h3 a { text-decoration: none; }

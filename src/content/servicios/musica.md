@@ -1,6 +1,6 @@
 ---
 titulo: Videoclips y sesiones en vivo
-orden: 3
+orden: 4
 gancho: "La imagen y el sonido, del mismo equipo."
 resumen: "Videoclips y sesiones grabadas en vivo. Fototoma graba y mezcla el sonido; Dial dirige, filma y da color. Tenemos espacio propio para sesiones íntimas."
 paraQuien: "Artistas, bandas, sellos y festivales."

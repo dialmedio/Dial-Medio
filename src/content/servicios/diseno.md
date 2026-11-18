@@ -1,16 +1,18 @@
 ---
-titulo: Diseño de comunicación
-orden: 6
-gancho: "Información pública que la gente lee hasta el final."
-resumen: "Convertimos comunicados, informes, cifras y decisiones políticas en carruseles, infografías e informes visuales claros. Verificamos cada dato y escribimos para quien no conoce el tema."
-paraQuien: "Entidades públicas, organizaciones, partidos, campañas y medios."
+titulo: Campañas y diseño de comunicación
+orden: 2
+gancho: "Toda la campaña, del concepto al último post."
+resumen: "Armamos la campaña completa: el concepto y el mensaje, el video, las piezas para redes y para imprimir, el calendario de publicación y el informe de lo que pasó. Para marcas sociales y con propósito, restaurantes y cafés, cultura y empresas de cualquier tamaño. Verificamos cada dato y escribimos para quien todavía no conoce la marca."
+paraQuien: "Marcas con propósito, restaurantes y cafés, cultura, empresas, entidades públicas y campañas."
 incluye:
-  - Verificación de datos y fuentes
-  - Redacción clara
-  - Carruseles, infografías e informes visuales
-  - Línea gráfica para redes
+  - Concepto y mensaje
+  - Spot y cortes verticales
+  - Carruseles, afiches, cartas e infografías
+  - Identidad para redes y plantillas
+  - Calendario de publicación
+  - Verificación de datos y redacción
 entregables:
-  - Carruseles 4:5
-  - Infografías e informes
-  - Plantillas propias
+  - Campaña lista para publicar
+  - Kit de piezas por red
+  - Informe de recepción
 ---
