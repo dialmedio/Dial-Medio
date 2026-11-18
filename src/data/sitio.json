@@ -1,15 +1,15 @@
 {
-  "nombre": "Dial",
-  "tagline": "Del ruido a la señal",
-  "promesa": "Contamos, y medimos, el encuentro humano.",
-  "descripcion": "Medio independiente hecho en Bogotá. Publica noticias explicadas, columnas de opinión, podcast, documentales y debates.",
+  "nombre": "Dial Medio",
+  "tagline": "El punto medio",
+  "promesa": "Investigamos antes de filmar.",
+  "descripcion": "Productora audiovisual de Bogotá. Publicidad, videoclips, eventos y documental, con la investigación de la RED Quynza y la música original de Fototoma.",
   "ciudad": "Bogotá, Colombia",
   "correo": "dialmediocol@gmail.com",
   "whatsapp": {
     "numero": "573104813624",
     "visible": "+57 310 481 3624",
     "contacto": "Martín Perea",
-    "mensaje": "Hola, Martín. Vi el sitio de Dial y quiero cotizar un proyecto."
+    "mensaje": "Hola, Martín. Vi la página de Dial Medio y quiero cotizar un proyecto."
   },
   "redes": [
     {
@@ -32,7 +32,18 @@
   "boletin": {
     "usuario": "dial",
     "frecuencia": "Una vez por trimestre",
-    "descripcion": "Una selección de lo que publicamos: columnas, noticias explicadas, documentales y lo que viene."
+    "descripcion": "Estrenos, proyectos en curso y lo que estamos filmando."
   },
-  "descripcionEstudio": "Dial Estudio produce documental, cobertura y eventos para organizaciones, con la misma mirada del medio."
+  "aliados": [
+    {
+      "nombre": "Fototoma",
+      "rol": "Música original y diseño sonoro",
+      "url": "https://fototomaproducciones.com"
+    },
+    {
+      "nombre": "RED Quynza",
+      "rol": "Investigación",
+      "url": "https://redquynza.org"
+    }
+  ]
 }

@@ -97,6 +97,21 @@ async function contacto(request: Request, env: Env): Promise<Response> {
  * debate-* → /laboratorio, podcast-* → /podcast, el resto (documentales) → /documentales.
  */
 function redireccion(ruta: string): string | null {
+  // Nov 18 2026: Dial pasa a ser la productora. El estudio es ahora la portada y las secciones del medio se reúnen en /trabajo.
+  const r = ruta.replace(/\/$/, '') || '/';
+  const fijas: Record<string, string> = {
+    '/estudio': '/',
+    '/estudio/como-trabajamos': '/nosotros',
+    '/impacto': '/servicios#documental',
+    '/impacto/medicion': '/investigacion#medir',
+    '/encuentros': '/servicios#eventos',
+    '/encuentros/celebraciones': '/servicios#eventos',
+    '/documentales': '/trabajo#documental',
+    '/laboratorio': '/trabajo#conversacion',
+    '/podcast': '/trabajo#conversacion',
+  };
+  if (fijas[r]) return fijas[r];
+  if (r.startsWith('/impacto/') || r.startsWith('/encuentros/')) return '/servicios';
   if (ruta === '/medio' || ruta === '/medio/') return '/';
   if (ruta === '/especiales' || ruta.startsWith('/especiales/')) return '/noticias'; // la sección se quitó (1 nov 2026)
   const m = ruta.match(/^\/medio\/([^/]+)\/?$/);
@@ -104,7 +119,7 @@ function redireccion(ruta: string): string | null {
   const id = m[1];
   if (id.startsWith('debate-')) return `/laboratorio/${id}`;
   if (id.startsWith('podcast-')) return `/podcast/${id}`;
-  if (id.startsWith('clip-')) return '/laboratorio';
+  if (id.startsWith('clip-')) return '/trabajo#conversacion';
   return `/documentales/${id}`;
 }
 

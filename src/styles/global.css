@@ -1,5 +1,8 @@
 /* ==========================================================================
-   Dial — sistema visual · Marca v5 (29 oct 2026): de la pantalla a la materia
+   Dial Medio — sistema visual · Marca v6 (18 nov 2026): la productora.
+   Sobre la v5: el texto pasa a Instrument Sans (más sobrio, de créditos de cine), la casa es oscura
+   como una sala, y la imagen manda en formato ancho (fotograma 2,39:1). Abajo, el bloque «v6».
+   Antes · Marca v5 (29 oct 2026): de la pantalla a la materia
    El aro de pluma, negro de película, papel y una sola luz roja (el punto).
    Titulares en serif, texto en Bricolage, rótulos en versalitas sin caja,
    sin mono. Las fotos se revelan con película. Ver /marca para el manual.
@@ -35,7 +38,7 @@
   /* Tipografía v5: serif para titular, Bricolage para leer, versalitas para rotular. Sin mono.
      (Fraunces es solo del logotipo y se dibuja como trazo: no se carga como letra.) */
   --f-display: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
-  --f-sub: 'Bricolage Grotesque Variable', 'Avenir Next', 'Segoe UI', sans-serif;
+  --f-sub: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif; /* v6: antes Bricolage */
   --f-texto: var(--f-sub);
   --f-serif: 'Instrument Serif', Georgia, serif;
   --f-rotulo: 'Instrument Sans Variable', 'Helvetica Neue', Arial, sans-serif;
@@ -72,8 +75,8 @@ body {
   font-family: var(--f-texto);
   font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.125rem);
   line-height: 1.6;
-  font-weight: 380;
-  font-stretch: 92%;
+  font-weight: 400;
+  font-stretch: 96%;
   letter-spacing: 0;
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
@@ -503,3 +506,40 @@ a:hover .foto img, .foto:hover img { transform: scale(1.025); }
 /* El epígrafe que abre una columna: una cita larga, un poco más contenida. */
 .prosa > blockquote:first-child { font-size: 1.14em; line-height: 1.42; }
 .prosa blockquote p:last-child:not(:first-child) { font-family: var(--f-rotulo); font-style: normal; font-size: .62em; letter-spacing: .12em; text-transform: uppercase; color: var(--texto-2); margin-top: 1em; }
+
+
+/* ==========================================================================
+   v6 · La productora (18 nov 2026)
+   Fotograma ancho, cartela (intertítulo) y bloque de créditos. Ver /marca.
+   ========================================================================== */
+
+/* Fotograma: la imagen en el ancho de cine. Sin bordes ni sombras: la imagen ocupa su caja. */
+.fotograma { position: relative; overflow: hidden; margin: 0; background: #0f0d0c; aspect-ratio: 2.39 / 1; }
+.fotograma img, .fotograma video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fotograma.r-16-9 { aspect-ratio: 16 / 9; }
+@media (max-width: 640px) { .fotograma { aspect-ratio: 16 / 10; } }
+
+/* Pie de fotograma, como un crédito: lugar en versalitas y autor en texto. */
+.credito { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; margin: 12px 0 0; font-size: .82rem; color: var(--texto-2); }
+.credito b { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; color: inherit; }
+
+/* Cartela: un intertítulo a pantalla. Una sola frase grande en serif sobre negro, centrada. */
+.cartela { text-align: center; padding-block: clamp(96px, 16vw, 220px); }
+.cartela .display { max-width: 18ch; margin-inline: auto; }
+.cartela p:not(.display) { max-width: 52ch; margin: 28px auto 0; }
+
+/* Créditos: rol en versalitas, nombre en serif. Para fichas técnicas y coproducciones. */
+.creditos { list-style: none; display: grid; gap: 22px 40px; }
+@media (min-width: 760px) { .creditos { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+.creditos dt, .creditos .rol { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; color: var(--texto-2); }
+.creditos dd, .creditos .nombre { margin: 6px 0 0; font-family: var(--f-display); font-size: clamp(1.4rem, 1.2rem + .8vw, 2rem); line-height: 1.05; }
+.creditos dd a, .creditos .nombre a { text-decoration: none; }
+.creditos dd a:hover, .creditos .nombre a:hover { color: var(--acento-texto); }
+
+/* Lista numerada en serif (diferenciales, pasos). */
+.numerada { list-style: none; display: grid; gap: 0; counter-reset: n; border-top: 1px solid var(--borde); }
+.numerada > li { counter-increment: n; display: grid; gap: 8px 32px; padding: 26px 0; border-bottom: 1px solid var(--borde); }
+.numerada > li::before { content: counter(n, decimal-leading-zero); font-family: var(--f-display); font-style: italic; font-size: 1.6rem; line-height: 1; color: var(--acento-texto); }
+.numerada h3 { font-family: var(--f-display); font-weight: 400; font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); line-height: 1.05; }
+.numerada p { margin: 0; color: var(--texto-2); max-width: 58ch; }
+@media (min-width: 900px) { .numerada > li { grid-template-columns: 80px minmax(0, 1fr) minmax(0, 1.25fr); align-items: baseline; } }

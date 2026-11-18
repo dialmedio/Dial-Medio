@@ -1,0 +1,116 @@
+---
+/**
+ * Servicios de la productora (18 nov 2026). Seis servicios en src/content/servicios, cada uno con su ancla.
+ * Diseño de comunicación muestra láminas reales de lo que Dial publicó como medio (son portafolio de diseño).
+ */
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PortadaPagina from '../components/PortadaPagina.astro';
+import CTAFinal from '../components/CTAFinal.astro';
+import cap from '../data/capacidades.json';
+import { dos } from '../lib/util';
+import { rutaNoticia } from '../lib/medio';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+
+const MUESTRAS = [
+  'donde-se-le-llevan-flores-a-un-desaparecido',
+  'el-congreso-aprobo-a-las-4-de-la-manana-el-presupuesto-de-2027',
+  'brasil-vota-con-la-menor-deforestacion-en-casi-40-anos',
+  'este-jueves-lectores-y-bibliotecarios-salen-a-defender-las-bibliotecas',
+];
+const laminas = (await getCollection('noticias', (n) => MUESTRAS.includes(n.id) && n.data.laminas.length > 0))
+  .sort((a, b) => MUESTRAS.indexOf(a.id) - MUESTRAS.indexOf(b.id))
+  .map((n) => ({ src: n.data.laminas[0], href: rutaNoticia(n), alt: n.data.titulo.replace(/\*/g, '') }));
+---
+
+<Base
+  titulo="Servicios"
+  descripcion="Documental, publicidad, videoclips, eventos, divulgación de investigación y diseño de comunicación. Dial Medio, productora audiovisual de Bogotá."
+>
+  <PortadaPagina
+    kicker="Servicios"
+    titulo="Del comercial al <em>documental.</em>"
+    bajada="Lo comercial y lo social los hace el mismo equipo, con la misma investigación detrás y música compuesta para cada pieza."
+    indice={servicios.map((s) => ({ texto: s.data.titulo, href: `#${s.id}` }))}
+  />
+
+  {
+    servicios.map((s, i) => (
+      <section class:list={['seccion', 'compacta', i % 2 ? 'tema-hueso' : 'tema-papel']} id={s.id}>
+        <div class="contenedor serv">
+          <div class="serv-cabeza" data-revela>
+            <p class="kicker">{dos(i + 1)} · Para {s.data.paraQuien.charAt(0).toLowerCase() + s.data.paraQuien.slice(1).replace(/\.$/, '')}</p>
+            <h2 class="display d-3">{s.data.titulo}</h2>
+            {s.data.gancho && <p class="gancho serv-gancho">{s.data.gancho}</p>}
+          </div>
+          <div class="serv-cuerpo" data-revela style="--retraso:.08s">
+            <p class="lead">{s.data.resumen}</p>
+            <dl class="serv-listas">
+              <div>
+                <dt class="rotulo">Incluye</dt>
+                <dd><ul>{s.data.incluye.map((x) => <li>{x}</li>)}</ul></dd>
+              </div>
+              <div>
+                <dt class="rotulo">Recibes</dt>
+                <dd><ul>{s.data.entregables.map((x) => <li>{x}</li>)}</ul></dd>
+              </div>
+            </dl>
+            <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
+          </div>
+          {
+            s.id === 'diseno' && laminas.length > 0 && (
+              <div class="laminas" data-revela>
+                {laminas.map((l) => (
+                  <a href={l.href} class="lamina">
+                    <Image src={l.src} alt={l.alt} widths={[360, 540, 720]} sizes="(min-width: 980px) 22vw, 45vw" />
+                  </a>
+                ))}
+                <p class="credito"><b>Muestras</b><span>Carruseles que Dial diseñó y publicó en 2026</span></p>
+              </div>
+            )
+          }
+        </div>
+      </section>
+    ))
+  }
+
+  <section class="seccion tema-carbon grano" id="proceso">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">Cómo trabajamos</p>
+          <h2 class="display d-2">De la idea al <em>estreno.</em></h2>
+        </div>
+        <p class="texto-2" data-revela>Hablas con una sola persona durante todo el proyecto. La historia no cambia de manos.</p>
+      </header>
+      <ol class="numerada">
+        {cap.proceso.map((p) => <li data-revela><h3>{p.titulo}</h3><p>{p.texto}</p></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <CTAFinal titulo="¿Qué necesitas contar?" />
+</Base>
+
+<style>
+  .serv { display: grid; gap: 28px 72px; }
+  @media (min-width: 980px) { .serv { grid-template-columns: 1fr 1.25fr; } }
+  .serv-cabeza { display: grid; gap: 16px; align-content: start; }
+  .serv-cabeza p { margin: 0; }
+  .serv-gancho { font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); color: var(--texto-2); max-width: 26ch; }
+  .serv-cuerpo { display: grid; gap: 26px; justify-items: start; }
+  .serv-cuerpo .lead { margin: 0; max-width: 58ch; }
+  .serv-listas { display: grid; gap: 22px 40px; margin: 0; width: 100%; }
+  @media (min-width: 640px) { .serv-listas { grid-template-columns: 1fr 1fr; } }
+  .serv-listas dd { margin: 10px 0 0; }
+  .serv-listas ul { list-style: none; display: grid; gap: 8px; }
+  .serv-listas li { padding-top: 8px; border-top: 1px solid var(--borde); font-size: .98rem; }
+  .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
+  .lamina { display: block; aspect-ratio: 4 / 5; overflow: hidden; background: var(--carbon-2); }
+  .lamina img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease); }
+  .lamina:hover img { transform: scale(1.03); }
+  .laminas .credito { grid-column: 1 / -1; margin: 0; }
+</style>

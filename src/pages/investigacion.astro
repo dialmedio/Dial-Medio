@@ -1,0 +1,122 @@
+---
+/**
+ * Investigación (18 nov 2026): la RED Quynza como brazo investigativo de Dial, la medición por escalones,
+ * la divulgación académica y el formato de preguntas en la calle (en preparación, de la RED y de Dial).
+ * Reemplaza /impacto/medicion.
+ */
+import Base from '../layouts/Base.astro';
+import PortadaPagina from '../components/PortadaPagina.astro';
+import EscalaMedicion from '../components/EscalaMedicion.astro';
+import CTAFinal from '../components/CTAFinal.astro';
+import { dos } from '../lib/util';
+
+const red = [
+  { titulo: 'Contexto y datos', texto: 'Antes de escribir el guion revisamos cifras, normas, antecedentes y lo que ya se ha investigado sobre el tema.' },
+  { titulo: 'Verificación', texto: 'Cada dato que sale en pantalla o en una lámina tiene una fuente que podemos mostrar.' },
+  { titulo: 'Acceso al territorio', texto: 'Los nodos de la RED presentan al equipo con la gente del lugar y ayudan con los permisos y el consentimiento.' },
+  { titulo: 'Lectura del guion y del corte', texto: 'Un investigador lee el guion antes del rodaje y el montaje antes del estreno.' },
+];
+
+const escalones = [
+  { titulo: 'En cada entrega', nombre: 'Informe de recepción', texto: 'Vistas, retención, quién vio la pieza y una lectura de los comentarios: qué entendió la gente y qué discutió.' },
+  { titulo: 'Con público en sala', nombre: 'Antes y después', texto: 'Una encuesta breve antes y después de la proyección, con las mismas preguntas. Cuidamos el anonimato.' },
+  { titulo: 'En proyectos grandes', nombre: 'Evaluación con la RED', texto: 'Investigadores de la RED diseñan la evaluación, la aplican y firman el informe.' },
+];
+---
+
+<Base
+  titulo="Investigación"
+  descripcion="La RED Quynza es el brazo investigativo de Dial Medio: contexto, verificación, acceso al territorio y medición de lo que pasa con cada pieza."
+>
+  <PortadaPagina
+    kicker="Investigación · con la RED Quynza"
+    titulo="Primero el contexto, después la <em>cámara.</em>"
+    bajada="La RED Quynza es una red académica de profesores e investigadores con nodos en varias regiones del país. Es el brazo investigativo de Dial."
+    indice={[{ texto: 'Qué hace la RED', href: '#red' }, { texto: 'Medir', href: '#medir' }, { texto: 'Divulgación', href: '#divulgacion' }, { texto: 'Preguntas en la calle', href: '#calle' }]}
+  >
+    <div class="acciones">
+      <a href="https://redquynza.org" class="btn linea" target="_blank" rel="noopener">Conoce la RED Quynza <span class="flecha">↗</span></a>
+    </div>
+  </PortadaPagina>
+
+  <section class="seccion tema-papel" id="red">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(1)} · Qué hace la RED</p>
+          <h2 class="display d-2">En cada <em>proyecto.</em></h2>
+        </div>
+        <p class="texto-2" data-revela>Sirve igual para un documental en una vereda que para un comercial que menciona una cifra.</p>
+      </header>
+      <ol class="numerada">{red.map((r) => <li data-revela><h3>{r.titulo}</h3><p>{r.texto}</p></li>)}</ol>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano" id="medir">
+    <div class="contenedor medir-grid">
+      <div class="medir-texto">
+        <header data-revela>
+          <p class="kicker">{dos(2)} · Medir</p>
+          <h2 class="display d-2">Qué pasó después del <em>estreno.</em></h2>
+        </header>
+        <p class="lead texto-2" data-revela>Medimos por escalones, según el tamaño del proyecto. A una organización le sirve para el informe que le debe a quien la financia.</p>
+        <ul class="creditos escalones">
+          {
+            escalones.map((e) => (
+              <li data-revela>
+                <span class="rol">{e.titulo}</span>
+                <p class="nombre">{e.nombre}</p>
+                <p class="texto-2 escalon-txt">{e.texto}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <EscalaMedicion />
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-hueso" id="divulgacion">
+    <div class="contenedor dos-col">
+      <div data-revela>
+        <p class="kicker">{dos(3)} · Divulgación</p>
+        <h2 class="display d-3">Investigaciones que se pueden <em>ver.</em></h2>
+      </div>
+      <div class="dos-col-texto" data-revela style="--retraso:.08s">
+        <p class="lead">
+          Con los mismos investigadores convertimos un proyecto de investigación en un documental corto, un podcast o una serie de piezas. El guion lo revisa el
+          grupo para que el dato quede bien dicho.
+        </p>
+        <a href="/servicios#divulgacion" class="enlace">Ver el servicio <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano cartela" id="calle">
+    <div class="contenedor">
+      <p class="kicker vivo calle-kicker">{dos(4)} · En preparación · RED Quynza y Dial</p>
+      <h2 class="display d-2">Preguntas en la <em>calle.</em></h2>
+      <p class="lead texto-2">
+        Una misma pregunta en Bogotá, en los nodos de la RED y en el campo, a gente que no suele salir en cámara. Mostramos lo que responden con su nombre y su
+        lugar, sin burlas, y al final lo que dicen las cifras. No es una encuesta representativa y así lo decimos.
+      </p>
+    </div>
+  </section>
+
+  <CTAFinal titulo="¿Tu proyecto necesita investigación?" texto="Cuéntanos el tema y para quién es. Armamos el equipo con la RED Quynza y te enviamos una propuesta." />
+</Base>
+
+<style>
+  .medir-grid { display: grid; gap: 56px; align-items: center; }
+  @media (min-width: 1040px) { .medir-grid { grid-template-columns: 1.1fr 1fr; gap: 80px; } }
+  .medir-texto { display: grid; gap: 28px; }
+  .medir-texto header { display: grid; gap: 18px; }
+  .medir-texto p { margin: 0; }
+  .escalones { grid-template-columns: 1fr !important; gap: 26px; border-top: 1px solid var(--linea-clara); padding-top: 26px; }
+  .escalon-txt { margin-top: 8px !important; font-size: .98rem; max-width: 52ch; }
+  .dos-col { display: grid; gap: 28px 72px; }
+  @media (min-width: 980px) { .dos-col { grid-template-columns: 1fr 1.25fr; align-items: end; } }
+  .dos-col-texto { display: grid; gap: 22px; justify-items: start; }
+  .dos-col-texto p { margin: 0; max-width: 56ch; }
+  .calle-kicker { justify-content: center; margin-bottom: 22px; }
+</style>

@@ -22,48 +22,40 @@ interface Props {
 // Imagen para compartir de cada página (se generan con scripts/generar-imagenes.mjs).
 const tarjetas: Record<string, string> = {
   '/': 'inicio',
-  '/noticias': 'noticias',
-  '/opinion': 'opinion',
-  '/podcast': 'podcast',
-  '/documentales': 'documentales',
-  '/laboratorio': 'laboratorio',
-  '/principios': 'principios',
+  '/trabajo': 'documentales',
+  '/servicios': 'estudio',
+  '/investigacion': 'medicion',
   '/nosotros': 'nosotros',
-  '/estudio': 'estudio',
-  '/estudio/como-trabajamos': 'estudio',
-  '/impacto': 'impacto',
-  '/impacto/medicion': 'medicion',
-  '/encuentros': 'encuentros',
-  '/encuentros/celebraciones': 'celebraciones',
   '/contacto': 'contacto',
 };
+// Lo que queda del medio (noticias, opinión, autores…) sigue en línea para los enlaces que circulan,
+// pero ya no es la cara de Dial: no se indexa (nov 2026).
+const ARCHIVO = ['/noticias', '/opinion', '/autores', '/principios', '/buscar', '/fotografia'];
 const ruta = Astro.url.pathname.replace(/\/$/, '') || '/';
 
 const {
   titulo,
   descripcion = sitio.descripcion,
   imagen = `/og/${tarjetas[ruta] ?? 'inicio'}.jpg`,
-  noindex = false,
+  noindex: noindexPropio = false,
   tipo = 'website',
   portada = false,
   articulo,
   ld,
 } = Astro.props;
+const noindex = noindexPropio || ARCHIVO.some((r) => ruta === r || ruta.startsWith(r + '/'));
 
-const tituloCompleto = !titulo ? 'Dial · Análisis, opinión y documental desde Colombia' : titulo.startsWith('Dial') ? titulo : `${titulo} · Dial`;
+const tituloCompleto = !titulo ? 'Dial Medio · Productora audiovisual' : titulo.startsWith('Dial') ? titulo : `${titulo} · Dial Medio`;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagenAbs = new URL(imagen, Astro.site);
 const imagenPropia = imagenAbs.hostname === Astro.site?.hostname;
-const imagenAlt = Astro.props.imagenAlt ?? (titulo ? `${titulo} — Dial` : 'Dial: análisis, opinión y documental desde Colombia');
+const imagenAlt = Astro.props.imagenAlt ?? (titulo ? `${titulo} — Dial Medio` : 'Dial Medio, productora audiovisual');
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'NewsMediaOrganization',
+  '@type': 'Organization',
   '@id': new URL('/#dial', Astro.site).toString(),
-  name: 'Dial',
-  publishingPrinciples: new URL('/principios', Astro.site).toString(),
-  correctionsPolicy: new URL('/principios#correcciones', Astro.site).toString(),
-  ethicsPolicy: new URL('/principios', Astro.site).toString(),
+  name: 'Dial Medio',
   slogan: sitio.tagline,
   description: sitio.descripcion,
   url: Astro.site?.toString(),
@@ -90,7 +82,7 @@ const jsonLd = {
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content={tipo} />
-    <meta property="og:site_name" content="Dial" />
+    <meta property="og:site_name" content="Dial Medio" />
     <meta property="og:locale" content="es_CO" />
     <meta property="og:title" content={tituloCompleto} />
     <meta property="og:description" content={descripcion} />

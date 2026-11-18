@@ -1,5 +1,13 @@
 import sitio from '../data/sitio.json';
 
+/** Menú de la productora (nov 2026). Cotizar va aparte, como botón. */
+export const NAV = [
+  { texto: 'Trabajo', href: '/trabajo' },
+  { texto: 'Servicios', href: '/servicios' },
+  { texto: 'Investigación', href: '/investigacion' },
+  { texto: 'Nosotros', href: '/nosotros' },
+];
+
 export type Video = {
   plataforma: 'youtube' | 'vimeo';
   id: string;

@@ -1,135 +1,123 @@
 ---
+/**
+ * Nosotros (18 nov 2026): equipo, capacidades, espacios y la casa (Fototoma y RED Quynza).
+ * Reemplaza el Nosotros del medio y /estudio/como-trabajamos. Retratos en foto normal, 4:5.
+ */
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import PortadaPagina from '../components/PortadaPagina.astro';
+import CTAFinal from '../components/CTAFinal.astro';
+import cap from '../data/capacidades.json';
 import sitio from '../data/sitio.json';
+import { dos } from '../lib/util';
 
-const autores = (await getCollection('autores')).sort((a, b) => a.data.orden - b.data.orden);
-
-const hacemos = [
-  { titulo: 'Noticias', href: '/noticias', texto: 'Noticias de Colombia, América Latina y el mundo, explicadas y con las fuentes a la vista.' },
-  { titulo: 'Opinión', href: '/opinion', texto: 'Columnas firmadas, separadas de las noticias.' },
-  { titulo: 'Podcast', href: '/podcast', texto: 'Entrevistas largas con personas que trabajan por la paz, hechas con la RED Quynza.' },
-  { titulo: 'Documentales', href: '/documentales', texto: 'Documentales sobre música, territorio y memoria.' },
-  { titulo: 'Revista', href: '/opinion#escribe', texto: 'La revista reúne ilustración, poesía y análisis. Está abierta la convocatoria para quienes quieran publicar en ella.' },
-  { titulo: 'Laboratorio', href: '/laboratorio', texto: 'Debates entre personas que piensan distinto, con encuesta a la sala antes y después.' },
-];
+const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.data.orden);
+const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', 'Pereira', 'Barranquilla', 'Cali', 'Popayán', 'Tres países de Asia'];
 ---
 
-<Base
-  titulo="Nosotros"
-  descripcion="Dial es una revista cultural independiente hecha en Bogotá: arte, memoria, conservación, comunidad y conversación, con rigor en los datos y de parte de la gente y la tierra."
->
-  <div class="tema-papel nosotros">
-    <header class="contenedor pagina-cabeza">
-      <p class="kicker">Nosotros</p>
-      <h1>Un lugar para <em>entender.</em></h1>
-      <p class="bajada">
-        Dial es una revista cultural independiente hecha en Bogotá. Difundimos arte, memoria, investigaciones y conversaciones, y contamos lo que pasa en el país con noticias explicadas, columnas, podcast y documentales.
-      </p>
-    </header>
+<Base titulo="Nosotros" descripcion="El equipo de Dial Medio, productora audiovisual de Bogotá, y su casa: Fototoma en la música y la RED Quynza en la investigación.">
+  <PortadaPagina
+    kicker="Nosotros"
+    titulo="Un equipo pequeño, de la idea al <em>estreno.</em>"
+    bajada="Dial Medio es una productora audiovisual de Bogotá. Trabaja junto a Fototoma, que hace la música y el sonido, y a la RED Quynza, que investiga."
+    indice={[{ texto: 'Equipo', href: '#equipo' }, { texto: 'La casa', href: '#casa' }, { texto: 'Capacidades', href: '#capacidades' }]}
+  />
 
-    <section class="contenedor manifiesto">
-      <p class="lead-xl">
-        No vivimos una época de medias tintas. Trabajamos con rigor en los datos, con ojo crítico y sin ligarnos a ningún partido, pero no escondemos de qué lado estamos: <em>con la gente y con la tierra.</em> Nos interesan la conservación, la comunidad, la juntanza y las expresiones artísticas y culturales, y queremos que cada pieza, además de informar, ayude a ponerse en el lugar del otro.
-      </p>
-    </section>
+  <section class="seccion compacta tema-papel">
+    <div class="contenedor lugares" data-revela>
+      <p class="kicker sin-linea">Hemos filmado en</p>
+      <ul>{lugares.map((l) => <li>{l}</li>)}</ul>
+    </div>
+  </section>
 
-    <section class="contenedor bloque" aria-labelledby="hacemos-t">
-      <header class="seccion-cabeza"><h2 id="hacemos-t">Qué hacemos</h2></header>
-      <ul class="hacemos">
-        {hacemos.map((h) => (
-          <li>
-            <a href={h.href} class="titular t-2">{h.titulo}</a>
-            <p class="bajada">{h.texto}</p>
-          </li>
-        ))}
-      </ul>
-    </section>
-
-    <section class="contenedor bloque" aria-labelledby="equipo-t">
-      <header class="seccion-cabeza"><h2 id="equipo-t">Quiénes hacemos Dial</h2></header>
+  <section class="seccion tema-papel" id="equipo">
+    <div class="contenedor">
+      <header class="cabeza" data-revela>
+        <p class="kicker">{dos(1)} · Equipo</p>
+        <h2 class="display d-2">Quién está <em>detrás.</em></h2>
+      </header>
       <div class="equipo">
-        {autores.map((a) => (
-          <a href={`/autores/${a.id}`} class:list={['persona', { texto: !a.data.retrato }]}>
-            {a.data.retrato && <Image src={a.data.retrato} alt={`Retrato de ${a.data.nombre}`} widths={[300, 600]} sizes="240px" />}
-            <span class="titular t-3">{a.data.nombre}</span>
-            <span class="datos">{a.data.rol}</span>
-            {!a.data.retrato && <p class="bajada">{a.data.bio}</p>}
-          </a>
-        ))}
-        <div class="persona texto">
-          <span class="titular t-3">Red de realizadores</span>
-          <span class="datos">Imagen · sonido · montaje · música</span>
-          <p class="bajada">Fotógrafos, sonidistas, editores y músicos que se suman según cada proyecto.</p>
+        {
+          equipo.map((p) => (
+            <article class="persona" data-revela>
+              {p.data.foto ? (
+                <Image src={p.data.foto} alt={p.data.nombre} widths={[400, 640]} sizes="(min-width: 980px) 24vw, (min-width: 640px) 45vw, 100vw" />
+              ) : (
+                <div class="sin-foto" aria-hidden="true" />
+              )}
+              <p class="rotulo">{p.data.rol}</p>
+              <h3 class="titular t-3">{p.data.nombre}</h3>
+              <p class="texto-2 bio">{p.data.bio}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tema-carbon grano" id="casa">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(2)} · La casa</p>
+          <h2 class="display d-2">Con quién <em>trabajamos.</em></h2>
         </div>
-      </div>
-      <p class="sumate">¿Quieres escribir? <a href="/opinion#escribe">Escribe en Dial</a>.</p>
-    </section>
+        <p class="texto-2" data-revela>Cuando un proyecto lo pide, las tres casas lo firman juntas.</p>
+      </header>
+      <dl class="creditos">
+        <div data-revela><dt>Imagen, dirección y producción</dt><dd>Dial Medio</dd></div>
+        {sitio.aliados.map((a) => <div data-revela><dt>{a.rol}</dt><dd><a href={a.url} target="_blank" rel="noopener">{a.nombre} ↗</a></dd></div>)}
+      </dl>
+    </div>
+  </section>
 
-    <section class="contenedor bloque dos" aria-labelledby="red-t">
-      <header class="seccion-cabeza"><h2 id="red-t">Con la RED Quynza</h2></header>
-      <div class="dos-texto">
-        <p>
-          La RED Quynza reúne a profesores, investigadores y personas de distintas regiones que trabajan por la paz. Con ella hacemos el podcast <a href="/podcast"><em>Lo que la gente quiere es vivir</em></a>, y diseñamos el <a href="/noticias/expediente">Expediente</a> que ella
-          publica, con el seguimiento de <a href="/autores/andres-tafur-villarreal">Andrés Tafur Villarreal</a>. Cada pieza dice de quién es la iniciativa y quién la produce.
-        </p>
-        <p>
-          La RED publica su trabajo académico y Dial su análisis político por separado: ninguna habla en nombre de la otra.
-        </p>
-        <a href="https://redquynza.org" class="enlace" target="_blank" rel="noopener">redquynza.org <span>↗</span></a>
+  <section class="seccion tema-hueso" id="capacidades">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela>
+          <p class="kicker">{dos(3)} · Capacidades</p>
+          <h2 class="display d-2">Con qué <em>trabajamos.</em></h2>
+        </div>
+        <p class="texto-2" data-revela>Equipos propios y espacios aliados en Bogotá. Lo que no tenemos lo alquilamos para cada proyecto.</p>
+      </header>
+      <div class="capacidades">
+        {
+          cap.grupos.map((g) => (
+            <div data-revela>
+              <h3 class="sub s-2">{g.titulo}</h3>
+              <ul>{g.items.map((x) => <li>{x}</li>)}</ul>
+            </div>
+          ))
+        }
       </div>
-    </section>
-
-    <section class="contenedor bloque dos" aria-labelledby="plata-t">
-      <header class="seccion-cabeza"><h2 id="plata-t">Cómo nos sostenemos</h2></header>
-      <div class="dos-texto">
-        <p>
-          Dial se financia con el trabajo de <a href="/estudio">Dial Estudio</a>, nuestra productora: documental, cobertura y eventos
-          para organizaciones. Lo que gana el Estudio sostiene el medio. También postulamos a convocatorias de cultura, periodismo
-          y cooperación.
-        </p>
-        <p>
-          Así no dependemos de las vistas en redes para sostenernos. Los clientes del Estudio no deciden qué publicamos, y no producimos propaganda electoral. Si una pieza recibe apoyo de alguien, lo decimos en la pieza.
-        </p>
-        <a href="/principios" class="enlace">Principios editoriales <span>→</span></a>
+      <div class="sueltos" data-revela>
+        <p class="rotulo">También por separado</p>
+        <ul class="etiquetas">{cap.sueltos.map((s) => <li>{s}</li>)}</ul>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="contenedor bloque contacto">
-      <p class="titular t-2">Escríbenos: <a href={`mailto:${sitio.correo}`}>{sitio.correo}</a></p>
-      <p class="redes-fila">{sitio.ciudad} · {sitio.redes.map((r) => <a href={r.url} target="_blank" rel="noopener">{r.nombre}</a>)}</p>
-    </section>
-  </div>
+  <CTAFinal />
 </Base>
 
 <style>
-  .pagina-cabeza h1 em { font-family: var(--f-serif); }
-  .manifiesto { padding-block: clamp(16px, 2vw, 32px) clamp(56px, 7vw, 96px); }
-  .manifiesto .lead-xl { max-width: 34ch; margin: 0; }
-  .bloque { padding-bottom: clamp(56px, 7vw, 96px); }
-  .hacemos { list-style: none; display: grid; gap: 0 40px; }
-  @media (min-width: 900px) { .hacemos { grid-template-columns: repeat(3, 1fr); } }
-  .hacemos li { display: grid; gap: 10px; align-content: start; padding: 22px 0; border-bottom: 1px solid var(--linea); }
-  .hacemos a { text-decoration: none; }
-  .hacemos a:hover { color: var(--terracota-ink); }
-  .hacemos .bajada { font-size: 1rem; }
-
-  .equipo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 20px; }
-  .equipo .persona.texto { grid-column: 1 / -1; }
-  @media (min-width: 700px) { .equipo { grid-template-columns: repeat(3, 1fr); gap: 32px; } .equipo .persona.texto { grid-column: auto; } }
-  .persona { display: grid; gap: 6px; align-content: start; text-decoration: none; }
-  .persona img { width: 100%; max-width: 240px; height: auto; margin-bottom: 10px; }
-  a.persona:hover .titular { color: var(--terracota-ink); }
-  .persona.texto { border-top: 1px solid var(--linea); padding-top: 16px; }
-  .persona .bajada { font-size: .98rem; margin-top: 6px; }
-  .sumate { margin-top: 28px; font-size: .95rem; color: var(--texto-2); }
-  .redes-fila { margin: 0; font-size: .9rem; color: var(--texto-2); }
-  .sumate a, .contacto a { color: inherit; }
-
-  .dos-texto { display: grid; gap: 18px; justify-items: start; max-width: 66ch; font-size: 1.1rem; }
-  .dos-texto p { margin: 0; }
-  .dos-texto a:not(.enlace) { color: inherit; text-decoration-color: var(--luz); }
-  .contacto { display: grid; gap: 10px; border-top: 1px solid var(--carbon); padding-top: 28px; }
-  .redes-fila a + a::before { content: ' · '; }
+  .lugares { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: baseline; }
+  .lugares .kicker { margin: 0; }
+  .lugares ul { list-style: none; display: flex; flex-wrap: wrap; }
+  .lugares li { font-family: var(--f-display); font-size: clamp(1.3rem, 1.1rem + .8vw, 1.9rem); line-height: 1.2; }
+  .lugares li + li::before { content: '·'; margin: 0 .5em; color: var(--luz); }
+  .equipo { display: grid; gap: 48px 24px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+  .persona { display: grid; gap: 10px; align-content: start; }
+  .persona :global(img), .sin-foto { aspect-ratio: 4 / 5; width: 100%; object-fit: cover; object-position: 50% 20%; background: var(--fibra); margin-bottom: 8px; }
+  .persona h3, .persona p { margin: 0; }
+  .bio { font-size: .94rem; line-height: 1.55; }
+  .capacidades { display: grid; gap: 40px 32px; }
+  .capacidades > div { border-top: 1px solid var(--borde); padding-top: 20px; display: grid; gap: 14px; align-content: start; }
+  .capacidades ul { list-style: none; display: grid; gap: 8px; }
+  .capacidades li { color: var(--texto-2); font-size: 1rem; line-height: 1.5; }
+  @media (min-width: 760px) { .capacidades { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .capacidades { grid-template-columns: repeat(4, 1fr); } }
+  .sueltos { margin-top: 48px; display: grid; gap: 12px; }
+  .sueltos .etiquetas { font-size: 1rem; }
 </style>

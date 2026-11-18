@@ -1,130 +1,101 @@
 ---
-// Manual de marca de Dial, v5 (29 oct 2026): de la pantalla a la materia. El aro de pluma, «dial» en Fraunces suave,
-// una sola luz roja, letras sin mono y fotos reveladas con película. Martín aprobó el camino B (la pluma) el 29 oct.
-// Antes: v4 (24 oct, el aro con punto) y v3.2 (una sola estética con Al Aire). Página sin indexar: se comparte por enlace o como PDF.
+// Manual de marca de Dial Medio, v6 (18 nov 2026): la productora. Dial deja de presentarse como medio de comunicación
+// y pasa a ser productora audiovisual asociada a Fototoma (música) y a la RED Quynza (investigación). «Medio» = punto medio.
+// Conserva de la v5 el logotipo en Fraunces, el aro de pluma y la luz roja. Cambia: casa oscura, texto en Instrument Sans,
+// imagen en formato de cine, créditos compartidos. PROPUESTA hasta que Martín la apruebe.
+// Antes: v5 (29 oct, la pluma), v4 (24 oct, el aro) y v3.2. Página sin indexar: se comparte por enlace o como PDF.
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 import Simbolo from '../components/Simbolo.astro';
 import Sintonizador from '../components/Sintonizador.astro';
+import palenque from '../assets/estudio/palenque.jpg';
+import liveSession from '../assets/estudio/live-session.jpg';
+import feoPalante from '../assets/estudio/feo-palante.jpg';
 
 const decisiones = [
-  {
-    area: 'Símbolo',
-    antes: 'El aro con punto de la v4: un trazo parejo, como hecho con compás.',
-    ahora: 'El mismo aro, trazado como la o de una pluma de punta ancha: grueso a los lados, fino arriba y abajo.',
-    porque: 'Conserva todo lo que se eligió en la v4 (medidas, punto a 45°, estaciones) y lo vuelve hecho a mano. Es análogo hasta en un favicon.',
-  },
-  {
-    area: 'Logotipo',
-    antes: '«dial» en Instrument Sans Bold y el apellido en terracota cursiva.',
-    ahora: '«dial» en Fraunces suave, una serif de imprenta con las esquinas redondeadas por la tinta. El apellido, en Fraunces cursiva y en la misma tinta.',
-    porque: 'La grotesca negra era neutra y de pantalla. Crema, terracota y cursiva juntas es la combinación que más se repite en las marcas generadas.',
-  },
-  {
-    area: 'Color',
-    antes: 'Carbón, papel, hueso, terracota y brasa en todo.',
-    ahora: 'Negro de película, papel y una sola luz roja: el punto. La foto pone el color.',
-    porque: 'Un punto rojo solo se ve más que un rojo repartido. Cada línea de noticias trae sus propios colores.',
-  },
-  {
-    area: 'Letras',
-    antes: 'Grotesca para titular, rótulos en caja y mono para datos.',
-    ahora: 'Instrument Serif para titular, Bricolage Grotesque para leer, versalitas de Instrument Sans para rotular. Sin mono.',
-    porque: 'La mono en mayúsculas y las cajas eran lo que más delataba una pieza hecha en pantalla.',
-  },
-  {
-    area: 'Materia',
-    antes: 'Un moteado de impresión digital y fotos tal como salen del sensor.',
-    ahora: 'Procesos reales: película, tinta de imprenta, papel de fibra y kraft.',
-    porque: 'Lo aprendimos con Termómetro: lo análogo no es un filtro, es mostrar el mundo como se toca.',
-  },
+  { area: 'Idea', antes: 'Un medio cultural: noticias, opinión, podcast y documental.', ahora: 'Una productora audiovisual. «Medio» quiere decir punto medio: el lugar desde donde una historia se cuenta con datos y sin caricatura.', porque: 'Abre la puerta a clientes de todos los sectores sin dejar de lado lo social, que sigue siendo el centro de la obra propia.' },
+  { area: 'Casa', antes: 'Una sombrilla con líneas: Impacto, Encuentros, Medio y Estudio.', ahora: 'Una sola marca, Dial Medio, con seis servicios. Fototoma hace la música y la RED Quynza investiga.', porque: 'Cuatro apellidos confundían. Cada casa conserva su marca y firman juntas en los créditos.' },
+  { area: 'Letras', antes: 'Bricolage Grotesque para leer.', ahora: 'Instrument Sans para leer y para los créditos. Instrument Serif sigue en los titulares.', porque: 'Bricolage era de revista indie. Instrument Sans es más sobria y se parece a la letra de los créditos de cine.' },
+  { area: 'Superficie', antes: 'Papel claro por defecto, negro en algunas secciones.', ahora: 'Negro por defecto, como una sala. El papel queda para leer y para respirar entre secciones oscuras.', porque: 'La imagen se ve mejor sobre negro, y una productora se presenta con imagen.' },
+  { area: 'Imagen', antes: 'Láminas 4:5 con procesos de imprenta, cianotipo y cuarto oscuro.', ahora: 'El fotograma ancho (2,39:1 y 16:9) a sangre. Los procesos de imprenta pasan al servicio de diseño de comunicación.', porque: 'Lo que vendemos es imagen en movimiento. El kit de láminas sigue vivo como oficio para clientes.' },
 ];
 
 const luces = [
-  { titulo: 'Al aire', texto: 'El piloto rojo de la cabina de radio: se enciende y alguien habla. Es el dial ya sintonizado.' },
-  { titulo: 'Grabando', texto: 'El punto rojo de la cámara cuando rueda. Dial es documental y debate: estamos registrando.' },
-  { titulo: 'Revelando', texto: 'La luz roja del cuarto oscuro, la única que no vela la copia. Bajo ella aparece la imagen.' },
+  { titulo: 'Grabando', texto: 'El punto rojo de la cámara cuando rueda. Es lo que hacemos.' },
+  { titulo: 'Revelando', texto: 'La luz roja del cuarto oscuro, la única que no vela la copia. La investigación y el montaje pasan ahí.' },
+  { titulo: 'Sintonizado', texto: 'La aguja del dial cuando encuentra la señal. El punto medio.' },
 ];
 
-const estaciones = [
-  { nombre: 'Arte y memoria', angulo: -90, proceso: 'Cuarto oscuro' },
-  { nombre: 'Nuevos mundos posibles', angulo: -45, proceso: 'Cianotipo' },
-  { nombre: 'Al Aire', angulo: 0, proceso: 'Imprenta' },
-  { nombre: 'Tecnología y poder', angulo: 45, proceso: 'Plancha y sello' },
-  { nombre: 'Termómetro', angulo: 90, proceso: 'Película y tiza' },
+const casas = [
+  { rol: 'Imagen, dirección y producción', nombre: 'Dial Medio', url: 'https://dialmedio.org' },
+  { rol: 'Música original y diseño sonoro', nombre: 'Fototoma', url: 'https://fototomaproducciones.com' },
+  { rol: 'Investigación', nombre: 'RED Quynza', url: 'https://redquynza.org' },
+];
+
+const firmas = [
+  ['Obra de Dial', 'Una producción de Dial Medio · Música original de Fototoma'],
+  ['Con la RED', 'RED Quynza en coproducción con Dial Medio (o al revés, según de quién sea la iniciativa)'],
+  ['Para un cliente', 'Una producción de Dial Medio para [cliente] · Investigación: RED Quynza · Música: Fototoma'],
+  ['Diseño para terceros', 'Diseño: Dial Medio, pequeño y al final. La pieza lleva la marca del cliente.'],
 ];
 
 const colores = [
-  { nombre: 'Negro de película', hex: '#1F1C19', rgb: '31 · 28 · 25', rol: 'Fondos oscuros y texto sobre claro. Negro levantado, nunca puro.', clase: 'c-carbon', proporcion: '40 %' },
-  { nombre: 'Papel', hex: '#F4EEE5', rgb: '244 · 238 · 229', rol: 'Fondo claro y toda la letra sobre negro y sobre fotos.', clase: 'c-papel', proporcion: '40 %' },
-  { nombre: 'Papel de fibra', hex: '#EBE3D6', rgb: '235 · 227 · 214', rol: 'Segunda superficie clara.', clase: 'c-hueso', proporcion: '15 %' },
-  { nombre: 'Kraft', hex: '#BFA078', rgb: '191 · 160 · 120', rol: 'Solo en impresos: sellos, bolsas, pegatinas.', clase: 'c-kraft', proporcion: '—' },
-  { nombre: 'Luz roja', hex: '#D4512E', rgb: '212 · 81 · 46', rol: 'Solo el punto. Una por pieza.', clase: 'c-terracota', proporcion: '1 %' },
+  { nombre: 'Negro de película', hex: '#1F1C19', rgb: '31 · 28 · 25', rol: 'La casa: fondos, cabecera y pie. Negro levantado, nunca puro.', clase: 'c-carbon', proporcion: '60 %' },
+  { nombre: 'Negro de sala', hex: '#0F0D0C', rgb: '15 · 13 · 12', rol: 'Solo detrás de la imagen: bandas de cine y cajas de video.', clase: 'c-sala', proporcion: '—' },
+  { nombre: 'Papel', hex: '#F4EEE5', rgb: '244 · 238 · 229', rol: 'Secciones para leer y toda la letra sobre negro.', clase: 'c-papel', proporcion: '30 %' },
+  { nombre: 'Papel de fibra', hex: '#EBE3D6', rgb: '235 · 227 · 214', rol: 'Segunda superficie clara.', clase: 'c-hueso', proporcion: '9 %' },
+  { nombre: 'Luz roja', hex: '#D4512E', rgb: '212 · 81 · 46', rol: 'El punto. Una por pieza: la i, el REC, un número.', clase: 'c-terracota', proporcion: '1 %' },
 ];
 
 const funcionales = [
   { nombre: 'Luz para texto en claro', hex: '#A83B1E', uso: 'Rótulos pequeños sobre papel' },
-  { nombre: 'Luz para texto en negro', hex: '#E0653F', uso: 'Rótulos pequeños sobre negro' },
+  { nombre: 'Luz para texto en negro', hex: '#E0653F', uso: 'Rótulos y números sobre negro' },
   { nombre: 'Humo', hex: '#5F574F', uso: 'Texto secundario sobre papel' },
   { nombre: 'Plata', hex: '#B5ACA0', uso: 'Texto secundario sobre negro' },
 ];
 
 const escala = [
-  { nivel: 'Titular', muestra: ['Contamos, ', 'y medimos,', ' el encuentro'], clase: 'm-d1', spec: 'Instrument Serif · regular · −1,2 % · interlineado 0,94–1. El acento en cursiva, en la misma tinta' },
-  { nivel: 'Titular de sección', muestra: ['Historias que ', 'transforman.', ''], clase: 'm-d2', spec: 'Instrument Serif · regular · interlineado 0,96' },
-  { nivel: 'Subtítulo', muestra: ['Cobertura de proyecto', '', ''], clase: 'm-sub', spec: 'Bricolage Grotesque · 600 · ancho 92 %' },
-  { nivel: 'Texto', muestra: ['Producimos historias reales de personas, comunidades y organizaciones.', '', ''], clase: 'm-texto', spec: 'Bricolage Grotesque · 380 · ancho 92 % · 17–18 px · interlineado 1,6' },
-  { nivel: 'Resaltado', muestra: ['La reserva se firmó ', '«a último minuto»', '.'], clase: 'm-resalte', spec: 'Bricolage en negrilla sobre franja de tinta negro grisácea. Una o dos por pieza' },
-  { nivel: 'Rótulo', muestra: ['Al Aire · Bogotá · 17 oct 2026', '', ''], clase: 'm-rotulo', spec: 'Instrument Sans · 600 · versalitas · +16 % · con el punto de luz delante' },
-  { nivel: 'Dato', muestra: ['1:07:36 · 66.735 vistas', '', ''], clase: 'm-dato', spec: 'Bricolage Grotesque · cifras tabulares · nunca mono' },
+  { nivel: 'Titular', muestra: ['Investigamos antes de ', 'filmar.', ''], clase: 'm-d1', spec: 'Instrument Serif · regular · interlineado 0,94. El acento en cursiva, en la misma tinta' },
+  { nivel: 'Titular de sección', muestra: ['Del comercial al ', 'documental.', ''], clase: 'm-d2', spec: 'Instrument Serif · regular · interlineado 0,96' },
+  { nivel: 'Texto', muestra: ['Hacemos publicidad, videoclips, eventos y documental, con investigación detrás.', '', ''], clase: 'm-texto', spec: 'Instrument Sans · 400 · ancho 96 % · 17–18 px · interlineado 1,6' },
+  { nivel: 'Crédito', muestra: ['Dirección · Martín Perea', '', ''], clase: 'm-rotulo', spec: 'Instrument Sans · 600 · versalitas · +16 %. Rol en versalitas, nombre en serif cuando es grande' },
+  { nivel: 'Rótulo', muestra: ['Productora audiovisual · Bogotá', '', ''], clase: 'm-rotulo con-punto', spec: 'Instrument Sans · 600 · versalitas · con el punto de luz delante' },
 ];
 
 // Enlaces absolutos: funcionan también dentro del PDF.
 const M = 'https://dialmedio.org/marca/';
 const descargas = [
-  ['Firma (símbolo + logotipo)', 'dial-firma-oscuro', 'dial-firma-claro'],
-  ['Logotipo', 'dial-logotipo-oscuro', 'dial-logotipo-claro'],
-  ['Símbolo', 'dial-simbolo-oscuro', 'dial-simbolo-claro'],
-  ['Dial Impacto', 'dial-impacto-oscuro', 'dial-impacto-claro'],
-  ['Dial Encuentros', 'dial-encuentros-oscuro', 'dial-encuentros-claro'],
-  ['Dial Medio', 'dial-medio-oscuro', 'dial-medio-claro'],
-  ['Dial Estudio', 'dial-estudio-oscuro', 'dial-estudio-claro'],
-  ['Dial Impacto · solo letras', 'dial-impacto-letras-oscuro', 'dial-impacto-letras-claro'],
-  ['Dial Encuentros · solo letras', 'dial-encuentros-letras-oscuro', 'dial-encuentros-letras-claro'],
+  ['Dial Medio (firma principal)', 'dial-medio-oscuro', 'dial-medio-claro'],
   ['Dial Medio · solo letras', 'dial-medio-letras-oscuro', 'dial-medio-letras-claro'],
-  ['Dial Estudio · solo letras', 'dial-estudio-letras-oscuro', 'dial-estudio-letras-claro'],
-  ['Dial Impacto · centrado', 'dial-impacto-centrado-oscuro', 'dial-impacto-centrado-claro'],
-  ['Dial Encuentros · centrado', 'dial-encuentros-centrado-oscuro', 'dial-encuentros-centrado-claro'],
   ['Dial Medio · centrado', 'dial-medio-centrado-oscuro', 'dial-medio-centrado-claro'],
-  ['Dial Estudio · centrado', 'dial-estudio-centrado-oscuro', 'dial-estudio-centrado-claro'],
+  ['Logotipo «dial»', 'dial-logotipo-oscuro', 'dial-logotipo-claro'],
+  ['Símbolo', 'dial-simbolo-oscuro', 'dial-simbolo-claro'],
+  ['Firma (símbolo + logotipo)', 'dial-firma-oscuro', 'dial-firma-claro'],
 ];
-// Cuadradas, con aire para el recorte circular de las redes
 const perfiles = [
   ['símbolo', 'simbolo'],
-  ['Dial', 'dial'],
-  ['Dial Impacto', 'impacto'],
-  ['Dial Encuentros', 'encuentros'],
   ['Dial Medio', 'medio'],
-  ['Dial Estudio', 'estudio'],
+  ['Dial', 'dial'],
 ];
 ---
 
-<Base titulo="Manual de marca v5" descripcion="Manual de marca de Dial: el aro de pluma, la luz roja, color, letras, materia, fotografía y voz." noindex>
+<Base titulo="Manual de marca v6" descripcion="Manual de marca de Dial Medio, productora audiovisual: idea, casa, logotipo, símbolo, color, letras, imagen, créditos y voz." noindex>
   <!-- PORTADA -->
   <section class="m-portada tema-carbon grano">
     <div class="contenedor m-portada-grid">
       <div class="m-portada-texto">
-        <p class="kicker"><span class="acento">Manual de marca</span> · v5 · Octubre 2026</p>
-        <h1 class="m-portada-logo"><Logo tono="claro" titulo="Dial" /></h1>
-        <p class="lead-xl">De la pantalla <em>a la materia.</em></p>
+        <p class="kicker"><span class="acento">Manual de marca</span> · v6 · Noviembre 2026 · Propuesta</p>
+        <h1 class="m-portada-logo"><Logo tono="claro" linea="medio" titulo="Dial Medio" /></h1>
+        <p class="lead-xl">El punto <em>medio.</em></p>
         <p class="lead texto-2">
-          La v5 lleva a toda la casa lo que aprendimos con Termómetro: el aro trazado a pluma, letras con tinta, una sola luz
-          roja y fotos reveladas con película. Conserva lo esencial: el nombre en minúsculas, el aro, sus estaciones y el lema.
+          La v6 acompaña el paso de Dial a productora audiovisual, junto a Fototoma y la RED Quynza. Conserva el logotipo, el aro de pluma y la luz roja de la
+          v5. Cambia la casa a negro, el texto a Instrument Sans y pone la imagen en formato de cine.
         </p>
       </div>
       <Simbolo tono="claro" anima class="m-portada-simbolo" titulo="Símbolo de Dial" />
     </div>
-    <div class="contenedor"><Sintonizador /></div>
+    <div class="contenedor"><Sintonizador frecuencia={1110} /></div>
   </section>
 
   <!-- 01 DECISIONES -->
@@ -132,108 +103,117 @@ const perfiles = [
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">01 — Qué cambió</p>
-          <h2 class="display d-2">Cinco decisiones.</h2>
+          <p class="kicker">01 — Qué cambia</p>
+          <h2 class="display d-2">De la v5 a la <em>v6.</em></h2>
         </div>
-        <p class="texto-2">Todo lo demás se desprende de estas cinco. Si una pieza duda, vuelve aquí.</p>
+        <p class="texto-2">Cinco decisiones. Lo que no aparece aquí sigue igual que en la v5.</p>
       </header>
       <ol class="decisiones">
         {
           decisiones.map((d) => (
             <li>
-              <p class="kicker sin-linea">{d.area}</p>
+              <h3 class="sub s-1">{d.area}</h3>
               <dl>
-                <div><dt class="meta">Antes</dt><dd class="texto-2">{d.antes}</dd></div>
-                <div><dt class="meta">Ahora</dt><dd class="d-ahora">{d.ahora}</dd></div>
-                <div><dt class="meta">Por qué</dt><dd class="texto-2">{d.porque}</dd></div>
+                <div><dt class="rotulo">Antes</dt><dd class="texto-2">{d.antes}</dd></div>
+                <div><dt class="rotulo">Ahora</dt><dd class="d-ahora">{d.ahora}</dd></div>
+                <div><dt class="rotulo">Por qué</dt><dd class="texto-2">{d.porque}</dd></div>
               </dl>
             </li>
           ))
         }
       </ol>
-      <div class="antes-despues">
-        <figure><img src="/marca/v5/antes-digital.jpg" alt="Foto del plantón frente al Museo Nacional, sin tratar" loading="lazy" width="900" height="600" /><figcaption class="meta">Antes: tal como sale del sensor</figcaption></figure>
-        <figure><img src="/marca/v5/despues-pelicula.jpg" alt="La misma foto revelada con película" loading="lazy" width="900" height="600" /><figcaption class="meta">Ahora: revelada con película · Foto: Martín Perea / Dial</figcaption></figure>
-      </div>
     </div>
   </section>
 
-  <!-- 02 LA IDEA -->
+  <!-- 02 IDEA -->
   <section class="seccion tema-carbon grano" id="idea">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">02 — La idea</p>
-          <h2 class="display d-2">Una sola <em>luz roja.</em></h2>
+          <p class="kicker">02 — Idea</p>
+          <h2 class="display d-2">Un dial busca el <em>punto medio.</em></h2>
         </div>
         <p class="texto-2">
-          En cada medio análogo hay una lucecita roja que avisa que algo está pasando. La de Dial es el punto del aro, y es el
-          único color de la marca madre. Por eso el rojo va solo en el punto.
+          La aguja recorre el dial hasta encontrar la señal. Dial Medio trabaja con todos los sectores y busca en cada historia el lugar desde donde se puede
+          contar con datos verificados, para que la entienda quien está de acuerdo y también quien no. La luz roja es el punto donde se detiene.
         </p>
       </header>
       <ul class="luces">
-        {luces.map((l) => (
-          <li>
-            <span class="foco" aria-hidden="true" />
-            <h3 class="sub s-2">{l.titulo}</h3>
-            <p class="texto-2">{l.texto}</p>
-          </li>
-        ))}
+        {luces.map((l) => <li><span class="foco" aria-hidden="true" /><h3 class="sub s-2">{l.titulo}</h3><p class="texto-2">{l.texto}</p></li>)}
       </ul>
     </div>
   </section>
 
-  <!-- 03 LOGOTIPO -->
-  <section class="seccion tema-hueso" id="logotipo">
+  <!-- 03 LA CASA -->
+  <section class="seccion tema-hueso" id="casa">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">03 — Logotipo</p>
-          <h2 class="display d-2">El punto es la voz.</h2>
+          <p class="kicker">03 — La casa</p>
+          <h2 class="display d-2">Tres marcas que <em>firman juntas.</em></h2>
         </div>
-        <p class="texto-2">
-          «dial» en Fraunces suave (peso 600, suavidad 100, tamaño óptico 144), en minúsculas. El punto de la i es el nodo del
-          símbolo, siempre en luz roja. Se dibuja como trazo: no hace falta instalar la letra.
-        </p>
+        <p class="texto-2">Cada casa conserva su logo, sus colores y su voz. Nunca se funden en un logo nuevo: se juntan en los créditos.</p>
       </header>
-
-      <div class="logos">
-        <div class="logo-caja c-papel"><Logo tono="oscuro" /></div>
-        <div class="logo-caja c-carbon"><Logo tono="claro" /></div>
-        <div class="logo-caja c-kraft"><Logo tono="oscuro" /></div>
-      </div>
+      <dl class="creditos m-casas">
+        {casas.map((c) => <div><dt>{c.rol}</dt><dd><a href={c.url} target="_blank" rel="noopener">{c.nombre}</a></dd></div>)}
+      </dl>
+      <h3 class="sub s-1 m-h3">Cómo se firma</h3>
+      <table class="tabla">
+        <thead><tr><th>Caso</th><th>Firma</th></tr></thead>
+        <tbody>{firmas.map(([c, f]) => <tr><td>{c}</td><td>{f}</td></tr>)}</tbody>
+      </table>
       <ul class="notas">
-        <li><strong>Protección:</strong> alrededor del logotipo, un espacio libre igual al alto de la letra d.</li>
-        <li><strong>Tamaño mínimo:</strong> 64 px de ancho en pantalla, 18 mm impreso.</li>
-        <li><strong>Impreso:</strong> en piezas sobre foto, papel o kraft el logo se imprime con tinta (borde mordido, carga desigual). El vector limpio queda para tamaños pequeños y el sitio.</li>
-        <li><strong>No:</strong> deformar, cambiar el color del punto, poner el apellido en otro color, contornos, sombras ni degradados.</li>
+        <li><strong>Logos juntos:</strong> a la misma altura visual, en una fila, separados por un filete fino. Dial Medio va primero si la pieza es suya.</li>
+        <li><strong>Servicios:</strong> son seis y se nombran en texto (Documental y campañas sociales, Publicidad y marcas, Videoclips y sesiones en vivo, Eventos y cobertura, Divulgación de investigación, Diseño de comunicación). No llevan logo propio.</li>
+        <li><strong>Las firmas viejas</strong> (Dial Impacto, Dial Encuentros, Dial Estudio) ya no se usan. Los archivos siguen en /marca para piezas antiguas.</li>
       </ul>
-
-      <h3 class="sub s-1 m-h3">Firmas por línea</h3>
-      <p class="texto-2 m-p">El apellido va en Fraunces cursiva, a la derecha y en la misma tinta que «dial». Solo el punto lleva color.</p>
-      <div class="firmas">
-        {(['impacto', 'encuentros', 'medio'] as const).map((l) => (
-          <div class="logo-caja c-papel firma"><Logo tono="oscuro" linea={l} /></div>
-        ))}
-      </div>
     </div>
   </section>
 
-  <!-- 04 SÍMBOLO -->
+  <!-- 04 LOGOTIPO -->
+  <section class="seccion tema-papel" id="logotipo">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">04 — Logotipo</p>
+          <h2 class="display d-2">El punto es la <em>señal.</em></h2>
+        </div>
+        <p class="texto-2">
+          La firma principal es «dial medio»: «dial» en Fraunces suave 600 y «medio» en Fraunces cursiva, en la misma tinta. El punto de la i, en luz roja. Se
+          dibuja como trazo: no hace falta instalar la letra.
+        </p>
+      </header>
+      <div class="logos">
+        <div class="logo-caja c-carbon"><Logo tono="claro" linea="medio" /></div>
+        <div class="logo-caja c-papel"><Logo tono="oscuro" linea="medio" /></div>
+        <div class="logo-caja sobre-foto">
+          <Image src={liveSession} alt="" widths={[640, 1000]} sizes="(min-width: 900px) 33vw, 100vw" />
+          <Logo tono="claro" linea="medio" />
+        </div>
+      </div>
+      <ul class="notas">
+        <li><strong>«dial» solo:</strong> cuando el espacio es chico (favicon, marca de agua, sello) o cuando «Dial Medio» ya se lee cerca.</li>
+        <li><strong>Protección:</strong> alrededor del logotipo, un espacio libre igual al alto de la letra d.</li>
+        <li><strong>Tamaño mínimo:</strong> 96 px de ancho en pantalla y 24 mm impreso para «dial medio»; 64 px y 18 mm para «dial».</li>
+        <li><strong>Sobre imagen:</strong> en papel, sobre la zona oscura del fotograma. Si la imagen no tiene zona oscura, se baja con un velo negro, nunca con una caja.</li>
+        <li><strong>No:</strong> deformar, cambiar el color del punto, poner «medio» en otro color, contornos, sombras ni degradados.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 05 SÍMBOLO -->
   <section class="seccion tema-carbon grano" id="simbolo">
     <div class="contenedor simbolo-grid">
       <div>
-        <p class="kicker">04 — Símbolo</p>
-        <h2 class="display d-2">Un dial trazado <em>a pluma.</em></h2>
+        <p class="kicker">05 — Símbolo</p>
+        <h2 class="display d-2">El aro, <em>igual que en la v5.</em></h2>
         <p class="texto-2 m-p">
-          El aro de la v4, con sus medidas (caja de 200: radio 84, punto 24,9, aire 9,4), trazado como la o de una pluma de punta
-          ancha. El grosor cambia con un eje de pluma a −28°: el trazo crece un 12 % a los lados y baja al 42 % en lo más fino.
-          El punto de luz roja va a 45°, separado por un respiro.
+          El aro trazado como la o de una pluma de punta ancha (caja de 200: radio 84, punto 24,9, aire 9,4; eje −28°). El punto de luz roja va a 45°. En la
+          v6 deja de girar por estaciones: esas eran las líneas de noticias.
         </p>
         <ul class="notas claro">
-          <li><strong>Completo:</strong> desde 24 px.</li>
-          <li><strong>Compacto</strong> (aro más grueso, punto un poco mayor): por debajo de 24 px, favicon y sellos.</li>
-          <li><strong>Animado:</strong> el aro se traza con la pluma desde el punto y la luz se enciende.</li>
+          <li><strong>Completo:</strong> desde 24 px. <strong>Compacto</strong> por debajo: favicon y sellos.</li>
+          <li><strong>En video:</strong> marca de agua abajo a la derecha, al 60 %, y el logo animado al final (la i lanza el punto).</li>
           <li><strong>Nunca</strong> marcas alrededor del aro (parece un sol) ni el punto en la mitad de abajo (se lee como Q).</li>
         </ul>
       </div>
@@ -246,37 +226,17 @@ const perfiles = [
         </div>
       </div>
     </div>
-    <div class="contenedor">
-      <h3 class="sub s-1 m-h3">Estaciones: un proceso análogo por línea</h3>
-      <p class="texto-2 m-p">
-        Las líneas de noticias giran el punto por la mitad de arriba, como estaciones de un mismo dial. Cada una tiene además
-        su propio proceso, para que el feed sea variado y todo siga siendo Dial.
-      </p>
-      <ul class="estaciones">
-        {estaciones.map((e) => (
-          <li>
-            <Simbolo tono="claro" angulo={e.angulo} />
-            <span class="grados">{e.angulo === 0 ? '0°' : (e.angulo > 0 ? '+' : '−') + Math.abs(e.angulo) + '°'}</span>
-            <span class="kicker sin-linea">{e.nombre}</span>
-            <span class="texto-2">{e.proceso}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
   </section>
 
-  <!-- 05 COLOR -->
+  <!-- 06 COLOR -->
   <section class="seccion tema-papel" id="color">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">05 — Color</p>
-          <h2 class="display d-2">Negro, papel y <em>una luz.</em></h2>
+          <p class="kicker">06 — Color</p>
+          <h2 class="display d-2">Negro de sala y <em>una luz.</em></h2>
         </div>
-        <p class="texto-2">
-          La marca madre deja de pintar: la foto pone el color. Dial pone el negro donde se revela, el papel donde se imprime y
-          la luz roja en el punto. La brasa se queda en Al Aire y Termómetro, donde ya trabaja.
-        </p>
+        <p class="texto-2">La paleta de la v5 con otra proporción: ahora manda el negro. El color lo pone la imagen. La brasa de Al Aire queda solo para el kit de diseño.</p>
       </header>
       <div class="colores">
         {
@@ -295,24 +255,25 @@ const perfiles = [
       <table class="tabla">
         <thead><tr><th>Nombre</th><th>Hex</th><th>Uso</th></tr></thead>
         <tbody>
-          {funcionales.map((f) => (
-            <tr><td><span class="punto" style={`background:${f.hex}`} />{f.nombre}</td><td class="meta">{f.hex}</td><td>{f.uso}</td></tr>
-          ))}
+          {funcionales.map((f) => <tr><td><span class="punto" style={`background:${f.hex}`} />{f.nombre}</td><td class="meta">{f.hex}</td><td>{f.uso}</td></tr>)}
         </tbody>
       </table>
-      <p class="texto-2 m-p">La luz roja como texto, solo en rótulos pequeños. Botones en tinta (negro sobre papel, papel sobre negro); al pasar el cursor se enciende la luz.</p>
+      <p class="texto-2 m-p">
+        Junto a Fototoma: su único acento es el sol ámbar (#E0A84E) y el nuestro la luz roja. En una pieza compartida cada logo lleva su luz y el resto de la
+        pieza va en negro y papel.
+      </p>
     </div>
   </section>
 
-  <!-- 06 LETRAS -->
+  <!-- 07 LETRAS -->
   <section class="seccion tema-hueso" id="tipografia">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">06 — Letras</p>
-          <h2 class="display d-2">Cuatro voces, <em>todas libres.</em></h2>
+          <p class="kicker">07 — Letras</p>
+          <h2 class="display d-2">Tres letras, <em>todas libres.</em></h2>
         </div>
-        <p class="texto-2">Todas de licencia abierta (OFL), en Google Fonts. Ninguna es mono.</p>
+        <p class="texto-2">Licencia abierta (OFL), en Google Fonts. Ninguna es mono.</p>
       </header>
       <div class="familias">
         <article>
@@ -321,19 +282,14 @@ const perfiles = [
           <p class="texto-2">Fraunces suave. Nunca en titulares: así el logo no se gasta.</p>
         </article>
         <article>
-          <p class="kicker sin-linea">Titulares</p>
+          <p class="kicker sin-linea">Titulares y cartelas</p>
           <p class="fam fam-serif">Instrument Serif</p>
-          <p class="texto-2">La voz de los titulares, en el sitio y en las láminas. El acento en cursiva, en la misma tinta.</p>
+          <p class="texto-2">Titulares del sitio, títulos de las piezas, cartelas y nombres en los créditos. El acento en cursiva.</p>
         </article>
         <article>
-          <p class="kicker sin-linea">Para leer</p>
-          <p class="fam fam-brico">Bricolage</p>
-          <p class="texto-2">Bricolage Grotesque: texto, subtítulos, botones y cifras. La eligió Martín para Termómetro por indie y análoga.</p>
-        </article>
-        <article>
-          <p class="kicker sin-linea">Para rotular</p>
-          <p class="fam fam-rotulo">Instrument Sans</p>
-          <p class="texto-2">Versalitas espaciadas para antetítulos, fechas y créditos. Sin caja.</p>
+          <p class="kicker sin-linea">Texto y créditos</p>
+          <p class="fam fam-sans">Instrument Sans</p>
+          <p class="texto-2">Texto, botones y cifras. En versalitas espaciadas: rótulos, roles y fichas técnicas.</p>
         </article>
       </div>
       <ol class="escala-tipo">
@@ -341,7 +297,7 @@ const perfiles = [
           escala.map((e) => (
             <li>
               <span class="meta">{e.nivel}</span>
-              <span class={e.clase}>{e.muestra[0]}{e.muestra[1] && (e.clase === 'm-resalte' ? <b>{e.muestra[1]}</b> : <em>{e.muestra[1]}</em>)}{e.muestra[2]}</span>
+              <span class={e.clase}>{e.muestra[0]}{e.muestra[1] && <em>{e.muestra[1]}</em>}{e.muestra[2]}</span>
               <span class="meta spec">{e.spec}</span>
             </li>
           ))
@@ -350,130 +306,142 @@ const perfiles = [
     </div>
   </section>
 
-  <!-- 07 MATERIA -->
-  <section class="seccion tema-carbon grano" id="materia">
+  <!-- 08 IMAGEN -->
+  <section class="seccion tema-carbon grano" id="imagen">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">07 — Materia</p>
-          <h2 class="display d-2">Lo que se <em>toca.</em></h2>
+          <p class="kicker">08 — Imagen</p>
+          <h2 class="display d-2">El fotograma <em>manda.</em></h2>
         </div>
-        <p class="texto-2">
-          Cada textura imita un proceso físico real, con sus defectos a la escala correcta. Si algo parece hecho en pantalla,
-          sobra: nada de neón, brillos, degradados ni cajas redondeadas.
-        </p>
+        <p class="texto-2">La imagen va a sangre y en formato de cine. El texto se acomoda a la imagen, no al revés.</p>
       </header>
-      <div class="materias">
-        <article>
-          <img src="/marca/v5/despues-pelicula.jpg" alt="Foto revelada con película" loading="lazy" width="900" height="600" />
-          <h3 class="sub s-2">Película</h3>
-          <p class="texto-2">Grano fino, halo tibio en las luces, negros levantados, una fuga de luz distinta cada vez, viñeta y algo de polvo. Es la función <code>pelicula()</code> del kit de noticias.</p>
-        </article>
-        <article>
-          <img src="/marca/v5/perfil.png" alt="El aro impreso con tinta sobre negro" loading="lazy" width="560" height="560" class="cuadrada" />
-          <h3 class="sub s-2">Tinta</h3>
-          <p class="texto-2">Cuando el logo va sobre algo, se imprime: borde mordido, carga desigual, la veta del tipo de madera. Es la función <code>tinta()</code> de Al Aire.</p>
-        </article>
-        <article>
-          <img src="/marca/v5/impresos.jpg" alt="Tarjeta, pegatina y sello sobre papel kraft" loading="lazy" width="1100" height="715" />
-          <h3 class="sub s-2">Papel</h3>
-          <p class="texto-2">Papel de fibra para lo claro y kraft para lo impreso: tarjetas en letterpress, pegatinas, sellos de caucho.</p>
-        </article>
-        <article>
-          <img src="/marca/v5/video-tercio.jpg" alt="Fotograma de video con el aro como marca de agua" loading="lazy" width="1400" height="788" />
-          <h3 class="sub s-2">Luz</h3>
-          <p class="texto-2">En video, el aro va de marca de agua y el punto puede encenderse con un halo leve, como un piloto. Tercios en serif cursiva y versalitas.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- 08 FOTOGRAFÍA -->
-  <section class="seccion tema-papel" id="fotografia">
-    <div class="contenedor">
-      <header class="cabeza doble">
-        <div>
-          <p class="kicker">08 — Fotografía</p>
-          <h2 class="display d-2">La foto propia, <em>primero.</em></h2>
-        </div>
-        <p class="texto-2">Todas reveladas con la misma película, para que el feed se vea como un solo cuerpo de trabajo.</p>
-      </header>
-      <div class="fotos">
-        <figure><img src="/marca/v5/foto-planton-danza.jpg" alt="Bailarina frente al Museo Nacional, Bogotá" loading="lazy" width="600" height="750" /><figcaption class="meta">Martín Perea / Dial</figcaption></figure>
-        <figure><img src="/marca/v5/foto-nukak-fruta.jpg" alt="Mujeres nukak comiendo frutas del monte" loading="lazy" width="600" height="750" /><figcaption class="meta">Galo Naranjo · dominio público</figcaption></figure>
-        <figure><img src="/marca/v5/foto-victoria.jpg" alt="Nervaduras de una hoja de Victoria amazónica" loading="lazy" width="600" height="750" /><figcaption class="meta">Laitr Keiows · CC BY-SA 3.0</figcaption></figure>
+      <figure class="m-fotograma">
+        <div class="fotograma"><Image src={palenque} alt="Calle de San Basilio de Palenque" widths={[800, 1400, 2000]} sizes="100vw" /></div>
+        <figcaption class="credito"><b>San Basilio de Palenque</b><span>Foto de Martín Perea · 2,39:1</span></figcaption>
+      </figure>
+      <div class="formatos">
+        <div><div class="caja-f f-239" /><p class="rotulo">2,39:1</p><p class="texto-2">Portadas, héroes y fotogramas destacados.</p></div>
+        <div><div class="caja-f f-169" /><p class="rotulo">16:9</p><p class="texto-2">Video, miniaturas y presentaciones.</p></div>
+        <div><div class="caja-f f-45" /><p class="rotulo">4:5</p><p class="texto-2">Carruseles y fotos en redes.</p></div>
+        <div><div class="caja-f f-916" /><p class="rotulo">9:16</p><p class="texto-2">Reels, shorts e historias.</p></div>
       </div>
       <div class="si-no">
         <div>
           <p class="kicker sin-linea">Sí</p>
           <ul class="notas">
-            <li>Fotos y fotogramas de Dial antes que archivo: la ciudad y el territorio que registramos.</li>
-            <li>En la portada, una cara, idealmente mirando a cámara.</li>
-            <li>Gente haciendo: bailar, pescar, protestar, comer. Sin idealizar.</li>
-            <li>Naturaleza de cerca: texturas, nervaduras, agua.</li>
+            <li>Fotogramas propios antes que archivo: gente, lugares y oficios que filmamos.</li>
+            <li>Una cara mirando a cámara en las portadas, cuando la hay.</li>
+            <li>El color de la película de la casa: negros levantados, luces tibias y grano fino según la resolución.</li>
+            <li>Bandas negras de cine cuando el formato ancho lo pide.</li>
           </ul>
         </div>
         <div>
           <p class="kicker sin-linea">No</p>
           <ul class="notas">
-            <li>Banco de imágenes con gente sonriendo a nadie, paisaje de dron o de postal.</li>
-            <li>Filtros que imitan lo viejo: rayones falsos, marcos de Polaroid.</li>
-            <li>Collages y recortes en la portada.</li>
-            <li>Créditos sobre la imagen: van en la descripción. Solo fotos propias o con licencia libre.</li>
+            <li>Banco de imágenes, dron de postal o la cámara del equipo como protagonista.</li>
+            <li>Consignas, banderas o logos de partidos en las imágenes de la marca.</li>
+            <li>Texto encima de la cara de alguien, cajas de color o marcos.</li>
+            <li>Miniaturas de YouTube con letras gigantes: la miniatura es un fotograma limpio.</li>
           </ul>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 09 VOZ -->
-  <section class="seccion tema-hueso" id="voz">
-    <div class="contenedor voz">
-      <div>
-        <p class="kicker">09 — Voz</p>
-        <h2 class="display d-2">Cálida y precisa.</h2>
-      </div>
-      <div class="voz-reglas">
-        <p class="lead-xl"><em>Del ruido a la señal.</em></p>
-        <p class="texto-2">Firma de Dial, en serif cursiva, nunca en mayúsculas. Dial Medio conserva la suya: <em>Sintonizar es conversar.</em></p>
+  <!-- 09 CRÉDITOS Y VIDEO -->
+  <section class="seccion tema-papel" id="video">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div>
+          <p class="kicker">09 — Créditos y video</p>
+          <h2 class="display d-2">Como en una <em>sala.</em></h2>
+        </div>
+        <p class="texto-2">Tercios inferiores, cartelas y créditos finales usan las mismas dos letras. Los generadores de la casa ya los hacen.</p>
+      </header>
+      <div class="video-demo">
+        <figure class="fotograma r-16-9">
+          <Image src={feoPalante} alt="" widths={[800, 1400]} sizes="(min-width: 980px) 60vw, 100vw" />
+          <div class="tercio"><span class="tercio-nombre">Delayn Núñez</span><span class="tercio-rol">Cantante · Feo Palante</span></div>
+          <span class="agua" aria-hidden="true"><Simbolo tono="claro" /></span>
+        </figure>
         <ul class="notas">
-          <li><strong>Análisis, no primicia.</strong> La portada es una pregunta que hila todo; el resto es prosa que piensa, no una lista de datos.</li>
-          <li><strong>Desde las personas,</strong> no desde el equipo técnico: se cuenta el encuentro, no la cámara.</li>
-          <li><strong>Frases cortas y verbos concretos.</strong> Tuteo, español de Colombia, sin sensacionalismo.</li>
-          <li><strong>Datos con fuente, periodo y alcance.</strong> Los calificativos llevan dueño. Si es ilustrativo, se dice.</li>
+          <li><strong>Tercio inferior:</strong> nombre en Instrument Serif y rol en versalitas, sin caja, sobre la zona oscura. Generador de tercios (ProRes 4444 con alfa).</li>
+          <li><strong>Cartela:</strong> una frase en serif, centrada, sobre negro. Para abrir capítulos o dar un dato.</li>
+          <li><strong>Créditos finales:</strong> rol en versalitas y nombre en serif, en columnas. Al final, las firmas de las casas.</li>
+          <li><strong>Cierre:</strong> logo animado de Dial Medio (la i lanza el punto). En vertical, el generador de cierres.</li>
+          <li><strong>Subtítulos:</strong> Instrument Sans 500, blanco papel, sin caja, con sombra muy suave. Español e inglés.</li>
         </ul>
       </div>
     </div>
   </section>
 
-  <!-- 10 APLICACIONES Y DESCARGAS -->
+  <!-- 10 VOZ -->
+  <section class="seccion tema-hueso" id="voz">
+    <div class="contenedor voz">
+      <div>
+        <p class="kicker">10 — Voz</p>
+        <h2 class="display d-2">Clara y sin <em>consignas.</em></h2>
+      </div>
+      <div class="voz-reglas">
+        <p class="lead-xl"><em>Investigamos antes de filmar.</em></p>
+        <p class="texto-2">La promesa de la productora. La idea de fondo es el punto medio, y se cuenta, no se repite como lema.</p>
+        <ul class="notas">
+          <li><strong>Hablar del oficio y de la gente.</strong> Qué hacemos, para quién y cómo. Sin adjetivos de agencia («innovador», «disruptivo»).</li>
+          <li><strong>Sin consignas.</strong> La marca no toma partido; la obra propia puede tener postura y la firma quien la hace.</li>
+          <li><strong>Datos con fuente.</strong> Si una cifra sale en una pieza, la RED puede mostrar de dónde viene.</li>
+          <li><strong>Frases cortas y verbos concretos.</strong> Tuteo, español de Colombia. Nada de «no es X, es Y» ni frases de tres.</li>
+          <li><strong>Sin inventar.</strong> Ni clientes, ni cifras, ni premios. Lo que está en curso se dice que está en curso.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 DISEÑO DE COMUNICACIÓN -->
+  <section class="seccion tema-carbon grano" id="diseno">
+    <div class="contenedor voz">
+      <div>
+        <p class="kicker">11 — Diseño de comunicación</p>
+        <h2 class="display d-2">El kit de láminas, <em>como oficio.</em></h2>
+      </div>
+      <div class="voz-reglas">
+        <p class="texto-2">
+          Lo que Dial aprendió publicando carruseles (verificación, redacción para quien no conoce el tema, láminas 4:5) pasa a ser un servicio para entidades,
+          organizaciones y campañas. Los procesos de las antiguas líneas quedan como catálogo de estilos para ofrecer:
+        </p>
+        <ul class="creditos m-estilos">
+          <li><span class="rol">Cuarto oscuro</span><span class="nombre">Memoria y arte</span></li>
+          <li><span class="rol">Cianotipo</span><span class="nombre">Propuestas y futuro</span></li>
+          <li><span class="rol">Imprenta</span><span class="nombre">Información pública</span></li>
+          <li><span class="rol">Plancha y sello</span><span class="nombre">Tecnología</span></li>
+          <li><span class="rol">Película y tiza</span><span class="nombre">Ambiente y clima</span></li>
+        </ul>
+        <p class="texto-2 m-p">La pieza lleva la marca del cliente o queda neutra. Dial Medio firma pequeño, al final: «Diseño: Dial Medio».</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 DESCARGAS -->
   <section class="seccion tema-papel" id="descargas">
     <div class="contenedor">
       <header class="cabeza doble">
         <div>
-          <p class="kicker">10 — Aplicaciones y descargas</p>
-          <h2 class="display d-2">Llevarlo a todas partes.</h2>
+          <p class="kicker">12 — Descargas</p>
+          <h2 class="display d-2">Llevarlo a todas <em>partes.</em></h2>
         </div>
-        <p class="texto-2">
-          Redes en vertical 4:5, todas las láminas iguales. Cada línea de noticias conserva su estética y lleva la firma de Dial
-          Medio arriba a la derecha.
-        </p>
+        <p class="texto-2">PNG en alta resolución con fondo transparente y SVG para impresión y diseño.</p>
       </header>
-      <figure class="app-ancha"><img src="/marca/v5/portada-web.jpg" alt="Portada con la firma dial medio impresa sobre una foto del plantón" loading="lazy" width="1500" height="844" /><figcaption class="meta">Portada o banner: firma impresa sobre foto propia · Foto: Martín Perea / Dial</figcaption></figure>
       <table class="tabla descargas">
         <thead><tr><th>Archivo</th><th>Para fondo claro</th><th>Para fondo oscuro</th></tr></thead>
-        <caption class="texto-2">PNG en alta resolución con fondo transparente, para documentos, redes y presentaciones. SVG para impresión y diseño.</caption>
         <tbody>
           {descargas.map(([n, o, c]) => (
             <tr><td>{n}</td><td><a href={`${M}${o}.png`} download>PNG</a> · <a href={`${M}${o}.svg`} download>SVG</a></td><td><a href={`${M}${c}.png`} download>PNG</a> · <a href={`${M}${c}.svg`} download>SVG</a></td></tr>
           ))}
-          <tr><td>Avatar de redes</td><td colspan="2"><a href={`${M}dial-avatar.png`} download>PNG</a> · <a href={`${M}dial-avatar.svg`} download>SVG</a></td></tr>
           {perfiles.map(([n, a]) => (
             <tr><td>Foto de perfil · {n}</td><td colspan="2">Fondo negro: <a href={`${M}dial-perfil-${a}-carbon.png`} download>PNG</a> · <a href={`${M}dial-perfil-${a}-carbon.svg`} download>SVG</a> — Fondo papel: <a href={`${M}dial-perfil-${a}-papel.png`} download>PNG</a> · <a href={`${M}dial-perfil-${a}-papel.svg`} download>SVG</a></td></tr>
           ))}
-          <tr><td>Banner de YouTube · Dial Medio</td><td colspan="2">Solo firma: <a href={`${M}dial-medio-banner-youtube.png`} download>PNG</a> · <a href={`${M}dial-medio-banner-youtube.svg`} download>SVG</a> — Con lema: <a href={`${M}dial-medio-banner-youtube-lema.png`} download>PNG</a> · <a href={`${M}dial-medio-banner-youtube-lema.svg`} download>SVG</a></td></tr>
-          <tr><td>Logotipo sobre la luz roja</td><td colspan="2"><a href={`${M}dial-logotipo-sobre-terracota.png`} download>PNG</a> · <a href={`${M}dial-logotipo-sobre-terracota.svg`} download>SVG</a></td></tr>
-          <tr><td>Letras</td><td colspan="2"><a href="https://fonts.google.com/specimen/Fraunces" target="_blank" rel="noopener">Fraunces</a> · <a href="https://fonts.google.com/specimen/Instrument+Serif" target="_blank" rel="noopener">Instrument Serif</a> · <a href="https://fonts.google.com/specimen/Bricolage+Grotesque" target="_blank" rel="noopener">Bricolage Grotesque</a> · <a href="https://fonts.google.com/specimen/Instrument+Sans" target="_blank" rel="noopener">Instrument Sans</a></td></tr>
+          <tr><td>Banner de YouTube</td><td colspan="2"><a href={`${M}dial-medio-banner-youtube.png`} download>PNG</a> · <a href={`${M}dial-medio-banner-youtube.svg`} download>SVG</a></td></tr>
+          <tr><td>Letras</td><td colspan="2"><a href="https://fonts.google.com/specimen/Fraunces" target="_blank" rel="noopener">Fraunces</a> · <a href="https://fonts.google.com/specimen/Instrument+Serif" target="_blank" rel="noopener">Instrument Serif</a> · <a href="https://fonts.google.com/specimen/Instrument+Sans" target="_blank" rel="noopener">Instrument Sans</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -485,22 +453,18 @@ const perfiles = [
   .m-portada-grid { display: grid; gap: 48px; align-items: center; margin-bottom: 56px; }
   .m-portada-texto { display: grid; gap: 24px; justify-items: start; }
   .m-portada-texto p { margin: 0; }
-  .m-portada-logo { font-size: clamp(5rem, 2rem + 12vw, 12rem); line-height: 1; font-weight: 400; }
+  .m-portada-logo { font-size: clamp(4rem, 1.6rem + 9vw, 9.5rem); line-height: 1; font-weight: 400; }
   .m-portada .lead { max-width: 52ch; }
-  .m-portada :global(.m-portada-simbolo) { width: min(70vw, 420px); justify-self: center; }
-  @media (min-width: 980px) { .m-portada-grid { grid-template-columns: 1.4fr 1fr; } }
+  .m-portada :global(.m-portada-simbolo) { width: min(70vw, 380px); justify-self: center; }
+  @media (min-width: 980px) { .m-portada-grid { grid-template-columns: 1.5fr 1fr; } }
 
   .decisiones { list-style: none; display: grid; gap: 24px; }
   @media (min-width: 900px) { .decisiones { grid-template-columns: 1fr 1fr; } }
-  .decisiones li { border-top: 1px solid var(--carbon); padding-top: 18px; display: grid; gap: 16px; }
+  .decisiones li { border-top: 1px solid var(--carbon); padding-top: 18px; display: grid; gap: 16px; align-content: start; }
   .decisiones dl { margin: 0; display: grid; gap: 12px; }
   .decisiones dl div { display: grid; grid-template-columns: 5.5rem 1fr; gap: 12px; align-items: baseline; }
   .decisiones dd { margin: 0; }
   .d-ahora { font-weight: 600; }
-  .antes-despues { display: grid; gap: 16px; margin-top: clamp(48px, 6vw, 72px); }
-  @media (min-width: 760px) { .antes-despues { grid-template-columns: 1fr 1fr; } }
-  .antes-despues figure, .fotos figure, .app-ancha { margin: 0; display: grid; gap: 8px; }
-  .antes-despues img, .fotos img, .app-ancha img, .materias img { width: 100%; height: auto; display: block; }
 
   .luces { list-style: none; display: grid; gap: 32px; }
   @media (min-width: 900px) { .luces { grid-template-columns: repeat(3, 1fr); gap: 48px; } }
@@ -508,16 +472,18 @@ const perfiles = [
   .luces p { margin: 0; }
   .foco { width: 14px; height: 14px; border-radius: 50%; background: var(--luz); box-shadow: 0 0 18px 4px rgba(212, 81, 46, 0.55); margin-bottom: 6px; }
 
+  .m-casas { border-top: 1px solid var(--borde); padding-top: 28px; }
+  .m-estilos { grid-template-columns: 1fr 1fr !important; margin: 24px 0; }
+
   .logos { display: grid; gap: 16px; }
   @media (min-width: 900px) { .logos { grid-template-columns: repeat(3, 1fr); } }
-  .logo-caja { display: grid; place-items: center; aspect-ratio: 16 / 10; font-size: clamp(3rem, 1.5rem + 4vw, 5.5rem); }
-  .firmas { display: grid; gap: 16px; margin-top: 24px; }
-  @media (min-width: 900px) { .firmas { grid-template-columns: repeat(3, 1fr); } }
-  .firma { font-size: clamp(2rem, 1rem + 2vw, 2.6rem); aspect-ratio: 16 / 8; }
+  .logo-caja { display: grid; place-items: center; aspect-ratio: 16 / 10; font-size: clamp(2.4rem, 1.2rem + 3vw, 4rem); position: relative; overflow: hidden; }
+  .sobre-foto :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.55); }
+  .sobre-foto :global(.logo) { position: relative; }
   .c-carbon { background: var(--carbon); }
+  .c-sala { background: #0f0d0c; }
   .c-papel { background: var(--papel); box-shadow: inset 0 0 0 1px var(--linea); }
   .c-hueso { background: var(--fibra); }
-  .c-kraft { background: var(--kraft); }
   .c-terracota { background: var(--luz); }
 
   .notas { list-style: none; display: grid; gap: 10px; margin-top: 28px; max-width: 70ch; }
@@ -530,18 +496,12 @@ const perfiles = [
   .simbolo-grid h2 { margin-top: 18px; }
   @media (min-width: 980px) { .simbolo-grid { grid-template-columns: 1fr 1fr; gap: 88px; } }
   .simbolos { display: grid; gap: 40px; justify-items: center; }
-  .s-grande { width: min(80vw, 340px); }
+  .s-grande { width: min(80vw, 320px); }
   .s-fila { display: flex; gap: 40px; align-items: flex-end; }
   .s-fila > div { display: grid; gap: 10px; justify-items: center; }
   .s-fila > div :global(svg) { width: 64px; height: 64px; }
   .s-fila .s-32 :global(svg) { width: 32px; height: 32px; }
   .s-fila .s-20 :global(svg) { width: 20px; height: 20px; }
-  .estaciones { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-top: 40px; }
-  .estaciones li { display: grid; gap: 6px; justify-items: center; text-align: center; }
-  .estaciones :global(svg) { width: min(88px, 100%); height: auto; margin-bottom: 8px; }
-  .estaciones .grados { font-family: var(--f-serif); font-style: italic; font-size: 1.4rem; color: var(--terracota-clara); }
-  .estaciones .kicker { justify-self: center; }
-  @media (max-width: 640px) { .estaciones .kicker { font-size: .56rem; letter-spacing: .06em; } .estaciones .texto-2 { font-size: .8rem; } }
 
   .colores { display: grid; gap: 28px 20px; grid-template-columns: repeat(2, 1fr); }
   @media (min-width: 900px) { .colores { grid-template-columns: repeat(5, 1fr); } }
@@ -554,45 +514,45 @@ const perfiles = [
   .tabla td { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--borde); vertical-align: middle; }
   .punto { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 10px; vertical-align: -2px; }
   .descargas a { font-weight: 600; text-underline-offset: 0.25em; }
-  .descargas caption { caption-side: bottom; text-align: left; padding-top: 16px; font-size: 1rem; }
-  .app-ancha { margin-bottom: clamp(40px, 5vw, 64px); }
 
   .familias { display: grid; gap: 32px; margin-bottom: clamp(56px, 7vw, 88px); }
-  @media (min-width: 900px) { .familias { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 900px) { .familias { grid-template-columns: repeat(3, 1fr); } }
   .familias article { border-top: 1px solid var(--carbon); padding-top: 18px; display: grid; gap: 12px; align-content: start; }
   .familias p { margin: 0; }
   .fam { font-size: clamp(2.2rem, 1.4rem + 2vw, 3.2rem); line-height: 1; }
   .fam-logo { font-size: clamp(2rem, 1.3rem + 1.8vw, 2.8rem); }
   .fam-serif { font-family: var(--f-serif); }
-  .fam-brico { font-weight: 600; font-stretch: 92%; }
-  .fam-rotulo { font-family: var(--f-rotulo); font-weight: 600; font-size: clamp(1.1rem, .9rem + .6vw, 1.4rem); letter-spacing: .16em; text-transform: uppercase; }
+  .fam-sans { font-family: var(--f-texto); font-weight: 500; }
 
   .escala-tipo { list-style: none; border-top: 1px solid var(--borde); }
   .escala-tipo li { display: grid; gap: 8px 32px; padding: 22px 0; border-bottom: 1px solid var(--borde); align-items: baseline; }
   @media (min-width: 1000px) { .escala-tipo li { grid-template-columns: 11rem 1fr 22rem; } }
   .spec { font-size: .82rem; }
-  .m-d1 { font-family: var(--f-display); letter-spacing: -.012em; font-size: clamp(2.6rem, 1rem + 4vw, 4.8rem); line-height: .96; }
+  .m-d1 { font-family: var(--f-display); font-size: clamp(2.6rem, 1rem + 4vw, 4.8rem); line-height: .96; }
   .m-d1 em, .m-d2 em { font-size: 1em; }
   .m-d2 { font-family: var(--f-display); font-size: clamp(2rem, 1rem + 2.4vw, 3.2rem); line-height: .98; }
-  .m-sub { font-weight: 600; font-stretch: 92%; font-size: 1.6rem; }
   .m-texto { font-size: 1.09rem; max-width: 52ch; }
-  .m-resalte { font-size: 1.15rem; }
-  .m-resalte b { background: var(--carbon-3); color: var(--papel); padding: .05em .3em; }
   .m-rotulo { font-family: var(--f-rotulo); font-weight: 600; font-size: var(--t-etq); letter-spacing: .16em; text-transform: uppercase; }
-  .m-dato { font-variant-numeric: tabular-nums; }
+  .con-punto::before { content: ''; display: inline-block; width: .62em; height: .62em; border-radius: 50%; background: var(--luz); margin-right: .6em; vertical-align: .05em; }
 
-  .materias { display: grid; gap: 48px; }
-  @media (min-width: 900px) { .materias { grid-template-columns: 1fr 1fr; gap: 56px 64px; } }
-  .materias article { display: grid; gap: 12px; align-content: start; }
-  .materias img { aspect-ratio: 16 / 9; object-fit: cover; margin-bottom: 8px; }
-  .materias img.cuadrada { object-fit: contain; background: var(--carbon-2); }
-  .materias p { margin: 0; }
-  .materias code { font-family: var(--f-rotulo); font-size: .9em; }
-
-  .fotos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-  .si-no { display: grid; gap: 32px; margin-top: 40px; }
+  .m-fotograma { margin: 0 0 clamp(40px, 5vw, 64px); }
+  .formatos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 20px; align-items: end; }
+  @media (min-width: 900px) { .formatos { grid-template-columns: 2.4fr 1.6fr .8fr .6fr; } }
+  .formatos p { margin: 8px 0 0; font-size: .92rem; }
+  .caja-f { border: 1px solid var(--linea-clara); background: #0f0d0c; }
+  .f-239 { aspect-ratio: 2.39 / 1; } .f-169 { aspect-ratio: 16 / 9; } .f-45 { aspect-ratio: 4 / 5; } .f-916 { aspect-ratio: 9 / 16; }
+  .si-no { display: grid; gap: 32px; margin-top: 56px; }
   @media (min-width: 900px) { .si-no { grid-template-columns: 1fr 1fr; gap: 56px; } }
   .si-no .notas { margin-top: 12px; }
+
+  .video-demo { display: grid; gap: 40px; align-items: start; }
+  @media (min-width: 980px) { .video-demo { grid-template-columns: 1.4fr 1fr; gap: 56px; } }
+  .video-demo .notas { margin-top: 0; }
+  .video-demo .fotograma::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(15, 13, 12, .75), transparent 45%); }
+  .tercio { position: absolute; left: 6%; bottom: 9%; z-index: 1; display: grid; gap: 6px; color: var(--papel); }
+  .tercio-nombre { font-family: var(--f-display); font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem); line-height: 1; }
+  .tercio-rol { font-family: var(--f-rotulo); font-weight: 600; font-size: clamp(.55rem, .5rem + .2vw, .72rem); letter-spacing: .16em; text-transform: uppercase; color: var(--hueso-2); }
+  .agua { position: absolute; right: 4%; bottom: 8%; z-index: 1; width: clamp(22px, 3vw, 36px); opacity: .6; }
 
   .voz { display: grid; gap: 40px; }
   .voz h2 { margin-top: 18px; }

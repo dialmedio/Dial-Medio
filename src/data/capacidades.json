@@ -2,19 +2,37 @@
   "grupos": [
     {
       "titulo": "Imagen",
-      "items": ["Cuatro cámaras profesionales", "Iluminación", "Dron", "Trípodes y grips", "Comunicación por radio"]
+      "items": [
+        "Cuatro cámaras profesionales",
+        "Iluminación",
+        "Dron",
+        "Trípodes y grips",
+        "Comunicación por radio"
+      ]
     },
     {
       "titulo": "Posproducción",
-      "items": ["Montaje en DaVinci Resolve", "Corrección de color", "Composición y gráficos en Fusion"]
+      "items": [
+        "Montaje en DaVinci Resolve",
+        "Corrección de color",
+        "Composición y gráficos en Fusion"
+      ]
     },
     {
       "titulo": "Sonido y música",
-      "items": ["Música original compuesta para cada pieza", "Diseño sonoro (Ableton e instrumentos)", "Sonido profesional y tarimas para eventos"]
+      "items": [
+        "Música original compuesta para cada pieza",
+        "Diseño sonoro (Ableton e instrumentos)",
+        "Sonido profesional y tarimas para eventos"
+      ]
     },
     {
       "titulo": "Espacios",
-      "items": ["Fundación Grafito · Calle 45A # 14-66", "Teatro Acto Latino · Carrera 16 # 58A-55", "Espacio propio para sesiones y encuentros íntimos"]
+      "items": [
+        "Fundación Grafito · Calle 45A # 14-66",
+        "Teatro Acto Latino · Carrera 16 # 58A-55",
+        "Espacio propio para sesiones y encuentros íntimos"
+      ]
     }
   ],
   "sueltos": [
@@ -26,19 +44,33 @@
     "Alquiler de espacio",
     "Sonido para eventos",
     "Sesiones de música en vivo",
+    "Diseño de carruseles e infografías",
     "Sitios web"
   ],
-  "criterios": [
-    { "titulo": "Sin propaganda electoral", "texto": "No producimos piezas de campaña ni propaganda electoral partidista." },
-    { "titulo": "Sin lavado de imagen", "texto": "No hacemos piezas que maquillen el daño ambiental de una organización." },
-    { "titulo": "Sin estigmas", "texto": "No contamos historias que estigmaticen a las comunidades que aparecen en ellas." }
-  ],
   "proceso": [
-    { "titulo": "Escucha", "texto": "Entendemos qué necesita contar tu organización, a quién y para qué." },
-    { "titulo": "Investigación y guion", "texto": "Buscamos la historia, las personas y los lugares. Escribimos la ruta." },
-    { "titulo": "Rodaje", "texto": "Filmamos donde sucede la historia —un set, la calle, un evento o el campo— con un equipo pequeño y completo." },
-    { "titulo": "Montaje, color y sonido", "texto": "Editamos, damos color y construimos el sonido de la pieza." },
-    { "titulo": "Música original", "texto": "Componemos la música para la historia, no la sacamos de un banco." },
-    { "titulo": "Estreno y medición", "texto": "Acompañamos la salida de la pieza y, si lo necesitas, medimos su efecto." }
+    {
+      "titulo": "Escucha",
+      "texto": "Entendemos qué necesita contar tu organización, a quién y para qué."
+    },
+    {
+      "titulo": "Investigación y guion",
+      "texto": "Con la RED Quynza revisamos el contexto, las cifras y las fuentes. Buscamos la historia, las personas y los lugares, y escribimos la ruta."
+    },
+    {
+      "titulo": "Rodaje",
+      "texto": "Filmamos donde sucede la historia —un set, la calle, un evento o el campo— con un equipo pequeño y completo."
+    },
+    {
+      "titulo": "Montaje, color y sonido",
+      "texto": "Editamos, damos color y construimos el sonido de la pieza."
+    },
+    {
+      "titulo": "Música original",
+      "texto": "Fototoma compone la música y hace el diseño sonoro para la historia. No la sacamos de un banco."
+    },
+    {
+      "titulo": "Estreno y circulación",
+      "texto": "Entregamos la pieza con su kit de circulación y, después del estreno, un informe de lo que pasó con ella."
+    }
   ]
 }

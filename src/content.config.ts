@@ -12,12 +12,11 @@ const video = z.object({
   vertical: z.boolean().default(false),
 });
 
-/** Paquetes de servicio de Dial Impacto y Dial Encuentros. */
+/** Servicios de la productora (nov 2026): uno por archivo, en el orden de `orden`. */
 const servicios = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/servicios' }),
   schema: z.object({
     titulo: z.string(),
-    linea: z.enum(['impacto', 'encuentros']),
     orden: z.number(),
     // Frase corta y destacada que resume el servicio.
     gancho: z.string().optional(),

@@ -4,15 +4,13 @@ import Base from '../layouts/Base.astro';
 import sitio from '../data/sitio.json';
 import { whatsapp } from '../lib/util';
 
-const servicios = (await getCollection('servicios')).sort((a, b) =>
-  a.data.linea === b.data.linea ? a.data.orden - b.data.orden : a.data.linea === 'impacto' ? -1 : 1,
-);
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
 const lineasForm = [
-  { valor: 'impacto', texto: 'Dial Impacto', nota: 'Documental, cobertura, medición' },
-  { valor: 'encuentros', texto: 'Dial Encuentros', nota: 'Eventos y foros' },
-  { valor: 'celebraciones', texto: 'Celebración', nota: 'Bodas, aniversarios' },
-  { valor: 'suelto', texto: 'Servicio suelto', nota: 'Cámara, edición, música…' },
+  { valor: 'proyecto', texto: 'Un proyecto completo', nota: 'Documental, publicidad, videoclip, evento' },
+  { valor: 'diseno', texto: 'Diseño de comunicación', nota: 'Carruseles, infografías, informes' },
+  { valor: 'celebraciones', texto: 'Una celebración', nota: 'Bodas, aniversarios' },
+  { valor: 'suelto', texto: 'Un servicio suelto', nota: 'Cámara, edición, música…' },
 ];
 
 const presupuestos = [
@@ -94,7 +92,7 @@ const presupuestos = [
             <span>Tipo de proyecto</span>
             <select name="servicio">
               <option value="">Elige una opción</option>
-              {servicios.map((s) => <option value={s.id} data-linea={s.data.linea}>{s.data.titulo}</option>)}
+              {servicios.map((s) => <option value={s.id}>{s.data.titulo}</option>)}
               <option value="otro">Otro / aún no sé</option>
             </select>
           </label>
@@ -140,6 +138,7 @@ const presupuestos = [
     const linea = q.get('linea');
     const servicio = q.get('servicio');
     if (linea) form.querySelector<HTMLInputElement>(`input[name=linea][value="${CSS.escape(linea)}"]`)?.click();
+    if (servicio === 'diseno') form.querySelector<HTMLInputElement>('input[name=linea][value="diseno"]')?.click();
     if (servicio) {
       const sel = form.querySelector<HTMLSelectElement>('select[name=servicio]');
       if (sel && [...sel.options].some((o) => o.value === servicio)) sel.value = servicio;
@@ -150,7 +149,7 @@ const presupuestos = [
         .filter(([k, v]) => k !== 'sitio_web' && k !== 'cf-turnstile-response' && String(v).trim())
         .map(([k, v]) => `${k}: ${v}`)
         .join('\n');
-      return `mailto:${sitio.correo}?subject=${encodeURIComponent('Cotización desde el sitio de Dial')}&body=${encodeURIComponent(cuerpo)}`;
+      return `mailto:${sitio.correo}?subject=${encodeURIComponent('Cotización desde el sitio de Dial Medio')}&body=${encodeURIComponent(cuerpo)}`;
     };
 
     form.addEventListener('submit', async (e) => {

@@ -9,11 +9,9 @@ import VideoLite from '../components/VideoLite.astro';
 import sitio from '../data/sitio.json';
 import { whatsapp } from '../lib/util';
 
-const servicios = (await getCollection('servicios')).sort((a, b) =>
-  a.data.linea === b.data.linea ? a.data.orden - b.data.orden : a.data.linea === 'impacto' ? -1 : 1,
-);
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 const debate = (await getCollection('medio', (m) => m.data.formato === 'debate' && m.data.destacado && !m.data.borrador))[0];
-const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ? `/impacto#${s.id}` : `/encuentros#${s.id}`);
+const destino = (s: (typeof servicios)[number]) => `/servicios#${s.id}`;
 ---
 
 <Base titulo="Bienvenida al boletín" noindex>
@@ -29,9 +27,9 @@ const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ?
         </p>
       </div>
       <dl class="bv-datos">
-        <div><dt class="kicker sin-linea">Somos</dt><dd>Productora audiovisual con medio propio, en Bogotá.</dd></div>
-        <div><dt class="kicker sin-linea">Hacemos</dt><dd>Documental, cobertura, eventos y piezas con medición.</dd></div>
-        <div><dt class="kicker sin-linea">Nos diferencia</dt><dd>Todo en casa, incluida la música, y medimos el efecto de cada pieza.</dd></div>
+        <div><dt class="kicker sin-linea">Somos</dt><dd>Productora audiovisual de Bogotá, con Fototoma en la música y la RED Quynza en la investigación.</dd></div>
+        <div><dt class="kicker sin-linea">Hacemos</dt><dd>Publicidad, videoclips, eventos, documental, divulgación y diseño de comunicación.</dd></div>
+        <div><dt class="kicker sin-linea">Nos diferencia</dt><dd>Investigamos antes de filmar y la música la compone Fototoma para cada pieza.</dd></div>
       </dl>
     </div>
   </section>
@@ -50,7 +48,7 @@ const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ?
           servicios.map((s) => (
             <li>
               <a href={destino(s)} class="bv-servicio">
-                <span class="kicker sin-linea">{s.data.linea === 'impacto' ? 'Dial Impacto' : 'Dial Encuentros'}</span>
+                <span class="kicker sin-linea">Servicio</span>
                 <span class="display d-4">{s.data.titulo}</span>
                 {s.data.gancho && <span class="bv-gancho gancho">{s.data.gancho}</span>}
                 <span class="meta">{s.data.entregables.join(' · ')}</span>
@@ -74,7 +72,7 @@ const destino = (s: (typeof servicios)[number]) => (s.data.linea === 'impacto' ?
               En nuestro primer debate, dos economistas conservadores se sentaron frente a diez voces progresistas. Encuestamos
               a la sala al entrar y al salir. Ese mismo método lo llevamos a las piezas que hacemos para organizaciones.
             </p>
-            <a href="/impacto/medicion" class="enlace">Cómo medimos <span>→</span></a>
+            <a href="/investigacion#medir" class="enlace">Cómo medimos <span>→</span></a>
           </div>
           <VideoLite video={debate.data.video!} titulo={debate.data.titulo} />
         </div>
