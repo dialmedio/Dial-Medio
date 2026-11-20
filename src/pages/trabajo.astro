@@ -33,6 +33,8 @@ const grupos: { id: string; titulo: string; texto: string; piezas: Pieza[] }[] =
     texto: 'Obra propia investigada y filmada por Dial, debates entre personas que piensan distinto y el podcast que hacemos con la RED Quynza.',
     piezas: [
       ...medio.filter((m) => m.data.formato === 'documental').map((m) => deMedio(m, m.data.serie ?? 'Documental')),
+      // Registro que Martín filmó para la RED Quynza (también en el portafolio de Fototoma, 19 nov 2026).
+      { titulo: 'Popayán: investigación-creación para el cuidado de la vida', video: { plataforma: 'youtube', id: '66oAOW-ilnM' }, href: 'https://youtu.be/66oAOW-ilnM', rotulo: 'Registro documental · con la RED Quynza', meta: 'Popayán · 2026' },
       ...medio.filter((m) => m.data.formato === 'debate' || m.data.formato === 'videopodcast').map((m) => deMedio(m, m.data.formato === 'debate' ? 'Debate' : 'Videopodcast · con la RED Quynza')),
     ],
   },
@@ -41,6 +43,7 @@ const grupos: { id: string; titulo: string; texto: string; piezas: Pieza[] }[] =
     titulo: 'Música e imagen',
     texto: 'Videoclips, sesiones en vivo y música original. La música y el sonido son de Fototoma.',
     piezas: [
+      { titulo: 'In-Vitro, sesión en vivo', video: { plataforma: 'youtube', id: 'L84B5ZGakjY' }, href: 'https://youtu.be/L84B5ZGakjY', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Música del disco In-Vitro · 2026' },
       { titulo: 'In-Vitro Live Sessions', video: { plataforma: 'youtube', id: 'tt3X0UynmCk' }, href: 'https://youtu.be/tt3X0UynmCk', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Bogotá' },
       ...muestras.map((m) => ({ titulo: m.data.titulo, video: m.data.video, rotulo: m.data.disciplinas.join(' · '), meta: `${m.data.rol.replace(/\.$/, '')} · ${m.data.anio}` })),
     ],
@@ -72,7 +75,7 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
             <div data-revela><h2 class="display d-3">{g.titulo}</h2></div>
             <p class="texto-2" data-revela>{g.texto}</p>
           </header>
-          <div class:list={['obras', { tres: g.piezas.length % 3 === 0 }]}>
+          <div class:list={['obras', { tres: g.piezas.length % 3 === 0, impar: g.piezas.length % 3 !== 0 && g.piezas.length % 2 === 1 }]}>
             {g.piezas.map((t) => (
               <article class="obra" data-revela>
                 <VideoLite video={t.video} titulo={t.titulo} />
@@ -114,7 +117,11 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
 
 <style>
   .obras { display: grid; gap: 40px 28px; }
-  @media (min-width: 760px) { .obras { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 760px) {
+    .obras { grid-template-columns: repeat(2, 1fr); }
+    /* Número impar en dos columnas: la primera pieza va a todo el ancho y no queda hueco. */
+    .obras.impar > .obra:first-child { grid-column: 1 / -1; }
+  }
   @media (min-width: 1100px) { .obras.tres { grid-template-columns: repeat(3, 1fr); } }
   .obra { display: grid; gap: 10px; align-content: start; }
   .obra .rotulo { margin-top: 6px; }

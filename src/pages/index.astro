@@ -31,7 +31,7 @@ const propios = (await getCollection('medio', (m) => !m.data.borrador && m.data.
 const muestras = (await getCollection('muestras', (m) => !m.data.borrador))
   .sort((a, b) => a.data.orden - b.data.orden)
   .map((m) => ({ titulo: m.data.titulo, video: m.data.video, href: undefined, rotulo: m.data.disciplinas.join(' · '), meta: `${m.data.rol.replace(/\.$/, '')} · ${m.data.anio}` }));
-const sesion = { titulo: 'In-Vitro Live Sessions', video: { plataforma: 'youtube' as const, id: 'tt3X0UynmCk' }, href: 'https://youtu.be/tt3X0UynmCk', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Bogotá' };
+const sesion = { titulo: 'In-Vitro, sesión en vivo', video: { plataforma: 'youtube' as const, id: 'L84B5ZGakjY' }, href: 'https://youtu.be/L84B5ZGakjY', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Música del disco In-Vitro · 2026' };
 const debate = (await getCollection('medio', (m) => !m.data.borrador && m.data.formato === 'debate' && !!m.data.video))
   .sort((a, b) => a.data.orden - b.data.orden)
   .map((m) => ({ titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo: 'Debate', meta: [m.data.lugar, anio(m.data.fecha)].filter(Boolean).join(' · ') }))
