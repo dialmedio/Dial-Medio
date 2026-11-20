@@ -13,10 +13,27 @@ import { dos } from '../lib/util';
 import CarruselMuestra from '../components/CarruselMuestra.astro';
 import { CARRUSELES } from '../lib/muestras';
 import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
+import VideoLite from '../components/VideoLite.astro';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
 // Muestras del servicio de campañas: carruseles propios que se recorren con el mouse (src/lib/muestras.ts).
+
+// Trabajo nuestro junto a cada servicio (19 nov 2026): las productoras grandes muestran obra, no listas.
+// Publicidad aún no tiene comerciales propios: se muestra la imagen de los videoclips, sin decir que son anuncios.
+type Obra = { titulo: string; id: string };
+const MONGOLIA = { titulo: 'Los últimos nómadas de Mongolia', id: 'ONV3lsPwmPo' };
+const JAZZ = { titulo: 'Historia del jazz colombiano en 10 minutos', id: '9-pppveOQRs' };
+const INVITRO = { titulo: 'In-Vitro, sesión en vivo', id: 'L84B5ZGakjY' };
+const FEO = { titulo: 'Delayn Núñez — Feo Palante', id: '1PCgmrlsKUQ' };
+const MANGORITO = { titulo: 'Arrabal Gentío — Mangorito', id: '5lgpy6H5sTU' };
+const OBRAS: Record<string, { rotulo: string; obras: Obra[] }> = {
+  documental: { rotulo: 'Hecho por nosotros', obras: [MONGOLIA, JAZZ] },
+  publicidad: { rotulo: 'Nuestra imagen', obras: [INVITRO, FEO, MANGORITO] },
+  musica: { rotulo: 'Hecho por nosotros', obras: [INVITRO, FEO, MANGORITO] },
+  eventos: { rotulo: 'Hecho por nosotros', obras: [{ titulo: 'Un progresista de mano dura frente a siete conservadores', id: 'lWeFYIvic5Q' }, { titulo: '2 economistas conservadores frente a 10 progresistas', id: 'szMuJkTqr4c' }] },
+  divulgacion: { rotulo: 'Hecho por nosotros', obras: [JAZZ, { titulo: 'Lo que la gente quiere es vivir, episodio 1', id: '1z-0Il0n8xE' }] },
+};
 ---
 
 <Base
@@ -48,19 +65,28 @@ const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden
             <p class="kicker">{dos(i + 1)} · Para {s.data.paraQuien.charAt(0).toLowerCase() + s.data.paraQuien.slice(1).replace(/\.$/, '')}</p>
             <h2 class="display d-3">{s.data.titulo}</h2>
             {s.data.gancho && <p class="gancho serv-gancho">{s.data.gancho}</p>}
+            {OBRAS[s.id] && (
+              <div class:list={['serv-obras', { tres: OBRAS[s.id].obras.length === 3 }]}>
+                <p class="rotulo">{OBRAS[s.id].rotulo}</p>
+                {OBRAS[s.id].obras.map((o) => (
+                  <figure>
+                    <VideoLite video={{ plataforma: 'youtube', id: o.id }} titulo={o.titulo} />
+                    <figcaption>{o.titulo}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
           </div>
           <div class="serv-cuerpo" data-revela style="--retraso:.08s">
             <p class="lead">{s.data.resumen}</p>
-            <dl class="serv-listas">
-              <div>
-                <dt class="rotulo">Incluye</dt>
-                <dd><ul>{s.data.incluye.map((x) => <li>{x}</li>)}</ul></dd>
-              </div>
-              <div>
-                <dt class="rotulo">Recibes</dt>
-                <dd><ul>{s.data.entregables.map((x) => <li>{x}</li>)}</ul></dd>
-              </div>
-            </dl>
+            <div class="serv-incluye">
+              <p class="rotulo">Incluye</p>
+              <ol class="recorrido">{s.data.incluye.map((x, j) => <li><span class="n">{dos(j + 1)}</span><span class="t">{x}</span></li>)}</ol>
+            </div>
+            <div class="serv-recibes">
+              <p class="rotulo">Recibes</p>
+              <ul>{s.data.entregables.map((x) => <li>{x}</li>)}</ul>
+            </div>
             <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
           </div>
           {
@@ -109,11 +135,33 @@ const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden
   .serv-gancho { font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); color: var(--texto-2); max-width: 26ch; }
   .serv-cuerpo { display: grid; gap: 26px; justify-items: start; }
   .serv-cuerpo .lead { margin: 0; max-width: 58ch; }
-  .serv-listas { display: grid; gap: 22px 40px; margin: 0; width: 100%; }
-  @media (min-width: 640px) { .serv-listas { grid-template-columns: 1fr 1fr; } }
-  .serv-listas dd { margin: 10px 0 0; }
-  .serv-listas ul { list-style: none; display: grid; gap: 8px; }
-  .serv-listas li { padding-top: 8px; border-top: 1px solid var(--borde); font-size: .98rem; }
+  /* Incluye: un recorrido sobre la línea del dial (marcas cortas y un punto por paso), no una lista con viñetas. */
+  .serv-incluye, .serv-recibes { width: 100%; display: grid; gap: 14px; }
+  .serv-incluye .rotulo, .serv-recibes .rotulo { margin: 0; }
+  .recorrido { list-style: none; margin: 0; padding: 0 0 0 22px; display: grid; gap: 0; position: relative;
+    background: repeating-linear-gradient(to bottom, var(--borde) 0 1px, transparent 1px 12px) 0 0 / 7px 100% no-repeat; }
+  .recorrido::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--borde); }
+  .recorrido li { position: relative; display: grid; grid-template-columns: 2.4em 1fr; align-items: baseline; padding: 11px 0; }
+  .recorrido li::before { content: ''; position: absolute; left: -25px; top: 50%; width: 7px; height: 7px; margin-top: -3px; border-radius: 50%; background: var(--acento-texto); transition: transform .3s var(--ease); }
+  .recorrido li:hover::before { transform: scale(1.6); }
+  .recorrido .n { font-family: var(--f-display); font-style: italic; color: var(--acento-texto); font-size: 1.05rem; }
+  .recorrido .t { font-family: var(--f-display); font-size: clamp(1.1rem, 1rem + .35vw, 1.3rem); line-height: 1.3; }
+  /* Recibes: lo que se entrega, en una franja oscura, como la cartela final de una película. */
+  .serv-recibes { background: var(--caja); color: var(--caja-texto); padding: 22px 24px 24px; }
+  .serv-recibes .rotulo { color: var(--caja-acento); }
+  .serv-recibes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .serv-recibes li { padding: 12px 0; border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent); font-family: var(--f-display); font-size: clamp(1.15rem, 1rem + .45vw, 1.45rem); line-height: 1.25; }
+  .serv-recibes li:first-child { border-top: 0; padding-top: 4px; }
+  @media (min-width: 700px) {
+    .serv-recibes ul { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 28px; }
+    .serv-recibes li, .serv-recibes li:first-child { border-top: 0; border-left: 1px solid color-mix(in srgb, currentColor 18%, transparent); padding: 4px 0 4px 16px; }
+  }
+  /* Trabajo nuestro junto al servicio. */
+  .serv-obras { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 18px; }
+  .serv-obras .rotulo { grid-column: 1 / -1; margin: 0; }
+  .serv-obras.tres figure:first-of-type { grid-column: 1 / -1; }
+  .serv-obras figure { margin: 0; display: grid; gap: 6px; }
+  .serv-obras figcaption { font-size: .85rem; color: var(--texto-2); line-height: 1.35; }
   .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
   @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
   .laminas .credito { grid-column: 1 / -1; margin: 0; }

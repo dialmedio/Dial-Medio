@@ -20,24 +20,41 @@ import { rutaVideo } from '../lib/medio';
 
 import disco from '../assets/estudio/in-vitro-disco.jpg';
 import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
+import { OBRA } from '../lib/obra';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
-// Trabajo: la sesión en vivo primero (sonido e imagen en casa), luego la obra propia y las muestras de oficio.
-// Currulao no va aquí: su miniatura es una foto que no es de Dial (Martín, 1 nov 2026).
-const propios = (await getCollection('medio', (m) => !m.data.borrador && m.data.mostrarEnImpacto && !!m.data.video && m.id !== 'currulao-musicas-del-pacifico-sur'))
-  .sort((a, b) => a.data.orden - b.data.orden)
-  .map((m) => ({ titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo: 'Documental', meta: `${m.data.lugar} · ${anio(m.data.fecha)}` }));
-const muestras = (await getCollection('muestras', (m) => !m.data.borrador))
-  .sort((a, b) => a.data.orden - b.data.orden)
-  .map((m) => ({ titulo: m.data.titulo, video: m.data.video, href: undefined, rotulo: m.data.disciplinas.join(' · '), meta: `${m.data.rol.replace(/\.$/, '')} · ${m.data.anio}` }));
+// Trabajo (Martín, 19 nov 2026): Mongolia es la principal (grande, 2×2) y alrededor lo mejor: In-Vitro en vivo,
+// Feo Palante, los dos debates y el jazz. Currulao no va: su miniatura es una foto que no es de Dial (1 nov 2026).
+const muestras = Object.fromEntries((await getCollection('muestras', (m) => !m.data.borrador)).map((m) => [m.id, m]));
+const deMuestra = (id: string) => {
+  const m = muestras[id];
+  return { titulo: m.data.titulo, video: m.data.video, href: undefined, rotulo: m.data.disciplinas.join(' · '), meta: `${m.data.rol.replace(/\.$/, '')} · ${m.data.anio}` };
+};
+const medio = Object.fromEntries((await getCollection('medio', (m) => !m.data.borrador && !!m.data.video)).map((m) => [m.id, m]));
+const deMedio = (id: string, rotulo: string) => {
+  const m = medio[id];
+  return { titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo, meta: [m.data.lugar, anio(m.data.fecha)].filter(Boolean).join(' · ') };
+};
 const sesion = { titulo: 'In-Vitro, sesión en vivo', video: { plataforma: 'youtube' as const, id: 'L84B5ZGakjY' }, href: 'https://youtu.be/L84B5ZGakjY', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Música del disco In-Vitro · 2026' };
-const debate = (await getCollection('medio', (m) => !m.data.borrador && m.data.formato === 'debate' && !!m.data.video))
-  .sort((a, b) => a.data.orden - b.data.orden)
-  .map((m) => ({ titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo: 'Debate', meta: [m.data.lugar, anio(m.data.fecha)].filter(Boolean).join(' · ') }))
-  .slice(0, 1);
-// Seis piezas: una grande (2×2) y cinco alrededor, sin huecos en la rejilla de tres columnas.
-const trabajo = [sesion, ...propios, ...debate, ...muestras].slice(0, 6);
+const trabajo = [
+  deMuestra('mongolia'),
+  sesion,
+  deMuestra('videoclip-feo-palante'),
+  deMedio('debate-mano-dura', 'Debate'),
+  deMedio('historia-del-jazz-colombiano', 'Documental'),
+  deMedio('debate-proyecto-de-pais', 'Debate'),
+];
+
+// Mosaico de campañas: imagen propia (src/lib/obra.ts), nada de stock. [clase, foto o carrusel, tamaño]
+const mosaico = [
+  ['cm-a', OBRA.inVitroVivo, 'grande'],
+  ['cm-b', OBRA.feoPalante, 'chica'],
+  ['cm-c', 'carrusel', 'chica'],
+  ['cm-d', OBRA.palenque, 'chica'],
+  ['cm-e', OBRA.mongolia, 'chica'],
+  ['cm-f', OBRA.mangorito, 'chica'],
+] as const;
 
 // Héroe: documental y comercial intercalados, seis fotogramas de 6 s.
 const fotogramas = [FOTOS.paramoFigura, FOTOS.camaraLuz, FOTOS.retratoAndino, FOTOS.setAzul, FOTOS.palmasNiebla, FOTOS.concierto];
@@ -173,12 +190,19 @@ const distintos = [
         </div>
       </div>
       <div class="campana-mosaico" data-revela>
-        <figure class="cm-a"><Image src={FOTOS.chef.src} alt={FOTOS.chef.alt} widths={[600, 1000, 1400]} sizes="(min-width: 1000px) 40vw, 100vw" style={`object-position:${FOTOS.chef.foco}`} /></figure>
-        <figure class="cm-b"><Image src={FOTOS.celular.src} alt={FOTOS.celular.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" style={`object-position:${FOTOS.celular.foco}`} /></figure>
-        <div class="cm-c"><CarruselMuestra c={carrusel('quintin-lame')} pie={false} sizes="(min-width: 1000px) 16vw, 33vw" /></div>
-        <figure class="cm-d"><Image src={FOTOS.barista.src} alt={FOTOS.barista.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" /></figure>
-        <figure class="cm-e"><Image src={FOTOS.moda.src} alt={FOTOS.moda.alt} widths={[400, 700]} sizes="(min-width: 1000px) 20vw, 50vw" /></figure>
-        <p class="credito cm-credito">Imágenes de referencia: {[FOTOS.chef, FOTOS.celular, FOTOS.barista, FOTOS.moda].map((f) => f.autor).join(', ')} / Unsplash. El carrusel es de Dial.</p>
+        {
+          mosaico.map(([clase, f, ancho]) =>
+            f === 'carrusel' ? (
+              <div class={clase}><CarruselMuestra c={carrusel('quintin-lame')} pie={false} sizes="(min-width: 1000px) 16vw, 33vw" /></div>
+            ) : (
+              <a href={f.href} class:list={['cm-foto', clase]}>
+                <Image src={f.src} alt={f.alt} widths={ancho === 'grande' ? [700, 1100, 1280] : [400, 700]} sizes={ancho === 'grande' ? '(min-width: 1000px) 45vw, 100vw' : '(min-width: 1000px) 22vw, 50vw'} style={f.foco ? `object-position:${f.foco}` : undefined} />
+                <span class="cm-pie"><b>{f.titulo}</b>{f.nota}</span>
+              </a>
+            ),
+          )
+        }
+        <p class="credito cm-credito">Fotogramas de trabajos nuestros y una foto de Martín en Palenque. El carrusel también es de Dial.</p>
       </div>
     </div>
     <div class="contenedor tira-cabeza" data-revela>
@@ -416,8 +440,18 @@ const distintos = [
   .cm-a { grid-column: 1 / span 6; grid-row: span 3; }
   .cm-b { grid-column: 1 / span 2; grid-row: span 3; }
   .cm-c { grid-column: 3 / span 2; grid-row: span 3; }
-  .cm-d { grid-column: 5 / span 2; grid-row: span 2; }
-  .cm-e { grid-column: 5 / span 2; grid-row: span 1; }
+  .cm-d { grid-column: 5 / span 2; grid-row: span 3; }
+  .cm-e { grid-column: 1 / span 3; grid-row: span 2; }
+  .cm-f { grid-column: 4 / span 3; grid-row: span 2; }
+  /* Fotos propias con su título encima, abajo a la izquierda (como VIST). */
+  .cm-foto { position: relative; display: block; overflow: hidden; background: #0f0d0c; color: #f4eee5; text-decoration: none; }
+  .cm-foto::after { content: ''; position: absolute; inset: 45% 0 0; background: linear-gradient(to top, rgba(10, 8, 7, .78), transparent); pointer-events: none; }
+  .cm-foto:hover :global(img) { transform: scale(1.04); }
+  .cm-pie { position: absolute; left: 14px; right: 14px; bottom: 12px; z-index: 1; display: grid; gap: 2px; font-size: .74rem; line-height: 1.3; color: rgba(244, 238, 229, .78); }
+  .cm-pie b { font-family: var(--f-display); font-weight: 400; font-size: clamp(.95rem, .85rem + .3vw, 1.15rem); color: #f4eee5; }
+  .cm-a .cm-pie { left: 20px; bottom: 18px; }
+  .cm-a .cm-pie b { font-size: clamp(1.2rem, 1rem + .6vw, 1.6rem); }
+  @media (max-width: 640px) { .cm-b .cm-pie, .cm-d .cm-pie { display: none; } }
   .cm-c { min-height: 0; }
   .cm-c :global(.carrusel) { height: 100% !important; display: block !important; }
   .cm-c :global(.carrusel-marco) { height: 100% !important; aspect-ratio: auto !important; }
@@ -438,7 +472,12 @@ const distintos = [
   /* ---------- Trabajo ---------- */
   .obras { display: grid; gap: 40px 28px; }
   @media (min-width: 760px) { .obras { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1100px) { .obras { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 1100px) {
+    .obras { grid-template-columns: repeat(3, 1fr); }
+    /* La principal (Mongolia) ocupa 2×2 y las otras cinco la rodean: nueve celdas, sin huecos. */
+    .obras > .obra:first-child { grid-column: span 2; grid-row: span 2; }
+    .obras > .obra:first-child .titular { font-size: clamp(1.6rem, 1.2rem + 1vw, 2.2rem); }
+  }
   .obra { display: grid; gap: 10px; align-content: start; }
   .obra .rotulo { margin-top: 6px; }
   .obra h3 a { text-decoration: none; }
