@@ -12,35 +12,39 @@ export const rutaServicio = (s: CollectionEntry<'servicios'>) => `/servicios/${s
  * obra, no listas. Reglas del 21 nov: ninguna pieza se repite entre servicios en /servicios, y cada servicio muestra
  * lo que de verdad corresponde a lo que ofrece. Las piezas van en una tira de igual altura (TiraObra.astro), así un
  * video vertical y uno horizontal quedan proporcionados entre sí.
- * Publicidad aún no tiene comerciales propios: muestra imagen (Feo Palante) y diseño sonoro (Shadow Of The Dragon),
- * sin decir que son anuncios.
+ * Publicidad aún no tiene comerciales propios: muestra diseño sonoro (Shadow Of The Dragon) y cortes verticales para
+ * redes, sin decir que son anuncios. Feo Palante es videoclip: va solo en Videoclips (Martín, 21 nov).
+ * Documental: Mongolia, Currulao (Pacífico) y el jazz (Martín pidió el Currulao, 21 nov).
  */
 export type Pieza =
-  | { tipo: 'youtube'; id: string; titulo: string; nota: string }
+  | { tipo: 'youtube'; id: string; titulo: string; nota: string; vertical?: boolean }
   | { tipo: 'vertical'; recap: Recap; titulo: string; nota: string }
   | { tipo: 'carrusel'; id: string; nota: string };
 
-const yt = (id: string, titulo: string, nota: string): Pieza => ({ tipo: 'youtube', id, titulo, nota });
+const yt = (id: string, titulo: string, nota: string, vertical = false): Pieza => ({ tipo: 'youtube', id, titulo, nota, vertical });
 
 export const OBRAS: Record<string, { rotulo: string; piezas: Pieza[]; pie?: string }> = {
   documental: {
     rotulo: 'Hecho por nosotros',
     piezas: [
       yt('ONV3lsPwmPo', 'Los últimos nómadas de Mongolia', 'Cortometraje documental · música original y diseño sonoro'),
+      yt('17IYYByXjKk', 'Currulao y músicas del Pacífico Sur', 'Documental · viaje por el Pacífico colombiano'),
       yt('9-pppveOQRs', 'Historia del jazz colombiano en 10 minutos', 'Videoensayo · investigación, dirección y música'),
     ],
   },
   publicidad: {
-    rotulo: 'Nuestra imagen y nuestro sonido',
+    rotulo: 'Nuestro sonido y nuestros cortes para redes',
     piezas: [
-      yt('1PCgmrlsKUQ', 'Delayn Núñez — Feo Palante', 'Imagen · rodaje y color'),
-      yt('6DZmq3vevQ4', 'Shadow Of The Dragon', 'Sonido · música y diseño sonoro para animación'),
+      yt('6DZmq3vevQ4', 'Shadow Of The Dragon', 'Música y diseño sonoro para animación'),
+      yt('0Uo3wjuU4HU', '¿El emprendimiento en Colombia es una mentira?', 'Corte vertical para redes', true),
+      yt('2oto-eJiXfg', '¿Emprender por elección o por necesidad?', 'Corte vertical para redes', true),
     ],
   },
   musica: {
     rotulo: 'Hecho por nosotros',
     piezas: [
       yt('L84B5ZGakjY', 'In-Vitro, sesión en vivo', 'Sesión en vivo · imagen y sonido'),
+      yt('1PCgmrlsKUQ', 'Delayn Núñez — Feo Palante', 'Videoclip · rodaje y color'),
       yt('5lgpy6H5sTU', 'Arrabal Gentío — Mangorito', 'Videoclip · música, guion y producción'),
       yt('tt3X0UynmCk', 'In-Vitro Live Sessions', 'Sesión íntima en nuestro espacio'),
     ],

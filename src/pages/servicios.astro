@@ -8,6 +8,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import Casa from '../components/Casa.astro';
 import ServicioBloque from '../components/ServicioBloque.astro';
 import cap from '../data/capacidades.json';
 import { FOTOS } from '../lib/cine';
@@ -38,6 +39,8 @@ const ld = {
   />
 
   {servicios.map((s, i) => <ServicioBloque s={s} i={i} />)}
+
+  <Casa tema="tema-hueso" />
 
   <section class="seccion tema-carbon grano" id="proceso">
     <div class="contenedor">

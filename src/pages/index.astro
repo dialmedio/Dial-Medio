@@ -12,13 +12,13 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import VideoLite from '../components/VideoLite.astro';
 import CTAFinal from '../components/CTAFinal.astro';
+import Casa from '../components/Casa.astro';
 import DialServicios from '../components/DialServicios.astro';
 import CarruselMuestra from '../components/CarruselMuestra.astro';
 import { CARRUSELES, carrusel } from '../lib/muestras';
 import { dos, anio } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
 
-import disco from '../assets/estudio/in-vitro-disco.jpg';
 import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
 import { OBRA } from '../lib/obra';
 import { rutaServicio } from '../lib/servicios';
@@ -124,9 +124,9 @@ const distintos = [
     </div>
     <div class="contenedor heroe-texto">
       <p class="kicker">Productora audiovisual · Bogotá</p>
-      <h1 class="display heroe-titulo">Investigamos antes de <em>filmar.</em></h1>
+      <h1 class="display heroe-titulo">Producimos con oficio de <em>cine.</em></h1>
       <p class="lead heroe-bajada">
-        Hacemos campañas, publicidad, videoclips, eventos y documental. La investigación la hacemos con la RED Quynza y la música la compone Fototoma, nuestra productora hermana.
+        Campañas, publicidad, videoclips, eventos y documental, con un equipo profesional de rodaje, montaje, color y sonido. Detrás de cada pieza están la investigación de la RED Quynza y la música original de Fototoma.
       </p>
       <div class="acciones">
         <a href="/contacto" class="btn">Cotiza tu proyecto <span class="flecha">→</span></a>
@@ -294,42 +294,8 @@ const distintos = [
     </div>
   </section>
 
-  <!-- LA CASA: Fototoma y RED Quynza -->
-  <section class="seccion tema-carbon grano casa">
-    <div class="contenedor">
-      <header class="cabeza" data-revela>
-        <p class="kicker">La casa</p>
-        <h2 class="display d-2">Imagen, sonido e <em>investigación.</em></h2>
-      </header>
-      <div class="casa-grid">
-        <article class="casa-pieza" data-revela>
-          <a href="https://fototomaproducciones.com" target="_blank" rel="noopener" class="fotograma r-16-9 casa-foto">
-            <Image src={disco} alt="Arte del disco In-Vitro" widths={[640, 1000, 1400]} sizes="(min-width: 980px) 50vw, 100vw" />
-          </a>
-          <p class="rotulo">Música y sonido</p>
-          <h3 class="titular t-2">Fototoma</h3>
-          <p class="texto-2">
-            La productora de música de Martín Perea, Santiago García y Juan Rizoma. Compone, graba y mezcla la música y el sonido de las piezas de Dial, y trabaja
-            también para cine, publicidad y videojuegos.
-          </p>
-          <a href="https://fototomaproducciones.com" class="enlace" target="_blank" rel="noopener">fototomaproducciones.com <span>↗</span></a>
-        </article>
-        <article class="casa-pieza" data-revela style="--retraso:.1s">
-          <div class="casa-red" aria-hidden="true">
-            <p class="cartela-mini">Una misma pregunta en Bogotá, en los nodos de la RED y en el campo. Al final, lo que dicen las cifras.</p>
-            <p class="rotulo">En preparación · Preguntas en la calle</p>
-          </div>
-          <p class="rotulo">Investigación</p>
-          <h3 class="titular t-2">RED Quynza</h3>
-          <p class="texto-2">
-            Una red académica de profesores e investigadores con nodos en varias regiones. Revisa el contexto y los datos de cada proyecto, nos abre la puerta en
-            los territorios y coproduce con Dial el podcast <em>Lo que la gente quiere es vivir</em>.
-          </p>
-          <a href="/investigacion" class="enlace">Cómo investigamos <span>→</span></a>
-        </article>
-      </div>
-    </div>
-  </section>
+  <!-- LA CASA: Fototoma y RED Quynza a fondo (componente compartido con /servicios) -->
+  <Casa />
 
   <CTAFinal
     titulo="¿Qué historia quieres contar?"
@@ -488,16 +454,4 @@ const distintos = [
   .obra { display: grid; gap: 10px; align-content: start; }
   .obra .rotulo { margin-top: 6px; }
   .obra h3 a { text-decoration: none; }
-
-  /* ---------- La casa ---------- */
-  .casa-grid { display: grid; gap: 56px 48px; }
-  @media (min-width: 980px) { .casa-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
-  .casa-pieza { display: grid; gap: 14px; align-content: start; justify-items: start; min-width: 0; }
-  .casa-pieza > .casa-foto, .casa-pieza > .casa-red { justify-self: stretch; }
-  .casa-pieza p { margin: 0; }
-  .casa-foto { width: 100%; display: block; }
-  .casa-foto img { transition: transform 1.2s var(--ease); }
-  .casa-foto:hover img { transform: scale(1.03); }
-  .casa-red { width: 100%; min-height: clamp(240px, 26vw, 360px); display: grid; align-content: space-between; padding: clamp(22px, 3vw, 40px); background: #0f0d0c; border: 1px solid var(--linea-clara); }
-  .cartela-mini { font-family: var(--f-display); font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem); line-height: 1.08; max-width: 20ch; }
 </style>

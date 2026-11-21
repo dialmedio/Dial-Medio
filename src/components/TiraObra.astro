@@ -3,7 +3,8 @@
  * Tira de trabajo propio junto a un servicio (21 nov 2026). Todas las piezas quedan a la MISMA ALTURA y el ancho de
  * cada una sale de su proporción (16:9, 9:16, 4:5): cada pieza crece en proporción a su relación de aspecto, así un
  * video vertical ya no queda enorme al lado de un horizontal chiquito.
- * Con tres videos horizontales la tira se vuelve «destacada»: el primero grande y los otros dos apilados al lado.
+ * Con tres videos horizontales la tira se vuelve «destacada»: el primero grande y los otros dos apilados al lado;
+ * con cuatro, una cuadrícula de dos por dos.
  * En el celular los horizontales van a todo el ancho y los verticales y láminas de a dos.
  */
 import VideoLite from './VideoLite.astro';
@@ -16,15 +17,18 @@ interface Props {
 }
 const { piezas } = Astro.props;
 const PROPORCION = { youtube: 16 / 9, vertical: 9 / 16, carrusel: 4 / 5 } as const;
-const destacada = piezas.length === 3 && piezas.every((p) => p.tipo === 'youtube');
+const prop = (p: Pieza) => (p.tipo === 'youtube' && p.vertical ? 9 / 16 : PROPORCION[p.tipo]);
+const horizontales = piezas.every((p) => prop(p) > 1);
+const destacada = horizontales && piezas.length === 3;
+const cuadricula = horizontales && piezas.length === 4;
 const titulo = (p: Pieza) => (p.tipo === 'carrusel' ? carrusel(p.id).titulo : p.titulo);
 ---
 
-<div class:list={['tira-obra', { destacada }]}>
+<div class:list={['tira-obra', { destacada, cuadricula }]}>
   {
     piezas.map((p) => (
-      <figure class:list={['pieza', { angosta: PROPORCION[p.tipo] < 1 }]} style={`--ar:${PROPORCION[p.tipo].toFixed(4)}`}>
-        {p.tipo === 'youtube' && <VideoLite video={{ plataforma: 'youtube', id: p.id }} titulo={p.titulo} />}
+      <figure class:list={['pieza', { angosta: prop(p) < 1 }]} style={`--ar:${prop(p).toFixed(4)}`}>
+        {p.tipo === 'youtube' && <VideoLite video={{ plataforma: 'youtube', id: p.id, vertical: p.vertical }} titulo={p.titulo} />}
         {p.tipo === 'vertical' && (
           <video controls playsinline preload="none" poster={p.recap.poster.src} width="720" height="1280" aria-label={p.recap.titulo}>
             <source src={p.recap.mp4} type="video/mp4" />
@@ -58,5 +62,6 @@ const titulo = (p: Pieza) => (p.tipo === 'carrusel' ? carrusel(p.id).titulo : p.
   @media (min-width: 760px) {
     .tira-obra.destacada { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 18px 14px; }
     .tira-obra.destacada .pieza:first-child { grid-row: 1 / span 2; }
+    .tira-obra.cuadricula { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 14px; }
   }
 </style>

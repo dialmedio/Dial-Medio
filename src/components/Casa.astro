@@ -1,0 +1,163 @@
+---
+/**
+ * La casa (21 nov 2026): Fototoma y la RED Quynza a fondo, en la portada y en /servicios. Martín pidió una sección más
+ * grande y a profundidad de las dos, que lleve a sus sitios y le dé peso a Dial. Datos tomados de sus propios sitios
+ * (fototomaproducciones.com, src/data/equipo.ts de D:/Fototoma/web; redquynza.org): no inventar cifras.
+ * Retratos = los de Fototoma; la foto de la RED es del taller de investigación-creación en Popayán (miniatura del video).
+ */
+import { Image } from 'astro:assets';
+import martin from '../assets/casa/fototoma-martin.jpg';
+import santiago from '../assets/casa/fototoma-santiago.jpg';
+import juan from '../assets/casa/fototoma-juan.jpg';
+import popayan from '../assets/casa/quynza-popayan.jpg';
+
+interface Props {
+  tema?: 'tema-carbon' | 'tema-hueso' | 'tema-papel';
+}
+const { tema = 'tema-carbon' } = Astro.props;
+
+const FOTOTOMA = 'https://fototomaproducciones.com';
+const QUYNZA = 'https://redquynza.org';
+const directores = [
+  { src: martin, nombre: 'Martín Perea Tobón', rol: 'Composición y realización audiovisual', foco: '50% 30%' },
+  { src: santiago, nombre: 'Santiago García', rol: 'Diseño sonoro y composición', foco: '50% 30%' },
+  { src: juan, nombre: 'Juan Rizoma', rol: 'Producción musical e ingeniería de sonido', foco: '50% 30%' },
+];
+const trayectoria = [
+  'Diseño sonoro de los comerciales «Una chispa» y «Un color» de Mazda.',
+  'Música de la segunda temporada de Científico por un día (MinCiencias, Señal Colombia y SENA).',
+  'El disco In-Vitro, sobre compositores del jazz colombiano, y un concierto en Corea del Sur.',
+];
+const cifras = [
+  { n: '+80', t: 'investigadoras e investigadores' },
+  { n: '+25', t: 'universidades' },
+  { n: '7', t: 'macrorregiones del país' },
+];
+const aporte = [
+  { t: 'Contexto y cifras', d: 'Antes del rodaje revisa el contexto, los datos y las fuentes de la historia.' },
+  { t: 'Llegada al territorio', d: 'Sus nodos nos presentan con la gente en regiones donde una productora de Bogotá llega como extraña.' },
+  { t: 'Guion revisado', d: 'En los proyectos de divulgación, los investigadores escriben y revisan el guion con nosotros.' },
+];
+---
+
+<section class:list={['seccion', tema, 'grano', 'casa']} id="casa">
+  <div class="contenedor">
+    <header class="cabeza doble">
+      <div data-revela>
+        <p class="kicker">La casa</p>
+        <h2 class="display d-2">Fototoma y la RED <em>Quynza.</em></h2>
+      </div>
+      <p class="texto-2" data-revela>
+        Dial filma y produce. La música y el sonido los hace Fototoma, una productora de música, y la investigación la RED Quynza, una red de investigadores de
+        todo el país. Las dos tienen trabajo propio, y en los proyectos de Dial trabajamos juntos desde el principio.
+      </p>
+    </header>
+
+    <!-- FOTOTOMA -->
+    <article class="aliado" data-revela>
+      <div class="aliado-media">
+        <div class="directores">
+          {
+            directores.map((d) => (
+              <figure>
+                <div class="retrato">
+                  <Image src={d.src} alt={`Retrato de ${d.nombre}`} widths={[300, 480, 720]} sizes="(min-width: 980px) 200px, 31vw" style={`object-position:${d.foco}`} />
+                </div>
+                <figcaption><b>{d.nombre}</b><span>{d.rol}</span></figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+      <div class="aliado-texto">
+        <p class="rotulo">Música y sonido</p>
+        <h3 class="display d-3">Fototoma</h3>
+        <p class="lead">
+          Productora de música para cine, documental, publicidad, videojuegos y discos, dirigida por tres músicos de Bogotá y Pereira. Compone la música de cada
+          pieza de Dial, hace el diseño sonoro y graba y mezcla las sesiones en vivo.
+        </p>
+        <p class="texto-2">
+          Como la música se escribe para cada corte, quien nos contrata no paga licencias de bancos de música, y la imagen y el sonido se piensan juntos desde el
+          guion.
+        </p>
+        <div class="lista-aliado">
+          <p class="rotulo">Han hecho</p>
+          <ul>{trayectoria.map((t) => <li>{t}</li>)}</ul>
+        </div>
+        <div class="acciones">
+          <a href={FOTOTOMA} class="btn" target="_blank" rel="noopener">Conocer Fototoma <span class="flecha">↗</span></a>
+          <a href={`${FOTOTOMA}/equipo`} class="enlace" target="_blank" rel="noopener">Escuchar su música <span>↗</span></a>
+        </div>
+      </div>
+    </article>
+
+    <!-- RED QUYNZA -->
+    <article class="aliado invertido" data-revela>
+      <div class="aliado-media">
+        <figure class="foto-red">
+          <div class="fotograma">
+            <Image src={popayan} alt="Investigadores y vecinos marcan un mapa de la ciudad sobre una mesa en un taller de la RED Quynza en Popayán" widths={[640, 1000, 1172]} sizes="(min-width: 980px) 640px, 100vw" />
+          </div>
+          <figcaption class="credito"><span>Taller de investigación-creación de la RED Quynza en Popayán, 2026.</span></figcaption>
+        </figure>
+        <dl class="cifras">
+          {cifras.map((c) => <div><dt>{c.n}</dt><dd>{c.t}</dd></div>)}
+        </dl>
+      </div>
+      <div class="aliado-texto">
+        <p class="rotulo">Investigación</p>
+        <h3 class="display d-3">RED Quynza</h3>
+        <p class="lead">
+          Una red académica de investigadoras e investigadores de universidades de todo el país que estudia la paz y la violencia en las ciudades de Colombia, y
+          abre lo que investiga en publicaciones, datos, podcast y documentales.
+        </p>
+        <div class="lista-aliado aporte">
+          <p class="rotulo">Lo que pone en cada proyecto</p>
+          <ul>{aporte.map((a) => <li><b>{a.t}.</b> {a.d}</li>)}</ul>
+        </div>
+        <p class="texto-2">Con Dial coproduce el podcast <em>Lo que la gente quiere es vivir</em>.</p>
+        <div class="acciones">
+          <a href={QUYNZA} class="btn" target="_blank" rel="noopener">Conocer la RED Quynza <span class="flecha">↗</span></a>
+          <a href="/investigacion" class="enlace">Cómo investigamos <span>→</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style>
+  .casa .cabeza { margin-bottom: clamp(40px, 5vw, 72px); }
+  .aliado { display: grid; gap: 32px 72px; align-items: center; padding: clamp(36px, 4vw, 56px) 0; border-top: 1px solid var(--borde); }
+  @media (min-width: 980px) {
+    .aliado { grid-template-columns: 1fr 1fr; }
+    .aliado.invertido .aliado-media { order: 2; }
+  }
+  .aliado-texto { display: grid; gap: 18px; justify-items: start; align-content: center; }
+  .aliado-texto > p, .aliado-texto h3 { margin: 0; }
+  .aliado-texto .lead, .aliado-texto .texto-2 { max-width: 54ch; }
+  .lista-aliado { display: grid; gap: 10px; width: 100%; }
+  .lista-aliado .rotulo { margin: 0; color: var(--acento-texto); }
+  .lista-aliado ul { list-style: none; margin: 0; padding: 0; display: grid; }
+  .lista-aliado li { padding: 10px 0; border-top: 1px solid var(--borde); font-size: .98rem; line-height: 1.45; max-width: 58ch; }
+  .lista-aliado li:last-child { border-bottom: 1px solid var(--borde); }
+  .lista-aliado li b { font-weight: 600; }
+  .acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; margin-top: 6px; }
+
+  /* Fototoma: los tres codirectores, a color, como en su sitio. */
+  .directores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .directores figure { margin: 0; display: grid; gap: 10px; align-content: start; }
+  .retrato { aspect-ratio: 4 / 5; overflow: hidden; background: #0f0d0c; }
+  .retrato :global(img) { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s var(--ease); }
+  .directores figure:hover .retrato :global(img) { transform: scale(1.04); }
+  .directores figcaption { display: grid; gap: 3px; font-size: .84rem; line-height: 1.35; color: var(--texto-2); }
+  .directores figcaption b { color: var(--texto); font-weight: 600; font-size: .92rem; }
+
+  /* RED Quynza: foto del taller y las cifras de la red. */
+  .foto-red { margin: 0; display: grid; gap: 10px; }
+  .foto-red .fotograma { aspect-ratio: 3 / 2; }
+  .foto-red .credito { margin: 0; }
+  .cifras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 22px 0 0; }
+  .cifras div { border-top: 1px solid var(--borde); padding-top: 12px; }
+  .cifras dt { font-family: var(--f-display); font-size: clamp(2.2rem, 1.6rem + 2vw, 3.4rem); line-height: 1; color: var(--acento-texto); }
+  .cifras dd { margin: 6px 0 0; font-size: .88rem; line-height: 1.35; color: var(--texto-2); }
+</style>
