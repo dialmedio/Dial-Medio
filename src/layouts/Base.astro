@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Interaccion from '../components/Interaccion.astro';
 import WhatsApp from '../components/WhatsApp.astro';
+import Musica from '../components/Musica.astro';
 import sitio from '../data/sitio.json';
 import { getCollection } from 'astro:content';
 
@@ -141,6 +142,7 @@ const jsonLd = {
     </main>
     <Footer />
     {!Astro.url.pathname.startsWith('/marca') && <WhatsApp />}
+    {!Astro.url.pathname.startsWith('/marca') && <Musica />}
     <Interaccion />
 
     <script>

@@ -1,0 +1,137 @@
+---
+/**
+ * Música de fondo (21 nov 2026). Botón fijo abajo a la izquierda (WhatsApp va a la derecha).
+ * Los navegadores no dejan sonar audio hasta que la persona toca la página: la música arranca con el primer clic,
+ * toque o tecla, entra despacio y a volumen bajo. Si la persona la apaga, queda apagada en las siguientes visitas
+ * (localStorage). Al cambiar de página sigue donde iba (sessionStorage). Se pausa sola cuando arranca un video.
+ * La pieza y su crédito salen de src/lib/musica.ts (música de Fototoma).
+ */
+import { ELEGIDA } from '../lib/musica';
+const credito = `Música original de ${ELEGIDA.autor}`;
+---
+
+<button type="button" class="mus" data-musica data-src={ELEGIDA.archivo} aria-pressed="false" aria-label="Activar la música" title={credito}>
+  <span class="mus-barras" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  <span class="mus-texto"><span class="mus-estado">Música</span><span class="mus-credito">Música original de {ELEGIDA.autor}</span></span>
+</button>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>('[data-musica]');
+  if (boton) {
+    const CLAVE = 'dial-musica';
+    const POS = 'dial-musica-pos';
+    const VOLUMEN = 0.32;
+    const leer = (s: Storage, k: string) => { try { return s.getItem(k); } catch { return null; } };
+    const guardar = (s: Storage, k: string, v: string) => { try { s.setItem(k, v); } catch {} };
+
+    const audio = new Audio();
+    audio.src = boton.dataset.src!;
+    audio.loop = true;
+    audio.preload = 'none';
+    audio.volume = 0;
+    const pos = parseFloat(leer(sessionStorage, POS) || '0');
+
+    let fundido = 0;
+    const fundir = (meta: number, ms: number, alFinal?: () => void) => {
+      cancelAnimationFrame(fundido);
+      const desde = audio.volume, t0 = performance.now();
+      const paso = (t: number) => {
+        const k = Math.min(1, (t - t0) / ms);
+        audio.volume = desde + (meta - desde) * k;
+        if (k < 1) fundido = requestAnimationFrame(paso);
+        else alFinal?.();
+      };
+      fundido = requestAnimationFrame(paso);
+    };
+    const pintar = (sonando: boolean) => {
+      boton.classList.toggle('sonando', sonando);
+      boton.setAttribute('aria-pressed', String(sonando));
+      boton.setAttribute('aria-label', sonando ? 'Silenciar la música' : 'Activar la música');
+      const estado = boton.querySelector('.mus-estado');
+      if (estado) estado.textContent = sonando ? 'Sonando' : 'Música';
+    };
+    const sonar = async () => {
+      if (!audio.paused) { pintar(true); fundir(VOLUMEN, 800); return true; }
+      try {
+        if (pos && !audio.currentTime) audio.currentTime = pos;
+        await audio.play();
+        pintar(true);
+        fundir(VOLUMEN, 2500);
+        return true;
+      } catch { return false; }
+    };
+    const callar = () => { pintar(false); fundir(0, 600, () => audio.pause()); };
+
+    boton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (audio.paused || boton.getAttribute('aria-pressed') === 'false') { guardar(localStorage, CLAVE, 'on'); sonar(); }
+      else { guardar(localStorage, CLAVE, 'off'); callar(); }
+    });
+
+    // Arranca sola si la persona no la apagó antes; si el navegador lo bloquea, espera el primer gesto.
+    if (leer(localStorage, CLAVE) !== 'off') {
+      sonar().then((ok) => {
+        if (ok) return;
+        const primerGesto = (e: Event) => {
+          if (boton.contains(e.target as Node)) return;
+          quitar();
+          if (leer(localStorage, CLAVE) !== 'off') sonar();
+        };
+        const quitar = () => ['pointerdown', 'keydown'].forEach((t) => document.removeEventListener(t, primerGesto, true));
+        ['pointerdown', 'keydown'].forEach((t) => document.addEventListener(t, primerGesto, true));
+      });
+    }
+
+    // Un video tiene prioridad: la música se calla (sin cambiar la preferencia).
+    document.addEventListener('play', (e) => { if (e.target !== audio && !audio.paused) callar(); }, true);
+    document.addEventListener('click', (e) => { if ((e.target as Element).closest?.('.video-boton, [data-video]') && !audio.paused) callar(); }, true);
+
+    window.addEventListener('pagehide', () => { if (!audio.paused) guardar(sessionStorage, POS, String(audio.currentTime)); });
+
+    // Igual que WhatsApp: se aparta cuando el pie está en pantalla.
+    const pie = document.querySelector('footer');
+    if (pie) new IntersectionObserver(([e]) => boton.classList.toggle('oculto', e.isIntersecting), { rootMargin: '0px 0px -40px 0px' }).observe(pie);
+  }
+</script>
+
+<style>
+  .mus {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    z-index: 55;
+    display: inline-flex;
+    align-items: center;
+    height: 54px;
+    padding: 0 18px;
+    background: rgba(15, 13, 12, 0.82);
+    color: var(--papel);
+    border: 1px solid rgba(244, 238, 229, 0.22);
+    box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.55);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    font: 600 0.86rem/1 var(--f-texto);
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: border-color 0.25s, opacity 0.35s var(--ease), translate 0.35s var(--ease);
+  }
+  .mus:hover, .mus:focus-visible { border-color: var(--luz); }
+  .mus:focus-visible { outline: 2px solid var(--papel); outline-offset: 3px; }
+  .mus-barras { display: inline-flex; align-items: flex-end; gap: 3px; height: 18px; width: 21px; flex: none; }
+  .mus-barras i { display: block; width: 3px; height: 4px; background: currentColor; opacity: 0.55; transform-origin: bottom; }
+  .mus.sonando .mus-barras i { opacity: 1; background: var(--luz); animation: barra 1.6s ease-in-out infinite; }
+  .mus.sonando .mus-barras i:nth-child(1) { animation-delay: -0.2s; }
+  .mus.sonando .mus-barras i:nth-child(2) { animation-delay: -0.9s; animation-duration: 1.9s; }
+  .mus.sonando .mus-barras i:nth-child(3) { animation-delay: -0.5s; animation-duration: 1.4s; }
+  .mus.sonando .mus-barras i:nth-child(4) { animation-delay: -1.2s; animation-duration: 2.1s; }
+  @keyframes barra { 0%, 100% { height: 4px; } 50% { height: 18px; } }
+  .mus-texto { display: grid; gap: 3px; margin-left: 12px; max-width: 0; overflow: hidden; white-space: nowrap; text-align: left; opacity: 0; transition: max-width 0.4s var(--ease), opacity 0.25s; }
+  .mus-credito { font-weight: 400; font-size: 0.72rem; color: rgba(244, 238, 229, 0.7); }
+  .mus:hover .mus-texto, .mus:focus-visible .mus-texto { max-width: 22em; opacity: 1; }
+  .mus.oculto { opacity: 0; translate: 0 12px; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .mus.sonando .mus-barras i { animation: none; height: 12px; }
+    .mus, .mus-texto { transition: none; }
+  }
+  @media print { .mus { display: none; } }
+</style>

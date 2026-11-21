@@ -6,6 +6,7 @@ import sitio from '../data/sitio.json';
 import { NAV, whatsapp } from '../lib/util';
 import { getCollection } from 'astro:content';
 import { rutaServicio } from '../lib/servicios';
+import { ELEGIDA } from '../lib/musica';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
@@ -63,7 +64,7 @@ const columnas = [
 
     <div class="pie-base">
       <span>© {new Date().getFullYear()} Dial Medio · Productora audiovisual · {sitio.ciudad}</span>
-      <span>Las imágenes de terceros conservan su licencia.</span>
+      <span>Las imágenes de terceros conservan su licencia. Música original de <a href={ELEGIDA.enlace} target="_blank" rel="noopener">{ELEGIDA.autor}</a>.</span>
     </div>
   </div>
 </footer>
