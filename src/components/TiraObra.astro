@@ -1,0 +1,62 @@
+---
+/**
+ * Tira de trabajo propio junto a un servicio (21 nov 2026). Todas las piezas quedan a la MISMA ALTURA y el ancho de
+ * cada una sale de su proporción (16:9, 9:16, 4:5): cada pieza crece en proporción a su relación de aspecto, así un
+ * video vertical ya no queda enorme al lado de un horizontal chiquito.
+ * Con tres videos horizontales la tira se vuelve «destacada»: el primero grande y los otros dos apilados al lado.
+ * En el celular los horizontales van a todo el ancho y los verticales y láminas de a dos.
+ */
+import VideoLite from './VideoLite.astro';
+import CarruselMuestra from './CarruselMuestra.astro';
+import { carrusel } from '../lib/muestras';
+import type { Pieza } from '../lib/servicios';
+
+interface Props {
+  piezas: Pieza[];
+}
+const { piezas } = Astro.props;
+const PROPORCION = { youtube: 16 / 9, vertical: 9 / 16, carrusel: 4 / 5 } as const;
+const destacada = piezas.length === 3 && piezas.every((p) => p.tipo === 'youtube');
+const titulo = (p: Pieza) => (p.tipo === 'carrusel' ? carrusel(p.id).titulo : p.titulo);
+---
+
+<div class:list={['tira-obra', { destacada }]}>
+  {
+    piezas.map((p) => (
+      <figure class:list={['pieza', { angosta: PROPORCION[p.tipo] < 1 }]} style={`--ar:${PROPORCION[p.tipo].toFixed(4)}`}>
+        {p.tipo === 'youtube' && <VideoLite video={{ plataforma: 'youtube', id: p.id }} titulo={p.titulo} />}
+        {p.tipo === 'vertical' && (
+          <video controls playsinline preload="none" poster={p.recap.poster.src} width="720" height="1280" aria-label={p.recap.titulo}>
+            <source src={p.recap.mp4} type="video/mp4" />
+          </video>
+        )}
+        {p.tipo === 'carrusel' && <CarruselMuestra c={carrusel(p.id)} pie={false} sizes="(min-width: 980px) 24vw, 45vw" />}
+        <figcaption>
+          <b>{titulo(p)}</b>
+          <span>{p.nota}</span>
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  .tira-obra { display: flex; flex-wrap: wrap; gap: 22px 14px; align-items: start; }
+  .pieza { margin: 0; min-width: 0; display: grid; gap: 10px; align-content: start; flex: 1 1 100%; }
+  .pieza.angosta { flex-basis: calc(50% - 7px); }
+  /* Misma altura en toda la fila: cada pieza crece en proporción a su ancho relativo. */
+  @media (min-width: 760px) {
+    .tira-obra { flex-wrap: nowrap; }
+    .pieza, .pieza.angosta { flex: var(--ar) 1 0; }
+  }
+  .pieza video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #0f0d0c; border-radius: var(--radio); object-fit: cover; }
+  .pieza :global(.carrusel) { gap: 0; }
+  .pieza figcaption { display: grid; gap: 3px; font-size: .86rem; line-height: 1.4; color: var(--texto-2); }
+  .pieza figcaption b { color: var(--texto); font-weight: 600; font-size: .92rem; }
+
+  /* Tres horizontales: el primero grande y los otros dos apilados a su lado. */
+  @media (min-width: 760px) {
+    .tira-obra.destacada { display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: auto auto; gap: 18px 14px; }
+    .tira-obra.destacada .pieza:first-child { grid-row: 1 / span 2; }
+  }
+</style>

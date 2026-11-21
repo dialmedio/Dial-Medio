@@ -1,19 +1,19 @@
 ---
 /**
- * Un servicio: trabajo nuestro, qué incluye y qué recibes (antes vivía solo en /servicios).
- * modo 'resumen' = /servicios (foto de cabecera, título y enlace a la página propia);
- * modo 'pagina'  = /servicios/<slug> (la foto y el título van en la portada; aquí el gancho y el texto largo).
+ * Un servicio: qué es, qué incluye, qué recibes y trabajo nuestro (antes vivía solo en /servicios).
+ * modo 'resumen' = /servicios (título con enlace a la página propia y una muestra corta del trabajo);
+ * modo 'pagina'  = /servicios/<slug> (la foto y el título van en la portada; aquí el gancho, el texto largo y toda la obra).
+ * 21 nov 2026, reorganización: arriba dos columnas parejas (texto | incluye y recibes) y abajo, a todo el ancho, la
+ * obra en una tira de igual altura. Se quitaron las fotos de cabecera de stock en /servicios: cada servicio se ilustra
+ * con trabajo propio (Martín no quiere stock donde hay trabajo nuestro).
  */
 import type { CollectionEntry } from 'astro:content';
 import { Image } from 'astro:assets';
-import VideoLite from './VideoLite.astro';
 import CarruselMuestra from './CarruselMuestra.astro';
+import TiraObra from './TiraObra.astro';
 import { CARRUSELES } from '../lib/muestras';
-import { FOTO_SERVICIO, credito } from '../lib/cine';
-import { OBRAS, rutaServicio } from '../lib/servicios';
-import { GALERIA_RETRATOS } from '../lib/retratos';
-import VideoVertical from './VideoVertical.astro';
-import { RECAPS, RECAPS_PIE } from '../lib/eventos';
+import { OBRAS, CARRUSELES_RESUMEN, rutaServicio } from '../lib/servicios';
+import { GALERIA_RETRATOS, FOTOGRAFO } from '../lib/retratos';
 import { dos } from '../lib/util';
 
 interface Props {
@@ -23,23 +23,14 @@ interface Props {
 }
 const { s, i, modo = 'resumen' } = Astro.props;
 const resumen = modo === 'resumen';
-const foto = resumen ? FOTO_SERVICIO[s.id] : undefined;
 const obras = OBRAS[s.id];
 const para = s.data.paraQuien.charAt(0).toLowerCase() + s.data.paraQuien.slice(1).replace(/\.$/, '');
 const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.texto;
+const carruseles = resumen ? CARRUSELES.filter((c) => CARRUSELES_RESUMEN.includes(c.id)) : CARRUSELES;
+const retratos = resumen ? GALERIA_RETRATOS.slice(0, 3) : GALERIA_RETRATOS;
 ---
 
 <section class:list={['seccion', 'compacta', 'serv-sec', i % 2 ? 'tema-hueso' : 'tema-papel']} id={resumen ? s.id : 'detalle'}>
-  {
-    foto && (
-      <figure class="serv-foto" data-revela>
-        <div class="fotograma">
-          <Image src={foto.src} alt={foto.alt} widths={[800, 1400, 2200]} sizes="100vw" style={foto.foco ? `object-position:${foto.foco}` : undefined} />
-        </div>
-        <figcaption class="contenedor credito"><b>{foto.propia ? 'Trabajo nuestro' : 'Imagen de referencia'}</b><span>{credito(foto)}</span></figcaption>
-      </figure>
-    )
-  }
   <div class="contenedor serv">
     <div class="serv-cabeza" data-revela>
       <p class="kicker">{resumen ? `${dos(i + 1)} · ` : ''}Para {para}</p>
@@ -51,22 +42,13 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
         )
       }
       {resumen && s.data.gancho && <p class="gancho serv-gancho">{s.data.gancho}</p>}
-      {
-        obras && (
-          <div class:list={['serv-obras', { tres: obras.obras.length === 3 }]}>
-            <p class="rotulo">{obras.rotulo}</p>
-            {obras.obras.map((o) => (
-              <figure>
-                <VideoLite video={{ plataforma: 'youtube', id: o.id }} titulo={o.titulo} />
-                <figcaption>{o.titulo}</figcaption>
-              </figure>
-            ))}
-          </div>
-        )
-      }
+      {parrafos.map((p, j) => <p class:list={{ lead: j === 0, 'texto-largo': j > 0 }}>{p}</p>)}
+      <div class="serv-acciones">
+        <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
+        {resumen && <a href={rutaServicio(s)} class="enlace">Ver {s.data.titulo.toLowerCase()} <span>→</span></a>}
+      </div>
     </div>
     <div class="serv-cuerpo" data-revela style="--retraso:.08s">
-      {parrafos.map((p, j) => <p class:list={{ lead: j === 0, 'texto-largo': j > 0 }}>{p}</p>)}
       <div class="serv-incluye">
         <p class="rotulo">Incluye</p>
         <ol class="recorrido">{s.data.incluye.map((x, j) => <li><span class="n">{dos(j + 1)}</span><span class="t">{x}</span></li>)}</ol>
@@ -75,36 +57,38 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
         <p class="rotulo">Recibes</p>
         <ul>{s.data.entregables.map((x) => <li>{x}</li>)}</ul>
       </div>
-      <div class="serv-acciones">
-        <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
-        {resumen && <a href={rutaServicio(s)} class="enlace">Ver {s.data.titulo.toLowerCase()} <span>→</span></a>}
-      </div>
     </div>
+
     {
-      s.id === 'retratos' && (
-        <div class="retratos" data-revela>
-          {GALERIA_RETRATOS.map((f, j) => (
-            <figure class:list={{ ancha: j === 0 }}>
-              <Image src={f.src} alt={f.alt} widths={[640, 1100, 1800, 2560]} sizes={j === 0 ? '(min-width: 1300px) 1200px, 100vw' : '(min-width: 1300px) 600px, (min-width: 700px) 50vw, 100vw'} />
-            </figure>
-          ))}
-          <p class="credito"><b>Trabajo nuestro</b><span>Secuencia en un humedal, 2026. Fotos de Martín Perea Tobón.</span></p>
-        </div>
-      )
-    }
-    {
-      s.id === 'eventos' && (
-        <div class="recaps" data-revela>
-          {RECAPS.map((r) => <VideoVertical r={r} />)}
-          <p class="credito"><b>Trabajo nuestro</b><span>{RECAPS_PIE}</span></p>
+      obras && (
+        <div class="serv-obra" data-revela>
+          <p class="rotulo">{obras.rotulo}</p>
+          <TiraObra piezas={obras.piezas} />
+          {obras.pie && <p class="credito"><span>{obras.pie}</span></p>}
         </div>
       )
     }
     {
       s.id === 'diseno' && (
-        <div class="laminas" data-revela>
-          {CARRUSELES.map((c) => <CarruselMuestra c={c} />)}
-          <p class="credito"><b>Muestras</b><span>Carruseles que Dial diseñó y publicó en 2026. Pasa el mouse por encima para ver las láminas.</span></p>
+        <div class="serv-obra" data-revela>
+          <p class="rotulo">Carruseles que diseñamos y publicamos</p>
+          <div class="laminas">{carruseles.map((c) => <CarruselMuestra c={c} />)}</div>
+          <p class="credito"><span>Pasa el mouse por encima para ver las láminas.{resumen && <> <a href={rutaServicio(s)}>Ver más carruseles →</a></>}</span></p>
+        </div>
+      )
+    }
+    {
+      s.id === 'retratos' && (
+        <div class="serv-obra" data-revela>
+          <p class="rotulo">Hecho por nosotros</p>
+          <div class:list={['retratos', { resumen }]}>
+            {retratos.map((f, j) => (
+              <figure class:list={{ ancha: !resumen && j === 0 }}>
+                <Image src={f.src} alt={f.alt} widths={[640, 1100, 1800, 2560]} sizes={resumen ? '(min-width: 1300px) 440px, (min-width: 760px) 33vw, 100vw' : j === 0 ? '(min-width: 1300px) 1200px, 100vw' : '(min-width: 1300px) 600px, (min-width: 700px) 50vw, 100vw'} />
+              </figure>
+            ))}
+          </div>
+          <p class="credito"><span>Secuencia en un humedal, 2026. Fotos de {FOTOGRAFO}.{resumen && <> <a href={rutaServicio(s)}>Ver la sesión completa →</a></>}</span></p>
         </div>
       )
     }
@@ -112,31 +96,25 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
 </section>
 
 <style>
-  .serv-sec { padding-top: 0; }
-  .serv-sec:first-of-type { padding-top: 0; }
-  .serv-foto { margin: 0 0 clamp(40px, 5vw, 72px); }
-  .serv-foto .fotograma { aspect-ratio: 2.39 / 1; }
-  @media (max-width: 640px) { .serv-foto .fotograma { aspect-ratio: 16 / 10; } }
-  .serv-foto .credito { margin-top: 10px; }
-  .serv-sec:not(:has(.serv-foto)) { padding-top: calc(var(--seccion) * .62); }
-  .serv { display: grid; gap: 28px 72px; }
-  @media (min-width: 980px) { .serv { grid-template-columns: 1fr 1.25fr; } }
-  .serv-cabeza { display: grid; gap: 16px; align-content: start; }
+  .serv-sec { padding-top: calc(var(--seccion) * .62); }
+  .serv { display: grid; gap: 36px 72px; }
+  @media (min-width: 980px) { .serv { grid-template-columns: 1.05fr 1fr; align-items: start; } }
+  .serv-cabeza { display: grid; gap: 18px; align-content: start; justify-items: start; }
   .serv-cabeza p { margin: 0; }
   .serv-titulo { color: inherit; text-decoration: none; }
   .serv-titulo:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .12em; }
-  .serv-gancho { font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); color: var(--texto-2); max-width: 26ch; }
-  .serv-cuerpo { display: grid; gap: 26px; justify-items: start; }
-  .serv-cuerpo .lead, .serv-cuerpo .texto-largo { margin: 0; max-width: 58ch; }
-  .serv-cuerpo .texto-largo { color: var(--texto-2); }
-  .serv-acciones { display: flex; flex-wrap: wrap; gap: 12px 32px; }
+  .serv-gancho { font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); color: var(--texto-2); max-width: 30ch; }
+  .serv-cabeza .lead, .serv-cabeza .texto-largo { max-width: 56ch; }
+  .serv-cabeza .texto-largo { color: var(--texto-2); }
+  .serv-acciones { display: flex; flex-wrap: wrap; gap: 12px 32px; margin-top: 6px; }
+  .serv-cuerpo { display: grid; gap: 28px; }
   /* Incluye: un recorrido sobre la línea del dial (marcas cortas y un punto por paso), no una lista con viñetas. */
   .serv-incluye, .serv-recibes { width: 100%; display: grid; gap: 14px; }
   .serv-incluye .rotulo, .serv-recibes .rotulo { margin: 0; }
   .recorrido { list-style: none; margin: 0; padding: 0 0 0 22px; display: grid; gap: 0; position: relative;
     background: repeating-linear-gradient(to bottom, var(--borde) 0 1px, transparent 1px 12px) 0 0 / 7px 100% no-repeat; }
   .recorrido::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--borde); }
-  .recorrido li { position: relative; display: grid; grid-template-columns: 2.4em 1fr; align-items: baseline; padding: 11px 0; }
+  .recorrido li { position: relative; display: grid; grid-template-columns: 2.4em 1fr; align-items: baseline; padding: 10px 0; }
   .recorrido li::before { content: ''; position: absolute; left: -25px; top: 50%; width: 7px; height: 7px; margin-top: -3px; border-radius: 50%; background: var(--acento-texto); transition: transform .3s var(--ease); }
   .recorrido li:hover::before { transform: scale(1.6); }
   .recorrido .n { font-family: var(--f-display); font-style: italic; color: var(--acento-texto); font-size: 1.05rem; }
@@ -151,21 +129,17 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
     .serv-recibes ul { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 28px; }
     .serv-recibes li, .serv-recibes li:first-child { border-top: 0; border-left: 1px solid color-mix(in srgb, currentColor 18%, transparent); padding: 4px 0 4px 16px; }
   }
-  /* Trabajo nuestro junto al servicio. */
-  .serv-obras { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 18px; }
-  .serv-obras .rotulo { grid-column: 1 / -1; margin: 0; }
-  .serv-obras.tres figure:first-of-type { grid-column: 1 / -1; }
-  .serv-obras figure { margin: 0; display: grid; gap: 6px; }
-  .serv-obras figcaption { font-size: .85rem; color: var(--texto-2); line-height: 1.35; }
-  .recaps { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; max-width: 760px; }
-  .recaps .credito { grid-column: 1 / -1; margin: 0; }
-  .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
+  /* Trabajo nuestro: a todo el ancho del contenedor, debajo del texto, separado por una línea fina. */
+  .serv-obra { grid-column: 1 / -1; display: grid; gap: 16px; padding-top: 28px; border-top: 1px solid var(--borde); }
+  .serv-obra > .rotulo { margin: 0; }
+  .serv-obra .credito { margin: 0; }
+  .serv-obra .credito a { color: inherit; }
+  .laminas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 14px; }
   @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
-  .laminas .credito { grid-column: 1 / -1; margin: 0; }
-  /* Retratos: galería de la sesión (fotos 16:9 tal como salieron de la edición). */
-  .retratos { grid-column: 1 / -1; display: grid; gap: 12px; }
+  /* Retratos: fotos 16:9 tal como salieron de la edición. En /servicios, tres en fila; en su página, la sesión completa. */
+  .retratos { display: grid; gap: 12px; }
   @media (min-width: 700px) { .retratos { grid-template-columns: repeat(2, 1fr); } .retratos .ancha { grid-column: 1 / -1; } }
+  @media (min-width: 760px) { .retratos.resumen { grid-template-columns: repeat(3, 1fr); } }
   .retratos figure { margin: 0; background: #0f0d0c; }
   .retratos img { display: block; width: 100%; height: auto; }
-  .retratos .credito { grid-column: 1 / -1; margin: 4px 0 0; }
 </style>
