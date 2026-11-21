@@ -1,0 +1,18 @@
+---
+/** Video vertical alojado en el propio sitio (reels): no carga hasta que la persona lo reproduce. */
+import type { Recap } from '../lib/eventos';
+interface Props { r: Recap }
+const { r } = Astro.props;
+---
+<figure class="vv">
+  <video controls playsinline preload="none" poster={r.poster.src} width="720" height="1280" aria-label={r.titulo}>
+    <source src={r.mp4} type="video/mp4" />
+  </video>
+  <figcaption><b>{r.titulo}</b><span>{r.nota}</span></figcaption>
+</figure>
+<style>
+  .vv { margin: 0; display: grid; gap: 10px; align-content: start; }
+  .vv video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #0f0d0c; border-radius: var(--radio); }
+  .vv figcaption { display: grid; gap: 4px; font-size: .88rem; line-height: 1.4; color: var(--texto-2); }
+  .vv figcaption b { color: var(--texto); font-weight: 600; }
+</style>

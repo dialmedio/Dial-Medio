@@ -12,6 +12,8 @@ import { CARRUSELES } from '../lib/muestras';
 import { FOTO_SERVICIO, credito } from '../lib/cine';
 import { OBRAS, rutaServicio } from '../lib/servicios';
 import { GALERIA_RETRATOS } from '../lib/retratos';
+import VideoVertical from './VideoVertical.astro';
+import { RECAPS, RECAPS_PIE } from '../lib/eventos';
 import { dos } from '../lib/util';
 
 interface Props {
@@ -91,6 +93,14 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
       )
     }
     {
+      s.id === 'eventos' && (
+        <div class="recaps" data-revela>
+          {RECAPS.map((r) => <VideoVertical r={r} />)}
+          <p class="credito"><b>Trabajo nuestro</b><span>{RECAPS_PIE}</span></p>
+        </div>
+      )
+    }
+    {
       s.id === 'diseno' && (
         <div class="laminas" data-revela>
           {CARRUSELES.map((c) => <CarruselMuestra c={c} />)}
@@ -147,6 +157,8 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
   .serv-obras.tres figure:first-of-type { grid-column: 1 / -1; }
   .serv-obras figure { margin: 0; display: grid; gap: 6px; }
   .serv-obras figcaption { font-size: .85rem; color: var(--texto-2); line-height: 1.35; }
+  .recaps { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; max-width: 760px; }
+  .recaps .credito { grid-column: 1 / -1; margin: 0; }
   .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
   @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
   .laminas .credito { grid-column: 1 / -1; margin: 0; }

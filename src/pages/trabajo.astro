@@ -11,6 +11,8 @@ import CTAFinal from '../components/CTAFinal.astro';
 import { FOTOS, credito } from '../lib/cine';
 import { anio, type Video } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
+import VideoVertical from '../components/VideoVertical.astro';
+import { RECAPS } from '../lib/eventos';
 
 type Pieza = { titulo: string; video: Video; href?: string; rotulo: string; meta: string };
 
@@ -104,6 +106,18 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
     ))
   }
 
+  <section class="seccion compacta tema-hueso" id="eventos">
+    <div class="contenedor">
+      <header class="cabeza doble">
+        <div data-revela><h2 class="display d-3">Cubrimiento de eventos sociales</h2></div>
+        <p class="texto-2" data-revela>Dos recaps verticales, pensados para redes, de las clases que dieron Joyce Rivas y Anguley Isaza en el Museo Nacional en medio de los plantones por la censura de piezas del museo.</p>
+      </header>
+      <div class="recaps">
+        {RECAPS.map((r) => <div data-revela><VideoVertical r={r} /></div>)}
+      </div>
+    </div>
+  </section>
+
   {
     enCurso.length > 0 && (
       <section class="seccion compacta tema-carbon grano" id="en-curso">
@@ -137,6 +151,7 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
     .obras.impar > .obra:first-child { grid-column: 1 / -1; }
   }
   @media (min-width: 1100px) { .obras.tres { grid-template-columns: repeat(3, 1fr); } }
+  .recaps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 20px; max-width: 760px; }
   .obra { display: grid; gap: 10px; align-content: start; }
   .destacada .contenedor { display: grid; gap: 28px 56px; align-items: end; }
   @media (min-width: 1040px) { .destacada .contenedor { grid-template-columns: minmax(0, 1.9fr) minmax(0, 1fr); } }
