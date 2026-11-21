@@ -62,7 +62,7 @@ const fotogramas = [FOTOS.paramoFigura, FOTOS.camaraLuz, FOTOS.retratoAndino, FO
 
 // Campañas se ilustra con carruseles propios (los eligió Martín, src/lib/muestras.ts).
 const laminas = ['quintin-lame', 'museo-nacional', 'tina-modotti'].map((id) => carrusel(id).laminas[0]);
-const CORTO: Record<string, string> = { documental: 'Documental', diseno: 'Campañas', publicidad: 'Publicidad', musica: 'Videoclips', eventos: 'Eventos', divulgacion: 'Divulgación' };
+const CORTO: Record<string, string> = { documental: 'Documental', diseno: 'Campañas', publicidad: 'Publicidad', musica: 'Videoclips', eventos: 'Eventos', divulgacion: 'Divulgación', retratos: 'Retratos' };
 const dialServicios = servicios.map((s) => ({ id: s.id, titulo: s.data.titulo, corto: CORTO[s.id] ?? s.data.titulo, gancho: s.data.gancho, href: rutaServicio(s) }));
 const ruta = Object.fromEntries(servicios.map((s) => [s.id, rutaServicio(s)]));
 
@@ -229,7 +229,7 @@ const distintos = [
       <ol class="servicios">
         {
           servicios.map((s, i) => (
-            <li data-revela style={`--retraso:${(i % 3) * 0.06}s`}>
+            <li data-revela class:list={{ ancho: servicios.length % 2 === 1 && i === servicios.length - 1 }} style={`--retraso:${(i % 3) * 0.06}s`}>
               <a href={ruta[s.id]} class="servicio">
                 {s.id === 'diseno' ? (
                   <span class="servicio-foto servicio-laminas">
@@ -238,7 +238,7 @@ const distintos = [
                   </span>
                 ) : FOTO_SERVICIO[s.id] ? (
                   <span class="servicio-foto">
-                    <Image src={FOTO_SERVICIO[s.id].src} alt="" widths={[480, 800, 1100]} sizes="(min-width: 1100px) 31vw, (min-width: 760px) 48vw, 100vw" style={FOTO_SERVICIO[s.id].foco ? `object-position:${FOTO_SERVICIO[s.id].foco}` : undefined} />
+                    <Image src={FOTO_SERVICIO[s.id].src} alt="" widths={[480, 800, 1100, 1600, 2200]} sizes={servicios.length % 2 === 1 && i === servicios.length - 1 ? '(min-width: 760px) 92vw, 100vw' : '(min-width: 1100px) 31vw, (min-width: 760px) 48vw, 100vw'} style={FOTO_SERVICIO[s.id].foco ? `object-position:${FOTO_SERVICIO[s.id].foco}` : undefined} />
                   </span>
                 ) : null}
                 <span class="servicio-n">{dos(i + 1)}</span>
@@ -409,6 +409,11 @@ const distintos = [
   @media (min-width: 760px) { .servicios { grid-template-columns: repeat(2, 1fr); } }
   @media (min-width: 1100px) { .servicios { grid-template-columns: repeat(3, 1fr); } }
   .servicios li { display: grid; }
+  /* Con un número impar de servicios, el último va a todo el ancho (foto ancha), así la rejilla no deja huecos. */
+  @media (min-width: 760px) {
+    .servicios li.ancho { grid-column: 1 / -1; }
+    .servicios li.ancho .servicio-foto { aspect-ratio: 2.39 / 1; }
+  }
   .servicio { display: grid; gap: 10px; align-content: start; text-decoration: none; }
   .servicio-foto { display: block; aspect-ratio: 16 / 10; overflow: hidden; background: #0f0d0c; margin-bottom: 8px; }
   .servicio-foto :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }

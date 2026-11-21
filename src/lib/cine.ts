@@ -28,8 +28,10 @@ import celular from '../assets/cine/celular.jpg';
 import barista from '../assets/cine/barista.jpg';
 import carta from '../assets/cine/carta.jpg';
 import moda from '../assets/cine/moda.jpg';
+import { PORTADA_RETRATOS } from './retratos';
 
-export type Foto = { src: ImageMetadata; alt: string; autor: string; lugar?: string; foco?: string };
+// `propia` = foto de Dial (no de Unsplash): el crédito y el rótulo cambian (21 nov 2026, retratos).
+export type Foto = { src: ImageMetadata; alt: string; autor: string; lugar?: string; foco?: string; propia?: boolean };
 
 export const FOTOS = {
   paramoFigura: { src: paramoFigura, alt: 'Una mujer con poncho mira el páramo junto a una llama', autor: 'Terra Sur Travels', lugar: 'Andes de Ecuador', foco: '62% 50%' },
@@ -56,7 +58,7 @@ export const FOTOS = {
   moda: { src: moda, alt: 'Una maquilladora prepara a una modelo en un estudio blanco', autor: 'Vitaly Gariev' },
 } satisfies Record<string, Foto>;
 
-export const credito = (f: Foto) => `${f.lugar ? f.lugar + ' · ' : ''}Foto: ${f.autor} / Unsplash`;
+export const credito = (f: Foto) => `${f.lugar ? f.lugar + ' · ' : ''}Foto: ${f.autor}${f.propia ? ' · Dial' : ' / Unsplash'}`;
 
 /** Imagen de cada servicio en /servicios. En la portada, Campañas muestra láminas propias sobre el afiche. */
 export const FOTO_SERVICIO: Record<string, Foto> = {
@@ -66,4 +68,5 @@ export const FOTO_SERVICIO: Record<string, Foto> = {
   eventos: FOTOS.concierto,
   divulgacion: FOTOS.manos,
   diseno: FOTOS.chef,
+  retratos: PORTADA_RETRATOS,
 };

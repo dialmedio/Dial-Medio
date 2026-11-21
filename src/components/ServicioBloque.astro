@@ -11,6 +11,7 @@ import CarruselMuestra from './CarruselMuestra.astro';
 import { CARRUSELES } from '../lib/muestras';
 import { FOTO_SERVICIO, credito } from '../lib/cine';
 import { OBRAS, rutaServicio } from '../lib/servicios';
+import { GALERIA_RETRATOS } from '../lib/retratos';
 import { dos } from '../lib/util';
 
 interface Props {
@@ -33,7 +34,7 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
         <div class="fotograma">
           <Image src={foto.src} alt={foto.alt} widths={[800, 1400, 2200]} sizes="100vw" style={foto.foco ? `object-position:${foto.foco}` : undefined} />
         </div>
-        <figcaption class="contenedor credito"><b>Imagen de referencia</b><span>{credito(foto)}</span></figcaption>
+        <figcaption class="contenedor credito"><b>{foto.propia ? 'Trabajo nuestro' : 'Imagen de referencia'}</b><span>{credito(foto)}</span></figcaption>
       </figure>
     )
   }
@@ -77,6 +78,18 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
         {resumen && <a href={rutaServicio(s)} class="enlace">Ver {s.data.titulo.toLowerCase()} <span>→</span></a>}
       </div>
     </div>
+    {
+      s.id === 'retratos' && (
+        <div class="retratos" data-revela>
+          {GALERIA_RETRATOS.map((f, j) => (
+            <figure class:list={{ ancha: j === 0 }}>
+              <Image src={f.src} alt={f.alt} widths={[640, 1100, 1800, 2560]} sizes={j === 0 ? '(min-width: 1300px) 1200px, 100vw' : '(min-width: 1300px) 600px, (min-width: 700px) 50vw, 100vw'} />
+            </figure>
+          ))}
+          <p class="credito"><b>Trabajo nuestro</b><span>Secuencia en un humedal, 2026. Fotos de Martín Perea Tobón.</span></p>
+        </div>
+      )
+    }
     {
       s.id === 'diseno' && (
         <div class="laminas" data-revela>
@@ -137,4 +150,10 @@ const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.tex
   .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
   @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
   .laminas .credito { grid-column: 1 / -1; margin: 0; }
+  /* Retratos: galería de la sesión (fotos 16:9 tal como salieron de la edición). */
+  .retratos { grid-column: 1 / -1; display: grid; gap: 12px; }
+  @media (min-width: 700px) { .retratos { grid-template-columns: repeat(2, 1fr); } .retratos .ancha { grid-column: 1 / -1; } }
+  .retratos figure { margin: 0; background: #0f0d0c; }
+  .retratos img { display: block; width: 100%; height: auto; }
+  .retratos .credito { grid-column: 1 / -1; margin: 4px 0 0; }
 </style>
