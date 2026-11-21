@@ -8,7 +8,7 @@
 import { dos } from '../lib/util';
 
 interface Props {
-  servicios: { id: string; titulo: string; corto: string; gancho?: string }[];
+  servicios: { id: string; titulo: string; corto: string; gancho?: string; href: string }[];
 }
 const { servicios } = Astro.props;
 const n = servicios.length;
@@ -22,7 +22,7 @@ const ticks = Array.from({ length: 85 }, (_, i) => ({ x: (i / 84) * 100, mayor: 
   <div class="ds-panel" aria-live="polite">
     {
       servicios.map((s, i) => (
-        <a href={`/servicios#${s.id}`} class:list={['ds-item', { activa: i === 0 }]} data-i={i} tabindex="-1">
+        <a href={s.href} class:list={['ds-item', { activa: i === 0 }]} data-i={i} tabindex="-1">
           <span class="ds-n">{dos(i + 1)} · {frec(i)} AM</span>
           <span class="ds-titulo">{s.titulo}</span>
           {s.gancho && <span class="ds-gancho">{s.gancho}</span>}
@@ -38,7 +38,7 @@ const ticks = Array.from({ length: 85 }, (_, i) => ({ x: (i / 84) * 100, mayor: 
     </div>
     {
       servicios.map((s, i) => (
-        <a href={`/servicios#${s.id}`} class:list={['ds-estacion', { activa: i === 0 }]} style={`left:${pos(i)}%`} data-i={i} data-pos={pos(i)}>
+        <a href={s.href} class:list={['ds-estacion', { activa: i === 0 }]} style={`left:${pos(i)}%`} data-i={i} data-pos={pos(i)}>
           <span class="ds-frec">{frec(i)}</span>
           <span class="ds-nombre">{s.corto}</span>
         </a>

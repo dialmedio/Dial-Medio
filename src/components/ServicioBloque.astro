@@ -1,0 +1,140 @@
+---
+/**
+ * Un servicio: trabajo nuestro, qué incluye y qué recibes (antes vivía solo en /servicios).
+ * modo 'resumen' = /servicios (foto de cabecera, título y enlace a la página propia);
+ * modo 'pagina'  = /servicios/<slug> (la foto y el título van en la portada; aquí el gancho y el texto largo).
+ */
+import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import VideoLite from './VideoLite.astro';
+import CarruselMuestra from './CarruselMuestra.astro';
+import { CARRUSELES } from '../lib/muestras';
+import { FOTO_SERVICIO, credito } from '../lib/cine';
+import { OBRAS, rutaServicio } from '../lib/servicios';
+import { dos } from '../lib/util';
+
+interface Props {
+  s: CollectionEntry<'servicios'>;
+  i: number;
+  modo?: 'resumen' | 'pagina';
+}
+const { s, i, modo = 'resumen' } = Astro.props;
+const resumen = modo === 'resumen';
+const foto = resumen ? FOTO_SERVICIO[s.id] : undefined;
+const obras = OBRAS[s.id];
+const para = s.data.paraQuien.charAt(0).toLowerCase() + s.data.paraQuien.slice(1).replace(/\.$/, '');
+const parrafos = resumen || !s.data.texto.length ? [s.data.resumen] : s.data.texto;
+---
+
+<section class:list={['seccion', 'compacta', 'serv-sec', i % 2 ? 'tema-hueso' : 'tema-papel']} id={resumen ? s.id : 'detalle'}>
+  {
+    foto && (
+      <figure class="serv-foto" data-revela>
+        <div class="fotograma">
+          <Image src={foto.src} alt={foto.alt} widths={[800, 1400, 2200]} sizes="100vw" style={foto.foco ? `object-position:${foto.foco}` : undefined} />
+        </div>
+        <figcaption class="contenedor credito"><b>Imagen de referencia</b><span>{credito(foto)}</span></figcaption>
+      </figure>
+    )
+  }
+  <div class="contenedor serv">
+    <div class="serv-cabeza" data-revela>
+      <p class="kicker">{resumen ? `${dos(i + 1)} · ` : ''}Para {para}</p>
+      {
+        resumen ? (
+          <h2 class="display d-3"><a href={rutaServicio(s)} class="serv-titulo">{s.data.titulo}</a></h2>
+        ) : (
+          s.data.gancho && <h2 class="display d-3">{s.data.gancho}</h2>
+        )
+      }
+      {resumen && s.data.gancho && <p class="gancho serv-gancho">{s.data.gancho}</p>}
+      {
+        obras && (
+          <div class:list={['serv-obras', { tres: obras.obras.length === 3 }]}>
+            <p class="rotulo">{obras.rotulo}</p>
+            {obras.obras.map((o) => (
+              <figure>
+                <VideoLite video={{ plataforma: 'youtube', id: o.id }} titulo={o.titulo} />
+                <figcaption>{o.titulo}</figcaption>
+              </figure>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <div class="serv-cuerpo" data-revela style="--retraso:.08s">
+      {parrafos.map((p, j) => <p class:list={{ lead: j === 0, 'texto-largo': j > 0 }}>{p}</p>)}
+      <div class="serv-incluye">
+        <p class="rotulo">Incluye</p>
+        <ol class="recorrido">{s.data.incluye.map((x, j) => <li><span class="n">{dos(j + 1)}</span><span class="t">{x}</span></li>)}</ol>
+      </div>
+      <div class="serv-recibes">
+        <p class="rotulo">Recibes</p>
+        <ul>{s.data.entregables.map((x) => <li>{x}</li>)}</ul>
+      </div>
+      <div class="serv-acciones">
+        <a href={`/contacto?servicio=${s.id}`} class="enlace">Cotizar este servicio <span>→</span></a>
+        {resumen && <a href={rutaServicio(s)} class="enlace">Ver {s.data.titulo.toLowerCase()} <span>→</span></a>}
+      </div>
+    </div>
+    {
+      s.id === 'diseno' && (
+        <div class="laminas" data-revela>
+          {CARRUSELES.map((c) => <CarruselMuestra c={c} />)}
+          <p class="credito"><b>Muestras</b><span>Carruseles que Dial diseñó y publicó en 2026. Pasa el mouse por encima para ver las láminas.</span></p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .serv-sec { padding-top: 0; }
+  .serv-sec:first-of-type { padding-top: 0; }
+  .serv-foto { margin: 0 0 clamp(40px, 5vw, 72px); }
+  .serv-foto .fotograma { aspect-ratio: 2.39 / 1; }
+  @media (max-width: 640px) { .serv-foto .fotograma { aspect-ratio: 16 / 10; } }
+  .serv-foto .credito { margin-top: 10px; }
+  .serv-sec:not(:has(.serv-foto)) { padding-top: calc(var(--seccion) * .62); }
+  .serv { display: grid; gap: 28px 72px; }
+  @media (min-width: 980px) { .serv { grid-template-columns: 1fr 1.25fr; } }
+  .serv-cabeza { display: grid; gap: 16px; align-content: start; }
+  .serv-cabeza p { margin: 0; }
+  .serv-titulo { color: inherit; text-decoration: none; }
+  .serv-titulo:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .12em; }
+  .serv-gancho { font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); color: var(--texto-2); max-width: 26ch; }
+  .serv-cuerpo { display: grid; gap: 26px; justify-items: start; }
+  .serv-cuerpo .lead, .serv-cuerpo .texto-largo { margin: 0; max-width: 58ch; }
+  .serv-cuerpo .texto-largo { color: var(--texto-2); }
+  .serv-acciones { display: flex; flex-wrap: wrap; gap: 12px 32px; }
+  /* Incluye: un recorrido sobre la línea del dial (marcas cortas y un punto por paso), no una lista con viñetas. */
+  .serv-incluye, .serv-recibes { width: 100%; display: grid; gap: 14px; }
+  .serv-incluye .rotulo, .serv-recibes .rotulo { margin: 0; }
+  .recorrido { list-style: none; margin: 0; padding: 0 0 0 22px; display: grid; gap: 0; position: relative;
+    background: repeating-linear-gradient(to bottom, var(--borde) 0 1px, transparent 1px 12px) 0 0 / 7px 100% no-repeat; }
+  .recorrido::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; border-left: 1px solid var(--borde); }
+  .recorrido li { position: relative; display: grid; grid-template-columns: 2.4em 1fr; align-items: baseline; padding: 11px 0; }
+  .recorrido li::before { content: ''; position: absolute; left: -25px; top: 50%; width: 7px; height: 7px; margin-top: -3px; border-radius: 50%; background: var(--acento-texto); transition: transform .3s var(--ease); }
+  .recorrido li:hover::before { transform: scale(1.6); }
+  .recorrido .n { font-family: var(--f-display); font-style: italic; color: var(--acento-texto); font-size: 1.05rem; }
+  .recorrido .t { font-family: var(--f-display); font-size: clamp(1.1rem, 1rem + .35vw, 1.3rem); line-height: 1.3; }
+  /* Recibes: lo que se entrega, en una franja oscura, como la cartela final de una película. */
+  .serv-recibes { background: var(--caja); color: var(--caja-texto); padding: 22px 24px 24px; }
+  .serv-recibes .rotulo { color: var(--caja-acento); }
+  .serv-recibes ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .serv-recibes li { padding: 12px 0; border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent); font-family: var(--f-display); font-size: clamp(1.15rem, 1rem + .45vw, 1.45rem); line-height: 1.25; }
+  .serv-recibes li:first-child { border-top: 0; padding-top: 4px; }
+  @media (min-width: 700px) {
+    .serv-recibes ul { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0 28px; }
+    .serv-recibes li, .serv-recibes li:first-child { border-top: 0; border-left: 1px solid color-mix(in srgb, currentColor 18%, transparent); padding: 4px 0 4px 16px; }
+  }
+  /* Trabajo nuestro junto al servicio. */
+  .serv-obras { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 12px; margin-top: 18px; }
+  .serv-obras .rotulo { grid-column: 1 / -1; margin: 0; }
+  .serv-obras.tres figure:first-of-type { grid-column: 1 / -1; }
+  .serv-obras figure { margin: 0; display: grid; gap: 6px; }
+  .serv-obras figcaption { font-size: .85rem; color: var(--texto-2); line-height: 1.35; }
+  .laminas { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 16px; }
+  @media (min-width: 980px) { .laminas { grid-template-columns: repeat(4, 1fr); } }
+  .laminas .credito { grid-column: 1 / -1; margin: 0; }
+</style>

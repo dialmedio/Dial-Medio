@@ -8,10 +8,11 @@ import Simbolo from '../components/Simbolo.astro';
 import VideoLite from '../components/VideoLite.astro';
 import sitio from '../data/sitio.json';
 import { whatsapp } from '../lib/util';
+import { rutaServicio } from '../lib/servicios';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 const debate = (await getCollection('medio', (m) => m.data.formato === 'debate' && m.data.destacado && !m.data.borrador))[0];
-const destino = (s: (typeof servicios)[number]) => `/servicios#${s.id}`;
+const destino = rutaServicio;
 ---
 
 <Base titulo="Bienvenida al boletín" noindex>

@@ -4,9 +4,14 @@ import Logo from './Logo.astro';
 import Boletin from './Boletin.astro';
 import sitio from '../data/sitio.json';
 import { NAV, whatsapp } from '../lib/util';
+import { getCollection } from 'astro:content';
+import { rutaServicio } from '../lib/servicios';
+
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
 const columnas = [
   { titulo: 'La productora', enlaces: [...NAV, { texto: 'Contacto', href: '/contacto' }, { texto: 'Manual de marca', href: '/marca' }] },
+  { titulo: 'Servicios', enlaces: servicios.map((s) => ({ texto: s.data.titulo, href: rutaServicio(s) })) },
   { titulo: 'Aliados', enlaces: sitio.aliados.map((a) => ({ texto: `${a.nombre} · ${a.rol}`, href: a.url, fuera: true })) },
 ];
 ---
@@ -90,5 +95,5 @@ const columnas = [
     display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; color: var(--hueso-2); font-size: .8rem;
   }
   @media (min-width: 700px) { .pie-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1040px) { .pie-grid { grid-template-columns: 1.5fr 1fr 1.1fr 1fr; } }
+  @media (min-width: 1040px) { .pie-grid { grid-template-columns: 1.4fr 1fr 1.1fr 1.1fr 1fr; } }
 </style>

@@ -21,6 +21,7 @@ import { rutaVideo } from '../lib/medio';
 import disco from '../assets/estudio/in-vitro-disco.jpg';
 import { FOTOS, FOTO_SERVICIO, credito } from '../lib/cine';
 import { OBRA } from '../lib/obra';
+import { rutaServicio } from '../lib/servicios';
 
 const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 
@@ -62,7 +63,8 @@ const fotogramas = [FOTOS.paramoFigura, FOTOS.camaraLuz, FOTOS.retratoAndino, FO
 // Campañas se ilustra con carruseles propios (los eligió Martín, src/lib/muestras.ts).
 const laminas = ['quintin-lame', 'museo-nacional', 'tina-modotti'].map((id) => carrusel(id).laminas[0]);
 const CORTO: Record<string, string> = { documental: 'Documental', diseno: 'Campañas', publicidad: 'Publicidad', musica: 'Videoclips', eventos: 'Eventos', divulgacion: 'Divulgación' };
-const dialServicios = servicios.map((s) => ({ id: s.id, titulo: s.data.titulo, corto: CORTO[s.id] ?? s.data.titulo, gancho: s.data.gancho }));
+const dialServicios = servicios.map((s) => ({ id: s.id, titulo: s.data.titulo, corto: CORTO[s.id] ?? s.data.titulo, gancho: s.data.gancho, href: rutaServicio(s) }));
+const ruta = Object.fromEntries(servicios.map((s) => [s.id, rutaServicio(s)]));
 
 const publicos = [
   {
@@ -104,8 +106,8 @@ const distintos = [
 ---
 
 <Base
-  titulo="Dial Medio · Productora audiovisual"
-  descripcion="Dial Medio es una productora audiovisual de Bogotá: campañas, publicidad, videoclips, eventos y documental, con la investigación de la RED Quynza y la música original de Fototoma."
+  titulo="Dial Medio · Productora audiovisual en Bogotá"
+  descripcion="Productora audiovisual en Bogotá: documentales, comerciales, videoclips, campañas para redes y cobertura de eventos, con investigación de la RED Quynza y música original de Fototoma."
   portada
 >
   <!-- HÉROE: fotogramas a sangre, sin bandas -->
@@ -161,7 +163,7 @@ const distintos = [
             <h2 class="display d-2" set:html={p.titulo} />
             <p class="texto-2">{p.texto}</p>
             <ul class="publico-enlaces">
-              {p.enlaces.map((id) => <li><a href={`/servicios#${id}`}>{nombre[id]}<span aria-hidden="true">→</span></a></li>)}
+              {p.enlaces.map((id) => <li><a href={ruta[id]}>{nombre[id]}<span aria-hidden="true">→</span></a></li>)}
             </ul>
           </div>
           <p class="credito publico-credito">{credito(p.foto)}</p>
@@ -186,7 +188,7 @@ const distintos = [
         <ol class="numerada campana-pasos">{campana.pasos.map((p) => <li data-revela><h3>{p.titulo}</h3><p>{p.texto}</p></li>)}</ol>
         <div class="acciones" data-revela>
           <a href="/contacto?servicio=diseno" class="btn">Cotiza tu campaña <span class="flecha">→</span></a>
-          <a href="/servicios#diseno" class="btn linea">Ver el servicio</a>
+          <a href={ruta.diseno} class="btn linea">Ver el servicio</a>
         </div>
       </div>
       <div class="campana-mosaico" data-revela>
@@ -228,7 +230,7 @@ const distintos = [
         {
           servicios.map((s, i) => (
             <li data-revela style={`--retraso:${(i % 3) * 0.06}s`}>
-              <a href={`/servicios#${s.id}`} class="servicio">
+              <a href={ruta[s.id]} class="servicio">
                 {s.id === 'diseno' ? (
                   <span class="servicio-foto servicio-laminas">
                     <Image src={FOTOS.afiche.src} alt="" class="laminas-fondo" widths={[480, 800, 1100]} sizes="(min-width: 1100px) 31vw, (min-width: 760px) 48vw, 100vw" />

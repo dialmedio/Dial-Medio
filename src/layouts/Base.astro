@@ -4,6 +4,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Interaccion from '../components/Interaccion.astro';
 import sitio from '../data/sitio.json';
+import { getCollection } from 'astro:content';
 
 interface Props {
   titulo?: string;
@@ -52,18 +53,38 @@ const imagenAbs = new URL(imagen, Astro.site);
 const imagenPropia = imagenAbs.hostname === Astro.site?.hostname;
 const imagenAlt = Astro.props.imagenAlt ?? (titulo ? `${titulo} — Dial Medio` : 'Dial Medio, productora audiovisual');
 
+// Datos estructurados de la productora (SEO, 21 nov 2026): ProfessionalService para búsquedas locales
+// («productora audiovisual Bogotá») con sus servicios, y WebSite para que Google muestre «Dial Medio» como nombre.
+const abs = (r: string) => new URL(r, Astro.site).toString();
+const servicios = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'Organization',
-  '@id': new URL('/#dial', Astro.site).toString(),
-  name: 'Dial Medio',
-  slogan: sitio.tagline,
-  description: sitio.descripcion,
-  url: Astro.site?.toString(),
-  logo: new URL('/favicon.svg', Astro.site).toString(),
-  email: sitio.correo,
-  address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressCountry: 'CO' },
-  sameAs: sitio.redes.map((r) => r.url),
+  '@graph': [
+    {
+      '@type': ['Organization', 'ProfessionalService'],
+      '@id': abs('/#dial'),
+      name: 'Dial Medio',
+      alternateName: 'Dial',
+      slogan: sitio.tagline,
+      description: sitio.descripcion,
+      url: abs('/'),
+      logo: abs('/marca/dial-perfil-medio-papel.png'),
+      image: abs('/og/inicio.jpg'),
+      email: sitio.correo,
+      telephone: '+' + sitio.whatsapp.numero,
+      address: { '@type': 'PostalAddress', addressLocality: 'Bogotá', addressRegion: 'Bogotá D.C.', addressCountry: 'CO' },
+      areaServed: [{ '@type': 'City', name: 'Bogotá' }, { '@type': 'Country', name: 'Colombia' }],
+      knowsAbout: ['Producción audiovisual', 'Documental', 'Video institucional', 'Publicidad', 'Videoclips', 'Cobertura de eventos', 'Campañas en redes sociales', 'Divulgación científica', 'Música original'],
+      knowsLanguage: ['es', 'en'],
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: 'Servicios de producción audiovisual',
+        itemListElement: servicios.map((s) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: s.data.titulo, url: abs(`/servicios/${s.data.ruta}`) } })),
+      },
+      sameAs: sitio.redes.map((r) => r.url),
+    },
+    { '@type': 'WebSite', '@id': abs('/#sitio'), name: 'Dial Medio', alternateName: 'Dial', url: abs('/'), inLanguage: 'es-CO', publisher: { '@id': abs('/#dial') } },
+  ],
 };
 ---
 

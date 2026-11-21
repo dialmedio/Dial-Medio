@@ -24,6 +24,15 @@ const servicios = defineCollection({
     paraQuien: z.string(),
     incluye: z.array(z.string()),
     entregables: z.array(z.string()),
+    // SEO (21 nov 2026): cada servicio tiene su página en /servicios/<slug>.
+    ruta: z.string(),
+    // Título y descripción para buscadores: con las palabras que la gente escribe en Google.
+    seoTitulo: z.string(),
+    seoDescripcion: z.string(),
+    // Párrafos que amplían el resumen en la página propia del servicio.
+    texto: z.array(z.string()).default([]),
+    // Preguntas frecuentes (también van como FAQPage en los datos estructurados).
+    preguntas: z.array(z.object({ pregunta: z.string(), respuesta: z.string() })).default([]),
   }),
 });
 

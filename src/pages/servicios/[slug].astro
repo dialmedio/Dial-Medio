@@ -1,0 +1,127 @@
+---
+/**
+ * Página propia de cada servicio (21 nov 2026, SEO): título y descripción con lo que la gente busca en Google
+ * («productora de videoclips en Bogotá», «cobertura de eventos»…), texto largo, preguntas frecuentes y datos
+ * estructurados (Service, FAQPage, BreadcrumbList). El contenido sale de src/content/servicios.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PortadaPagina from '../../components/PortadaPagina.astro';
+import ServicioBloque from '../../components/ServicioBloque.astro';
+import CTAFinal from '../../components/CTAFinal.astro';
+import { FOTO_SERVICIO, FOTOS } from '../../lib/cine';
+import { rutaServicio } from '../../lib/servicios';
+import { dos } from '../../lib/util';
+
+export async function getStaticPaths() {
+  const todos = (await getCollection('servicios')).sort((a, b) => a.data.orden - b.data.orden);
+  return todos.map((s, i) => ({ params: { slug: s.data.ruta }, props: { s, i, todos } }));
+}
+const { s, i, todos } = Astro.props;
+const d = s.data;
+const url = (r: string) => new URL(r, Astro.site).toString();
+const otros = todos.filter((x) => x.id !== s.id);
+
+const ld = {
+  '@graph': [
+    {
+      '@type': 'Service',
+      '@id': url(rutaServicio(s)) + '#servicio',
+      name: d.titulo,
+      serviceType: d.titulo,
+      description: d.seoDescripcion,
+      url: url(rutaServicio(s)),
+      provider: { '@id': url('/#dial') },
+      areaServed: [{ '@type': 'City', name: 'Bogotá' }, { '@type': 'Country', name: 'Colombia' }],
+      audience: { '@type': 'Audience', audienceType: d.paraQuien.replace(/\.$/, '') },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog',
+        name: `Qué incluye: ${d.titulo}`,
+        itemListElement: d.incluye.map((x) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: x } })),
+      },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: url('/') },
+        { '@type': 'ListItem', position: 2, name: 'Servicios', item: url('/servicios') },
+        { '@type': 'ListItem', position: 3, name: d.titulo, item: url(rutaServicio(s)) },
+      ],
+    },
+    ...(d.preguntas.length
+      ? [{
+          '@type': 'FAQPage',
+          mainEntity: d.preguntas.map((p) => ({ '@type': 'Question', name: p.pregunta, acceptedAnswer: { '@type': 'Answer', text: p.respuesta } })),
+        }]
+      : []),
+  ],
+};
+---
+
+<Base portada titulo={d.seoTitulo} descripcion={d.seoDescripcion} ld={ld} imagen="/og/estudio.jpg">
+  <PortadaPagina
+    kicker={`Servicios · ${dos(i + 1)}`}
+    titulo={d.titulo}
+    bajada={d.resumen}
+    imagen={FOTO_SERVICIO[s.id] ?? FOTOS.camaraLuz}
+  >
+    <nav class="migas" aria-label="Ruta"><a href="/">Inicio</a> <span aria-hidden="true">/</span> <a href="/servicios">Servicios</a></nav>
+  </PortadaPagina>
+
+  <ServicioBloque s={s} i={1} modo="pagina" />
+
+  {
+    d.preguntas.length > 0 && (
+      <section class="seccion tema-papel" id="preguntas">
+        <div class="contenedor preguntas">
+          <header data-revela>
+            <p class="kicker">Preguntas frecuentes</p>
+            <h2 class="display d-3">Lo que suelen <em>preguntarnos.</em></h2>
+          </header>
+          <div class="lista" data-revela style="--retraso:.08s">
+            {d.preguntas.map((p) => (
+              <details>
+                <summary>{p.pregunta}</summary>
+                <p>{p.respuesta}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="seccion compacta tema-hueso" id="otros">
+    <div class="contenedor">
+      <p class="kicker" data-revela>Otros servicios</p>
+      <ul class="otros" data-revela>
+        {otros.map((x) => (
+          <li><a href={rutaServicio(x)}><span class="titular t-3">{x.data.titulo}</span>{x.data.gancho && <span class="gancho">{x.data.gancho}</span>}</a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <CTAFinal titulo="¿Qué necesitas contar?" />
+</Base>
+
+<style>
+  .migas { margin-top: 18px; font-size: .9rem; color: var(--texto-2); }
+  .migas a { color: inherit; }
+  .preguntas { display: grid; gap: 28px 72px; }
+  @media (min-width: 980px) { .preguntas { grid-template-columns: 1fr 1.25fr; } }
+  .preguntas header p, .preguntas header h2 { margin: 0 0 14px; }
+  .lista { border-top: 1px solid var(--borde); }
+  .lista details { border-bottom: 1px solid var(--borde); }
+  .lista summary { cursor: pointer; list-style: none; padding: 18px 36px 18px 0; position: relative; font-family: var(--f-display); font-size: clamp(1.1rem, 1rem + .4vw, 1.35rem); line-height: 1.3; }
+  .lista summary::-webkit-details-marker { display: none; }
+  .lista summary::after { content: '+'; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--acento-texto); font-size: 1.4rem; transition: transform .25s var(--ease); }
+  .lista details[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+  .lista details p { margin: 0 0 20px; max-width: 60ch; color: var(--texto-2); }
+  .otros { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 0 40px; }
+  @media (min-width: 760px) { .otros { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .otros { grid-template-columns: repeat(3, 1fr); } }
+  .otros a { display: grid; gap: 6px; padding: 18px 0; border-top: 1px solid var(--borde); color: inherit; text-decoration: none; }
+  .otros a:hover .titular { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .12em; }
+  .otros .gancho { color: var(--texto-2); font-size: .98rem; }
+</style>
