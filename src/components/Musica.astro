@@ -36,8 +36,8 @@ const credito = `Música original de ${ELEGIDA.autor}`;
       cancelAnimationFrame(fundido);
       const desde = audio.volume, t0 = performance.now();
       const paso = (t: number) => {
-        const k = Math.min(1, (t - t0) / ms);
-        audio.volume = desde + (meta - desde) * k;
+        const k = Math.max(0, Math.min(1, (t - t0) / ms)); // el primer cuadro puede llegar antes de t0
+        audio.volume = Math.max(0, Math.min(1, desde + (meta - desde) * k));
         if (k < 1) fundido = requestAnimationFrame(paso);
         else alFinal?.();
       };
