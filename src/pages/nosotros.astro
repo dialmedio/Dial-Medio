@@ -14,6 +14,9 @@ import sitio from '../data/sitio.json';
 import { dos } from '../lib/util';
 
 const equipo = (await getCollection('equipo')).sort((a, b) => a.data.orden - b.data.orden);
+// Encuadre por persona cuando la foto original no la tiene al centro (21 nov 2026, pedido de Martín).
+// La de Arturo era cuadrada y con él a la derecha: se recortó a 4:5 (arturo-ramirez-valderrama-centrada.jpg).
+const FOCO: Record<string, string> = { 'martin-perea-tobon': '95% 20%' };
 const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', 'Pereira', 'Barranquilla', 'Cali', 'Popayán', 'Tres países de Asia'];
 ---
 
@@ -44,7 +47,7 @@ const lugares = ['Bogotá', 'Pacífico colombiano', 'San Basilio de Palenque', '
           equipo.map((p) => (
             <article class="persona" data-revela>
               {p.data.foto ? (
-                <Image src={p.data.foto} alt={p.data.nombre} widths={[400, 640]} sizes="(min-width: 980px) 24vw, (min-width: 640px) 45vw, 100vw" />
+                <Image src={p.data.foto} alt={p.data.nombre} widths={[400, 640]} sizes="(min-width: 980px) 24vw, (min-width: 640px) 45vw, 100vw" style={FOCO[p.id] ? `object-position:${FOCO[p.id]}` : undefined} />
               ) : (
                 <div class="sin-foto" aria-hidden="true" />
               )}
