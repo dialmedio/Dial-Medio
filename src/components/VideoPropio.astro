@@ -1,0 +1,50 @@
+---
+/**
+ * Video horizontal alojado en el propio sitio, con el mismo botón de reproducir que VideoLite.
+ * No descarga el video hasta que la persona le da reproducir.
+ * `encuadre="16:9"` lo recorta al formato de las demás piezas de una grilla (sin cortar los subtítulos).
+ */
+import { getImage } from 'astro:assets';
+import type { VideoPropio } from '../lib/paz';
+interface Props { v: VideoPropio; encuadre?: 'original' | '16:9' }
+const { v, encuadre = 'original' } = Astro.props;
+const poster = await getImage({ src: v.poster, width: 1280, format: 'jpg', quality: 80 });
+const ar = encuadre === '16:9' ? '16 / 9' : `${v.poster.width} / ${v.poster.height}`;
+---
+<div class:list={['vp', { recorte: encuadre === '16:9' }]} style={`--ar:${ar}`} data-vp>
+  <video playsinline preload="none" poster={poster.src} aria-label={v.titulo}>
+    <source src={v.mp4} type="video/mp4" />
+  </video>
+  <button type="button" class="vp-boton" aria-label={`Reproducir: ${v.titulo}`}>
+    <span class="vp-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor" /></svg></span>
+  </button>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-vp]').forEach((caja) => {
+    const video = caja.querySelector('video')!;
+    const boton = caja.querySelector<HTMLButtonElement>('.vp-boton')!;
+    boton.addEventListener('click', () => {
+      boton.hidden = true;
+      video.controls = true;
+      video.play().catch(() => {});
+    });
+  });
+</script>
+
+<style>
+  .vp { position: relative; aspect-ratio: var(--ar); background: #0f0d0c; overflow: hidden; border-radius: var(--radio); }
+  .vp video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* Los subtítulos van abajo: el recorte sale más de arriba que de abajo. */
+  .vp.recorte video { object-position: 50% 70%; }
+  .vp-boton { all: unset; position: absolute; inset: 0; cursor: pointer; display: grid; place-items: center; }
+  .vp-boton[hidden] { display: none; }
+  .vp-boton:focus-visible { outline: 2px solid var(--ambar); outline-offset: -4px; }
+  .vp-play {
+    width: clamp(56px, 7vw, 84px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+    background: var(--terracota); color: #f7f2ea; box-shadow: 0 0 0 0 rgba(193, 80, 46, 0.5);
+    transition: transform 0.4s var(--ease), box-shadow 0.6s var(--ease);
+  }
+  .vp-play svg { width: 42%; transform: translateX(6%); }
+  .vp:hover .vp-play { transform: scale(1.08); box-shadow: 0 0 0 14px rgba(193, 80, 46, 0.18); }
+</style>

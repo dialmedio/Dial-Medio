@@ -17,6 +17,10 @@ import sitio from '../../data/sitio.json';
         <a href="/trabajo" class="btn">Ver lo que hacemos <span class="flecha">→</span></a>
         <a href="/apoya" class="btn linea" data-volver hidden>Intentar de nuevo</a>
       </div>
+      <p class="letra-chica">
+        Dial es una productora, así que el aporte no es deducible de impuestos. Si quieres apoyar un proyecto en particular o aportar como organización,
+        <a href="/contacto">escríbenos</a>.
+      </p>
       <div class="gracias-boletin">
         <p class="kicker sin-linea"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
         <p class="texto-2">Para que sepas en qué se convierte tu aporte: {sitio.boletin.descripcion.toLowerCase()}</p>
@@ -63,6 +67,8 @@ import sitio from '../../data/sitio.json';
   .gracias-cuerpo :global(.gracias-simbolo) { width: 120px; margin-bottom: 12px; }
   .gracias h1 { max-width: 18ch; }
   .gracias .lead { margin: 0; max-width: 56ch; }
+  .letra-chica { margin: 0; max-width: 60ch; font-size: 0.85rem; color: var(--texto-2); }
+  .letra-chica a { color: inherit; }
   .gracias-boletin { display: grid; gap: 12px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--linea-clara); width: 100%; max-width: 560px; }
   .gracias-boletin p { margin: 0; }
 </style>

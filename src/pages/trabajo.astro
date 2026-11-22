@@ -13,8 +13,10 @@ import { anio, type Video } from '../lib/util';
 import { rutaVideo } from '../lib/medio';
 import VideoVertical from '../components/VideoVertical.astro';
 import { RECAPS } from '../lib/eventos';
+import VideoPropio from '../components/VideoPropio.astro';
+import { PAZ_JORDAN, type VideoPropio as Propio } from '../lib/paz';
 
-type Pieza = { titulo: string; video: Video; href?: string; rotulo: string; meta: string };
+type Pieza = { titulo: string; video?: Video; propio?: Propio; href?: string; rotulo: string; meta: string };
 
 // Currulao no va: su miniatura es una foto que no es de Dial (Martín, 1 nov 2026).
 const medio = (await getCollection('medio', (m) => !m.data.borrador && m.data.estado === 'publicado' && !!m.data.video && m.data.formato !== 'clip' && m.id !== 'currulao-musicas-del-pacifico-sur'))
@@ -36,6 +38,8 @@ const grupos: { id: string; titulo: string; texto: string; piezas: Pieza[] }[] =
     titulo: 'Documental y conversación',
     texto: 'Obra propia investigada y filmada por Dial, debates entre personas que piensan distinto y el podcast que hacemos con la RED Quynza.',
     piezas: [
+      // Serie de preguntas en la calle (22 nov 2026): Martín la quiere visible en el portafolio.
+      { titulo: PAZ_JORDAN.titulo, propio: PAZ_JORDAN, href: PAZ_JORDAN.instagram, rotulo: 'Serie · ¿Qué es la paz?', meta: 'Reel en Instagram · 2026' },
       ...medio.filter((m) => m.data.formato === 'documental').map((m) => deMedio(m, m.data.serie ?? 'Documental')),
       ...medio.filter((m) => m.data.formato === 'debate' || m.data.formato === 'videopodcast').map((m) => deMedio(m, m.data.formato === 'debate' ? 'Debate' : 'Videopodcast · con la RED Quynza')),
       // Popayán va al final: es un ejercicio de montaje con material ajeno (Martín, 19 nov 2026).
@@ -94,7 +98,7 @@ const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.
           <div class:list={['obras', { tres: g.piezas.length % 3 === 0, impar: g.piezas.length % 3 !== 0 && g.piezas.length % 2 === 1 }]}>
             {g.piezas.map((t) => (
               <article class="obra" data-revela>
-                <VideoLite video={t.video} titulo={t.titulo} />
+                {t.propio ? <VideoPropio v={t.propio} encuadre="16:9" /> : <VideoLite video={t.video!} titulo={t.titulo} />}
                 <p class="rotulo">{t.rotulo}</p>
                 <h3 class="titular t-3">{t.href ? <a href={t.href}>{t.titulo}</a> : t.titulo}</h3>
                 {t.meta && <p class="datos"><span>{t.meta}</span></p>}

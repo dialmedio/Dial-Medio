@@ -5,21 +5,15 @@
  * 2) Tarjeta, PSE o Nequi con Wompi (worker/index.ts → /api/apoyo). El bloque solo
  *    aparece cuando el worker tiene WOMPI_PUBLIC_KEY y WOMPI_INTEGRITY_SECRET.
  */
-import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PortadaPagina from '../components/PortadaPagina.astro';
 import sitio from '../data/sitio.json';
 import { FOTOS } from '../lib/cine';
+import VideoPropio from '../components/VideoPropio.astro';
+import { PAZ_JORDAN } from '../lib/paz';
 
 const { llave, titular, montos } = sitio.apoyo;
 const llaveVisible = llave.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
-
-const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.estado !== 'publicado')).map((m) => ({
-  titulo: m.data.titulo,
-  estado: m.data.estado === 'en-posproduccion' ? 'En posproducción' : 'En preparación',
-  resumen: m.data.resumen,
-  lugar: m.data.lugar,
-}));
 
 const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
 ---
@@ -32,7 +26,7 @@ const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
     kicker="Apoya a Dial"
     titulo="Ayúdanos a seguir <em>filmando.</em>"
     bajada="Además de los encargos, en Dial hacemos obra propia: documentales sobre la historia y la vida social de Colombia. Esas piezas no tienen cliente. Las sostienen las personas que las ven y quieren que haya más."
-    indice={[{ texto: 'Cómo aportar', href: '#llave' }, ...(enCurso.length ? [{ texto: 'Qué sostienes', href: '#en-curso' }] : []), { texto: 'Para que quede claro', href: '#claro' }]}
+    indice={[{ texto: 'Desde tu banco', href: '#llave' }, { texto: 'Tarjeta o PSE', href: '#wompi' }, { texto: 'Lo que hacemos', href: '#mision' }]}
     imagen={FOTOS.campoCiudad}
   />
 
@@ -94,45 +88,36 @@ const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
           investigación. Lo que aportas aquí va a la obra de Dial.
         </p>
         <button type="submit" class="btn">Aportar con Wompi <span class="flecha">→</span></button>
+        <p class="letra-chica">Aporte voluntario y no reembolsable.</p>
         <p class="form-estado" role="status" aria-live="polite" data-estado></p>
       </form>
     </div>
   </section>
 
-  {
-    enCurso.length > 0 && (
-      <section class="seccion compacta tema-carbon grano" id="en-curso">
-        <div class="contenedor">
-          <header class="cabeza">
-            <p class="kicker vivo">Qué sostienes</p>
-            <h2 class="display d-3">Lo que tenemos <em>en marcha.</em></h2>
-          </header>
-          <ul class="creditos">
-            {enCurso.map((e) => (
-              <li>
-                <span class="rol">{e.estado}{e.lugar && ` · ${e.lugar}`}</span>
-                <p class="nombre">{e.titulo}</p>
-                <p class="texto-2 en-curso-txt">{e.resumen}</p>
-              </li>
-            ))}
-          </ul>
-          <a href="/trabajo" class="btn linea">Ver lo que ya hicimos <span class="flecha">→</span></a>
-        </div>
-      </section>
-    )
-  }
-
-  <section class="seccion compacta tema-papel" id="claro">
-    <div class="contenedor"><div class="claro">
-      <p class="kicker sin-linea">Para que quede claro</p>
-      <ul class="texto-2">
-        <li>Es un aporte voluntario, sin contraprestación y no reembolsable.</li>
-        <li>Los pagos en línea los recibe por ahora la cuenta de Wompi de la RED Quynza, aliada de Dial; por eso el comprobante de Wompi dice «Red Quynza». Los aportes con la llave llegan directo.</li>
-        <li>Dial es una productora, no una fundación: el aporte no es deducible de impuestos.</li>
-        <li>Lo usamos en la obra propia: viajes, equipos, investigación y montaje.</li>
-        <li>¿Quieres apoyar un proyecto en particular o aportar como organización? <a href="/contacto">Escríbenos</a>.</li>
-      </ul>
-    </div></div>
+  <section class="seccion compacta tema-carbon grano" id="mision">
+    <div class="contenedor mision">
+      <figure class="mision-foto">
+        <VideoPropio v={PAZ_JORDAN} />
+        <figcaption class="credito"><span>De la serie <em>¿Qué es la paz?</em>, preguntas en la calle. <a href={PAZ_JORDAN.instagram} target="_blank" rel="noopener">Verla en Instagram ↗</a></span></figcaption>
+      </figure>
+      <div class="mision-texto">
+        <p class="kicker vivo">Lo que hacemos</p>
+        <h2 class="display d-3">Lo que la gente quiere es <em>vivir.</em></h2>
+        <p class="lead">
+          En Dial hacemos documentales sobre la gente: cómo vive, qué ha pasado y qué entiende por paz en un país que lleva décadas buscándola.
+        </p>
+        <p class="texto-2">
+          Salimos a la calle, a los barrios y a las veredas a preguntar y a escuchar con calma. Filmamos con tiempo, para que quien habla se sienta
+          escuchado y quien ve pueda ponerse en su lugar.
+        </p>
+        <p class="texto-2">
+          Investigamos en diálogo con la <a href="https://redquynza.org" target="_blank" rel="noopener">RED Quynza</a>, una red de investigadoras e
+          investigadores de universidades de todo el país que estudia la paz y la violencia en las ciudades de Colombia. Con ella hacemos el podcast <em>Lo que la gente quiere es vivir</em>,
+          y de ahí sale el título de esta sección.
+        </p>
+        <p class="texto-2">Tu aporte paga los viajes y las horas de montaje que piezas así necesitan.</p>
+      </div>
+    </div>
   </section>
 </Base>
 
@@ -229,12 +214,17 @@ const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
   .aviso { margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--texto-2); border-left: 2px solid var(--luz, #c0442a); padding-left: 14px; }
   .aviso strong { color: var(--texto, inherit); }
   .aviso a { color: inherit; }
-  .form-estado { margin: 0; min-height: 1.4em; }
+  .form-estado { margin: 0; }
+  .form-estado:empty { display: none; }
   .form-estado.error { color: var(--terracota-ink, #c0442a); }
 
-  .creditos { padding: 0; margin: 0 0 32px; }
-  .en-curso-txt { margin: 4px 0 0; max-width: 62ch; }
+  .letra-chica { margin: -8px 0 0; font-size: 0.85rem; color: var(--texto-2); }
 
-  .claro { display: grid; gap: 14px; max-width: 760px; }
-  .claro ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+  .mision { display: grid; gap: 40px 72px; align-items: center; }
+  @media (min-width: 1000px) { .mision { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
+  .mision-foto { margin: 0; display: grid; gap: 10px; }
+  .mision-foto .credito a { color: inherit; }
+  .mision-texto a { color: inherit; }
+  .mision-texto { display: grid; gap: 18px; justify-items: start; }
+  .mision-texto p { margin: 0; max-width: 60ch; }
 </style>
