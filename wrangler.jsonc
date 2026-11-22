@@ -17,5 +17,8 @@
   },
   "workers_dev": true,
   "preview_urls": false,
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Aportes en /apoya (worker/index.ts). Por ahora el comercio de Wompi es el de la RED Quynza.
+  // El secreto WOMPI_INTEGRITY_SECRET se pone con: bash scripts/activar-wompi.sh
+  "vars": { "WOMPI_PUBLIC_KEY": "pub_prod_Yz9ROtHkvKsiGQwAUqmTIqNUd5z4KkWf" }
 }

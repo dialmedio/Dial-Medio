@@ -1,0 +1,240 @@
+---
+/**
+ * Apoya a Dial (nov 2026): aportes voluntarios a la obra propia.
+ * 1) Transferencia directa con la llave Bre-B / Nequi (sin comisión).
+ * 2) Tarjeta, PSE o Nequi con Wompi (worker/index.ts → /api/apoyo). El bloque solo
+ *    aparece cuando el worker tiene WOMPI_PUBLIC_KEY y WOMPI_INTEGRITY_SECRET.
+ */
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PortadaPagina from '../components/PortadaPagina.astro';
+import sitio from '../data/sitio.json';
+import { FOTOS } from '../lib/cine';
+
+const { llave, titular, montos } = sitio.apoyo;
+const llaveVisible = llave.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+
+const enCurso = (await getCollection('medio', (m) => !m.data.borrador && m.data.estado !== 'publicado')).map((m) => ({
+  titulo: m.data.titulo,
+  estado: m.data.estado === 'en-posproduccion' ? 'En posproducción' : 'En preparación',
+  resumen: m.data.resumen,
+  lugar: m.data.lugar,
+}));
+
+const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
+---
+
+<Base
+  titulo="Apoya a Dial: aportes para el documental"
+  descripcion="Aporta a la obra propia de Dial Medio: documental y creación audiovisual sobre la historia y la vida social de Colombia. Por transferencia con llave, Nequi, tarjeta o PSE."
+>
+  <PortadaPagina
+    kicker="Apoya a Dial"
+    titulo="Ayúdanos a seguir <em>filmando.</em>"
+    bajada="Además de los encargos, en Dial hacemos obra propia: documentales sobre la historia y la vida social de Colombia. Esas piezas no tienen cliente. Las sostienen las personas que las ven y quieren que haya más."
+    indice={[{ texto: 'Cómo aportar', href: '#llave' }, ...(enCurso.length ? [{ texto: 'Qué sostienes', href: '#en-curso' }] : []), { texto: 'Para que quede claro', href: '#claro' }]}
+    imagen={FOTOS.campoCiudad}
+  />
+
+  <section class="seccion compacta tema-papel" id="llave">
+    <div class="contenedor dos">
+      <header class="cabeza">
+        <p class="kicker"><span class="acento">Sin comisión</span></p>
+        <h2 class="display d-3">Desde tu banco, con la <em>llave.</em></h2>
+        <p class="texto-2">La forma más directa: todo lo que envías llega completo. Funciona desde Nequi, Bancolombia y casi cualquier banco o billetera del país.</p>
+      </header>
+
+      <div class="llave-caja">
+        <p class="kicker sin-linea">Llave Bre-B y Nequi</p>
+        <p class="llave-num" data-llave={llave}>{llaveVisible}</p>
+        <button type="button" class="btn" data-copiar={llave}>Copiar la llave</button>
+        <ol class="pasos">
+          <li>Abre la app de tu banco y busca <strong>Transferir con llave</strong> (en Nequi, <strong>Envía</strong>).</li>
+          <li>Escribe el número y el valor que quieras aportar.</li>
+          <li>Antes de enviar verás el nombre de <strong>{titular}</strong>, director de Dial.</li>
+        </ol>
+        <p class="texto-2 nota">Si quieres que sepamos que fuiste tú, cuéntanos por <a href={`https://wa.me/${sitio.whatsapp.numero}?text=${encodeURIComponent('Hola, Martín. Acabo de hacer un aporte a Dial.')}`} target="_blank" rel="noopener">WhatsApp</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion compacta tema-hueso" id="wompi" data-wompi hidden>
+    <div class="contenedor dos">
+      <header class="cabeza">
+        <p class="kicker"><span class="acento">Tarjeta, PSE o Nequi</span></p>
+        <h2 class="display d-3">Un aporte en <em>línea.</em></h2>
+        <p class="texto-2">Elige el valor y paga en la página segura de Wompi, la pasarela de Bancolombia. Puedes usar tarjeta de crédito o débito, PSE, Nequi o tu cuenta Bancolombia.</p>
+      </header>
+
+      <form class="aporte" data-aporte novalidate>
+        <fieldset>
+          <legend class="kicker sin-linea">¿Cuánto quieres aportar?</legend>
+          <div class="montos">
+            {
+              montos.map((m, i) => (
+                <label class="monto">
+                  <input type="radio" name="monto" value={m} checked={i === 1} />
+                  <span>{pesos(m)}</span>
+                </label>
+              ))
+            }
+            <label class="monto">
+              <input type="radio" name="monto" value="otro" />
+              <span>Otro valor</span>
+            </label>
+          </div>
+        </fieldset>
+        <label class="campo" data-otro hidden>
+          <span>Valor en pesos (mínimo {pesos(sitio.apoyo.minimo)})</span>
+          <input name="otro" type="text" inputmode="numeric" autocomplete="off" placeholder="Ej.: 35.000" />
+        </label>
+        <p class="aviso">
+          <strong>En la página de pago verás «Red Quynza».</strong> Dial todavía no tiene cuenta propia en Wompi, así que por ahora
+          recibimos los aportes con la de la <a href="https://redquynza.org" target="_blank" rel="noopener">RED Quynza</a>, nuestra aliada de
+          investigación. Lo que aportas aquí va a la obra de Dial.
+        </p>
+        <button type="submit" class="btn">Aportar con Wompi <span class="flecha">→</span></button>
+        <p class="form-estado" role="status" aria-live="polite" data-estado></p>
+      </form>
+    </div>
+  </section>
+
+  {
+    enCurso.length > 0 && (
+      <section class="seccion compacta tema-carbon grano" id="en-curso">
+        <div class="contenedor">
+          <header class="cabeza">
+            <p class="kicker vivo">Qué sostienes</p>
+            <h2 class="display d-3">Lo que tenemos <em>en marcha.</em></h2>
+          </header>
+          <ul class="creditos">
+            {enCurso.map((e) => (
+              <li>
+                <span class="rol">{e.estado}{e.lugar && ` · ${e.lugar}`}</span>
+                <p class="nombre">{e.titulo}</p>
+                <p class="texto-2 en-curso-txt">{e.resumen}</p>
+              </li>
+            ))}
+          </ul>
+          <a href="/trabajo" class="btn linea">Ver lo que ya hicimos <span class="flecha">→</span></a>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="seccion compacta tema-papel" id="claro">
+    <div class="contenedor"><div class="claro">
+      <p class="kicker sin-linea">Para que quede claro</p>
+      <ul class="texto-2">
+        <li>Es un aporte voluntario, sin contraprestación y no reembolsable.</li>
+        <li>Los pagos en línea los recibe por ahora la cuenta de Wompi de la RED Quynza, aliada de Dial; por eso el comprobante de Wompi dice «Red Quynza». Los aportes con la llave llegan directo.</li>
+        <li>Dial es una productora, no una fundación: el aporte no es deducible de impuestos.</li>
+        <li>Lo usamos en la obra propia: viajes, equipos, investigación y montaje.</li>
+        <li>¿Quieres apoyar un proyecto en particular o aportar como organización? <a href="/contacto">Escríbenos</a>.</li>
+      </ul>
+    </div></div>
+  </section>
+</Base>
+
+<script>
+  // Copiar la llave
+  document.querySelectorAll<HTMLButtonElement>('[data-copiar]').forEach((b) => {
+    const original = b.textContent;
+    b.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(b.dataset.copiar!);
+        b.textContent = 'Llave copiada';
+      } catch {
+        b.textContent = 'Cópiala a mano';
+      }
+      setTimeout(() => (b.textContent = original), 2200);
+    });
+  });
+
+  // Wompi: el bloque solo se muestra si el worker ya tiene las llaves
+  const bloque = document.querySelector<HTMLElement>('[data-wompi]');
+  const form = document.querySelector<HTMLFormElement>('[data-aporte]');
+  const estado = document.querySelector<HTMLElement>('[data-estado]');
+  const otro = document.querySelector<HTMLElement>('[data-otro]');
+
+  fetch('/api/apoyo/config')
+    .then((r) => (r.ok ? r.json() : { activo: false }))
+    .then((c) => { if (c.activo && bloque) bloque.hidden = false; })
+    .catch(() => {});
+
+  if (form && estado && otro) {
+    form.addEventListener('change', () => {
+      const v = (form.elements.namedItem('monto') as RadioNodeList).value;
+      otro.hidden = v !== 'otro';
+      if (v === 'otro') otro.querySelector('input')?.focus();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      estado.className = 'form-estado';
+      const v = (form.elements.namedItem('monto') as RadioNodeList).value;
+      const monto = v === 'otro' ? Number(String((form.elements.namedItem('otro') as HTMLInputElement).value).replace(/\D/g, '')) : Number(v);
+      const boton = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+      boton.disabled = true;
+      estado.textContent = 'Abriendo Wompi…';
+      try {
+        const r = await fetch('/api/apoyo', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ monto }) });
+        const d = await r.json();
+        if (!r.ok || !d.url) throw new Error(d.error || 'error');
+        location.href = d.url;
+      } catch (err) {
+        estado.classList.add('error');
+        const msg = err instanceof Error && err.message !== 'error' ? err.message : 'No pudimos abrir Wompi.';
+        estado.textContent = `${msg} También puedes aportar con la llave, aquí arriba.`;
+        boton.disabled = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .dos { display: grid; gap: 40px 88px; }
+  @media (min-width: 1000px) { .dos { grid-template-columns: 1fr 1.1fr; align-items: start; } }
+  .cabeza { display: grid; gap: 14px; align-content: start; }
+  .cabeza p { margin: 0; }
+
+  .llave-caja, .aporte {
+    display: grid; gap: 18px; justify-items: start;
+    background: #fbf8f3; padding: clamp(22px, 4vw, 44px); border: 1px solid var(--linea);
+  }
+  .llave-caja p { margin: 0; }
+  .llave-num {
+    font-family: var(--f-display, inherit); font-weight: 600;
+    font-size: clamp(2.4rem, 7vw, 3.8rem); line-height: 1; letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums; user-select: all;
+  }
+  .pasos { margin: 8px 0 0; padding-left: 1.2em; display: grid; gap: 8px; }
+  .nota a { color: inherit; }
+
+  fieldset { border: 0; margin: 0; padding: 0; width: 100%; }
+  legend { margin-bottom: 14px; }
+  .montos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
+  @media (min-width: 560px) { .montos { grid-template-columns: repeat(3, 1fr); } }
+  .monto { position: relative; cursor: pointer; }
+  .monto input { position: absolute; opacity: 0; }
+  .monto span {
+    display: block; text-align: center; padding: 14px 10px; border: 1px solid var(--linea);
+    font-variant-numeric: tabular-nums; font-size: 1.05rem; background: var(--papel, #f4eee5);
+  }
+  .monto input:checked + span { background: var(--carbon, #17130f); color: var(--papel, #f4eee5); border-color: transparent; }
+  .monto input:focus-visible + span { outline: 2px solid var(--terracota-ink, #c0442a); outline-offset: 2px; }
+  .campo { display: grid; gap: 6px; width: 100%; }
+  .campo[hidden] { display: none; }
+  .campo input { font: inherit; padding: 12px; border: 1px solid var(--linea); background: #fff; width: 100%; }
+  .aviso { margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--texto-2); border-left: 2px solid var(--luz, #c0442a); padding-left: 14px; }
+  .aviso strong { color: var(--texto, inherit); }
+  .aviso a { color: inherit; }
+  .form-estado { margin: 0; min-height: 1.4em; }
+  .form-estado.error { color: var(--terracota-ink, #c0442a); }
+
+  .creditos { padding: 0; margin: 0 0 32px; }
+  .en-curso-txt { margin: 4px 0 0; max-width: 62ch; }
+
+  .claro { display: grid; gap: 14px; max-width: 760px; }
+  .claro ul { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+</style>

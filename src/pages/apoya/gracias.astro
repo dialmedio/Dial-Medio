@@ -1,0 +1,68 @@
+---
+/** Regreso desde Wompi: /apoya/gracias?id=<transacción>. El estado lo consulta /api/apoyo/estado. */
+import Base from '../../layouts/Base.astro';
+import Simbolo from '../../components/Simbolo.astro';
+import Boletin from '../../components/Boletin.astro';
+import sitio from '../../data/sitio.json';
+---
+
+<Base titulo="Gracias por tu aporte" noindex>
+  <section class="gracias tema-carbon grano">
+    <div class="contenedor gracias-cuerpo">
+      <Simbolo tono="claro" anima class="gracias-simbolo" />
+      <p class="kicker"><span class="acento" data-kicker>Aporte</span></p>
+      <h1 class="display d-2" data-titulo>Estamos confirmando tu aporte…</h1>
+      <p class="lead texto-2" data-texto>Wompi nos está contando cómo salió el pago. Tarda unos segundos.</p>
+      <div class="acciones">
+        <a href="/trabajo" class="btn">Ver lo que hacemos <span class="flecha">→</span></a>
+        <a href="/apoya" class="btn linea" data-volver hidden>Intentar de nuevo</a>
+      </div>
+      <div class="gracias-boletin">
+        <p class="kicker sin-linea"><span class="acento">Boletín</span> · {sitio.boletin.frecuencia}</p>
+        <p class="texto-2">Para que sepas en qué se convierte tu aporte: {sitio.boletin.descripcion.toLowerCase()}</p>
+        <Boletin id="boletin-apoyo" origen="apoyo" />
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const id = new URLSearchParams(location.search).get('id');
+  const $ = (s: string) => document.querySelector<HTMLElement>(s)!;
+  const pesos = (n: number) => '$' + n.toLocaleString('es-CO');
+
+  const pintar = (kicker: string, titulo: string, texto: string, volver = false) => {
+    $('[data-kicker]').textContent = kicker;
+    $('[data-titulo]').textContent = titulo;
+    $('[data-texto]').textContent = texto;
+    $('[data-volver]').hidden = !volver;
+  };
+
+  async function consultar(intento = 0) {
+    if (!id) return pintar('Aporte', 'Gracias por pasar por aquí.', 'No encontramos el pago en el enlace. Si aportaste y tienes dudas, escríbenos.', true);
+    try {
+      const r = await fetch(`/api/apoyo/estado?id=${encodeURIComponent(id)}`);
+      const d = await r.json();
+      if (!r.ok) throw new Error();
+      if (d.estado === 'APPROVED') return pintar('Señal recibida', 'Gracias. Tu aporte llegó.', `Recibimos ${pesos(d.monto)} para la obra propia de Dial: viajes, investigación y montaje. El comprobante de Wompi te llegará a nombre de «Red Quynza», la cuenta con la que por ahora recibimos los aportes en línea.`);
+      if (d.estado === 'PENDING') {
+        if (intento < 10) return setTimeout(() => consultar(intento + 1), 3000);
+        return pintar('En proceso', 'Tu pago sigue en proceso.', 'Algunos pagos (PSE o Nequi) tardan unos minutos. Wompi te enviará el resultado por correo.');
+      }
+      return pintar('Sin cobro', 'El pago no se completó.', 'No se te cobró nada. Puedes intentarlo otra vez o aportar con la llave, que no tiene comisión.', true);
+    } catch {
+      pintar('Aporte', 'No pudimos confirmar el pago desde aquí.', 'Wompi te envía el comprobante por correo. Si tienes dudas, escríbenos.');
+    }
+  }
+  consultar();
+</script>
+
+<style>
+  .gracias { min-height: calc(100svh - 72px); display: grid; align-items: center; position: relative; padding-block: 72px; }
+  .gracias-cuerpo { display: grid; gap: 24px; justify-items: start; }
+  .gracias-cuerpo :global(.gracias-simbolo) { width: 120px; margin-bottom: 12px; }
+  .gracias h1 { max-width: 18ch; }
+  .gracias .lead { margin: 0; max-width: 56ch; }
+  .gracias-boletin { display: grid; gap: 12px; margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--linea-clara); width: 100%; max-width: 560px; }
+  .gracias-boletin p { margin: 0; }
+</style>

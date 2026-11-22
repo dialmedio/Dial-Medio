@@ -45,5 +45,17 @@
       "rol": "Investigación",
       "url": "https://redquynza.org"
     }
-  ]
+  ],
+  "apoyo": {
+    "llave": "3104813624",
+    "titular": "Martín Perea Tobón",
+    "montos": [
+      20000,
+      50000,
+      100000,
+      200000,
+      500000
+    ],
+    "minimo": 5000
+  }
 }

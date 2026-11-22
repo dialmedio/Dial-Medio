@@ -6,6 +6,7 @@ export const NAV = [
   { texto: 'Servicios', href: '/servicios' },
   { texto: 'Investigación', href: '/investigacion' },
   { texto: 'Nosotros', href: '/nosotros' },
+  { texto: 'Apoya', href: '/apoya' },
 ];
 
 export type Video = {

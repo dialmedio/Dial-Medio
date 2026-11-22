@@ -4,8 +4,19 @@
 // o al pasar el mouse. Se esconde cuando el pie (que ya tiene el contacto) está en pantalla.
 import sitio from '../data/sitio.json';
 import { whatsapp } from '../lib/util';
+// Nov 22 2026: a su lado va «Dona» (lleva a /apoya), salvo en la propia /apoya.
+const enApoya = Astro.url.pathname.startsWith('/apoya');
 ---
 
+<div class="flotantes" data-flotantes>
+{
+  !enApoya && (
+    <a class="dona" href="/apoya" aria-label="Dona a Dial: apoya nuestros documentales">
+      <span class="wa-punto" aria-hidden="true" />
+      Dona
+    </a>
+  )
+}
 <a
   class="wa"
   href={whatsapp()}
@@ -22,10 +33,12 @@ import { whatsapp } from '../lib/util';
   </svg>
   <span class="wa-texto"><span class="wa-punto" aria-hidden="true"></span>Cotizar por WhatsApp</span>
 </a>
+</div>
 
 <script>
   const boton = document.querySelector<HTMLElement>('[data-wa]');
-  if (boton) {
+  const grupo = document.querySelector<HTMLElement>('[data-flotantes]');
+  if (boton && grupo) {
     let antes = window.scrollY;
     const revisar = () => {
       const y = window.scrollY;
@@ -38,18 +51,54 @@ import { whatsapp } from '../lib/util';
     revisar();
     const pie = document.querySelector('footer');
     if (pie)
-      new IntersectionObserver(([e]) => boton.classList.toggle('oculto', e.isIntersecting), {
+      new IntersectionObserver(([e]) => grupo.classList.toggle('oculto', e.isIntersecting), {
         rootMargin: '0px 0px -40px 0px',
       }).observe(pie);
   }
 </script>
 
 <style>
-  .wa {
+  .flotantes {
     position: fixed;
     right: max(16px, env(safe-area-inset-right));
     bottom: max(16px, env(safe-area-inset-bottom));
     z-index: 55;
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    transition:
+      opacity 0.35s var(--ease),
+      translate 0.35s var(--ease);
+  }
+  .dona {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 54px;
+    padding: 0 18px;
+    background: var(--carbon);
+    color: var(--papel);
+    border: 1px solid rgba(244, 238, 229, 0.22);
+    box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.55);
+    font: 600 0.92rem/1 var(--f-texto);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+  }
+  .dona:hover,
+  .dona:focus-visible {
+    background: var(--luz);
+    border-color: var(--luz);
+  }
+  .dona:hover .wa-punto,
+  .dona:focus-visible .wa-punto {
+    background: var(--papel);
+  }
+  .dona:focus-visible {
+    outline: 2px solid var(--papel);
+    outline-offset: 3px;
+  }
+  .wa {
     display: inline-flex;
     align-items: center;
     height: 54px;
@@ -112,14 +161,24 @@ import { whatsapp } from '../lib/util';
     outline: 2px solid var(--papel);
     outline-offset: 3px;
   }
-  .wa.oculto {
+  .flotantes.oculto {
     opacity: 0;
     translate: 0 12px;
     pointer-events: none;
   }
   @media (max-width: 600px) {
-    .wa {
+    .wa,
+    .dona {
       font-size: 0.88rem;
+    }
+    /* Con «Dona» al lado no cabe el texto: en el celular WhatsApp va siempre como ícono. */
+    .wa .wa-texto {
+      max-width: 0;
+      margin-left: 0;
+      opacity: 0;
+    }
+    .wa {
+      padding: 0 15px;
     }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -129,7 +188,7 @@ import { whatsapp } from '../lib/util';
     }
   }
   @media print {
-    .wa {
+    .flotantes {
       display: none;
     }
   }

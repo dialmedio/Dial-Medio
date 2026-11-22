@@ -11,6 +11,9 @@
  *   CONTACTO_DESTINO   correo que recibe las solicitudes (p. ej. dialmediocol@gmail.com)
  *   CONTACTO_REMITENTE remitente verificado en Resend (p. ej. "Sitio Dial <sitio@dialmedio.org>")
  *   TURNSTILE_SECRET   (opcional) clave secreta de Cloudflare Turnstile
+ *   WOMPI_INTEGRITY_SECRET  secreto de integridad de Wompi (prod_integrity_…), para /apoya
+ * Variable (wrangler.jsonc → vars): WOMPI_PUBLIC_KEY (pub_prod_… o pub_test_…).
+ * Sin las dos, /apoya solo muestra la llave Bre-B / Nequi.
  */
 
 interface Env {
@@ -19,6 +22,8 @@ interface Env {
   CONTACTO_DESTINO?: string;
   CONTACTO_REMITENTE?: string;
   TURNSTILE_SECRET?: string;
+  WOMPI_PUBLIC_KEY?: string;
+  WOMPI_INTEGRITY_SECRET?: string;
 }
 
 const CAMPOS = ['linea', 'servicio', 'nombre', 'organizacion', 'correo', 'telefono', 'fecha', 'presupuesto', 'mensaje'] as const;
@@ -93,6 +98,68 @@ async function contacto(request: Request, env: Env): Promise<Response> {
 }
 
 /**
+ * Aportes con Wompi (Web Checkout, pago único). /apoya pide la firma aquí porque el secreto
+ * de integridad no puede ir al navegador. Las referencias empiezan por DIAL- para
+ * distinguirlas en el panel de Wompi si el comercio es compartido.
+ */
+const APOYO_MIN = 5000;
+const APOYO_MAX = 10_000_000;
+
+async function sha256(s: string): Promise<string> {
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(h)].map((x) => x.toString(16).padStart(2, '0')).join('');
+}
+
+async function apoyo(request: Request, env: Env, url: URL): Promise<Response> {
+  const ruta = url.pathname.replace(/\/$/, '');
+  const activo = Boolean(env.WOMPI_PUBLIC_KEY && env.WOMPI_INTEGRITY_SECRET);
+  const sandbox = String(env.WOMPI_PUBLIC_KEY ?? '').startsWith('pub_test_');
+  const api = sandbox ? 'https://sandbox.wompi.co/v1' : 'https://production.wompi.co/v1';
+
+  if (ruta === '/api/apoyo/config' && request.method === 'GET') {
+    return new Response(JSON.stringify({ activo, sandbox }), {
+      headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+    });
+  }
+
+  if (ruta === '/api/apoyo' && request.method === 'POST') {
+    if (!activo) return json({ ok: false, error: 'Los aportes en línea aún no están activos.' }, 503);
+    const b = (await request.json().catch(() => ({}))) as { monto?: unknown };
+    const monto = Math.round(Number(b.monto));
+    if (!Number.isFinite(monto) || monto < APOYO_MIN || monto > APOYO_MAX) {
+      return json({ ok: false, error: `El aporte debe ser de al menos $${APOYO_MIN.toLocaleString('es-CO')}.` }, 400);
+    }
+    const hoy = new Date(Date.now() - 5 * 3600 * 1000).toISOString().slice(0, 10).replace(/-/g, '');
+    const referencia = `DIAL-${hoy}-${crypto.randomUUID().slice(0, 8)}`;
+    const centavos = monto * 100;
+    const firma = await sha256(`${referencia}${centavos}COP${env.WOMPI_INTEGRITY_SECRET}`);
+    const q = new URLSearchParams({
+      'public-key': env.WOMPI_PUBLIC_KEY!,
+      currency: 'COP',
+      'amount-in-cents': String(centavos),
+      reference: referencia,
+      'signature:integrity': firma,
+      // Wompi bloquea (403) los regresos a http://localhost: en pruebas se vuelve al sitio real.
+      'redirect-url': `${url.protocol === 'https:' ? url.origin : 'https://dialmedio.org'}/apoya/gracias`,
+    });
+    // Wompi documenta el parámetro con los dos puntos tal cual (signature:integrity).
+    return json({ ok: true, url: `https://checkout.wompi.co/p/?${q.toString().replace('signature%3Aintegrity', 'signature:integrity')}` });
+  }
+
+  if (ruta === '/api/apoyo/estado' && request.method === 'GET') {
+    const id = url.searchParams.get('id') ?? '';
+    if (!/^[\w-]{6,64}$/.test(id)) return json({ ok: false }, 400);
+    const r = await fetch(`${api}/transactions/${id}`);
+    if (!r.ok) return json({ ok: false }, 404);
+    const t = ((await r.json()) as { data?: { reference?: string; status?: string; amount_in_cents?: number } }).data;
+    if (!t?.reference?.startsWith('DIAL-')) return json({ ok: false }, 404);
+    return json({ ok: true, estado: t.status, monto: Math.round((t.amount_in_cents ?? 0) / 100) });
+  }
+
+  return json({ ok: false, error: 'No encontrado' }, 404);
+}
+
+/**
  * Direcciones viejas (nov 2026): /medio se repartió en secciones. Los enlaces que ya circulan siguen funcionando.
  * debate-* → /laboratorio, podcast-* → /podcast, el resto (documentales) → /documentales.
  */
@@ -133,6 +200,15 @@ export default {
     if (url.hostname.startsWith('www.')) {
       url.hostname = url.hostname.slice(4);
       return Response.redirect(url.toString(), 301);
+    }
+
+    if (url.pathname.startsWith('/api/apoyo')) {
+      try {
+        return await apoyo(request, env, url);
+      } catch (e) {
+        console.error('apoyo', url.pathname, e);
+        return json({ ok: false, error: 'No pudimos conectar con Wompi.' }, 502);
+      }
     }
 
     if (url.pathname === '/api/contacto') {
