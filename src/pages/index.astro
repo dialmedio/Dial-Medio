@@ -11,6 +11,8 @@ import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import VideoLite from '../components/VideoLite.astro';
+import VideoPropio from '../components/VideoPropio.astro';
+import { PAZ_JORDAN } from '../lib/paz';
 import CTAFinal from '../components/CTAFinal.astro';
 import Casa from '../components/Casa.astro';
 import DialServicios from '../components/DialServicios.astro';
@@ -38,13 +40,15 @@ const deMedio = (id: string, rotulo: string) => {
   return { titulo: m.data.titulo, video: m.data.video!, href: rutaVideo(m), rotulo, meta: [m.data.lugar, anio(m.data.fecha)].filter(Boolean).join(' · ') };
 };
 const sesion = { titulo: 'In-Vitro, sesión en vivo', video: { plataforma: 'youtube' as const, id: 'L84B5ZGakjY' }, href: 'https://youtu.be/L84B5ZGakjY', rotulo: 'Sesión en vivo · Imagen y sonido', meta: 'Música del disco In-Vitro · 2026' };
+// 22 nov 2026: entra el reel «¿Qué es la paz?» junto a Mongolia y sale el segundo debate (debate-proyecto-de-pais).
+const paz = { titulo: PAZ_JORDAN.titulo, propio: PAZ_JORDAN, video: undefined, href: PAZ_JORDAN.instagram, rotulo: 'Serie · ¿Qué es la paz?', meta: 'Reel en Instagram · 2026' };
 const trabajo = [
   deMuestra('mongolia'),
+  paz,
   sesion,
   deMuestra('videoclip-feo-palante'),
   deMedio('debate-mano-dura', 'Debate'),
   deMedio('historia-del-jazz-colombiano', 'Documental'),
-  deMedio('debate-proyecto-de-pais', 'Debate'),
 ];
 
 // Mosaico de campañas: imagen propia (src/lib/obra.ts), nada de stock. [clase, foto o carrusel, tamaño]
@@ -260,7 +264,7 @@ const distintos = [
         {
           trabajo.map((t, i) => (
             <article class="obra" data-revela>
-              <VideoLite video={t.video} titulo={t.titulo} />
+              {'propio' in t && t.propio ? <VideoPropio v={t.propio} encuadre="16:9" /> : <VideoLite video={t.video!} titulo={t.titulo} />}
               <p class="rotulo">{t.rotulo}</p>
               <h3 class="titular t-3">{t.href ? <a href={t.href}>{t.titulo}</a> : t.titulo}</h3>
               <p class="datos"><span>{t.meta}</span></p>
